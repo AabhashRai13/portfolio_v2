@@ -67,7 +67,7 @@ class ProjectCardWidget extends StatelessWidget {
                 const Text(
                   "Available on:",
                   style: TextStyle(
-                    color: CustomColor.accent2,
+                    color: CustomColor.accent,
                     fontSize: 10,
                   ),
                 ),

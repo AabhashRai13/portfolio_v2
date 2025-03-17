@@ -16,7 +16,7 @@ class HeaderMobile extends StatelessWidget {
     return Container(
       height: 50.0,
       margin: const EdgeInsets.fromLTRB(40, 5, 20, 5),
-      decoration: kHederDecoration,
+      decoration: kHeaderDecoration,
       child: Row(
         children: [
           SiteLogo(
