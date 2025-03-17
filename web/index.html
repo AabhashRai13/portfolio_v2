@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter Web App</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #252734; /* scaffoldBg */
+            color: #EAEAEB; /* whitePrimary */
+            font-family: Arial, sans-serif;
+        }
+        .splash-container {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            background-color: #252734; /* scaffoldBg */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 1s ease-in-out;
+        }
+        .lottie-container {
+            width: 200px;
+            height: 200px;
+        }
+        .loading-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #C8C9CE; /* textFieldBg */
+            margin-top: 10px;
+        }
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.10/lottie.min.js"></script>
+</head>
+<body>
+    <div class="splash-container" id="splash">
+        <div class="lottie-container" id="lottie"></div>
+        <p class="loading-text" id="welcome-message">Loading...</p>
+    </div>
+    <div class="loading-container" id="loading" style="display: none;">
+        <div class="spinner"></div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        <p class="loading-text">Loading, please wait...</p>
+    </div>
+    <script>
+        window.onload = function () {
+            // Fetch the JSON data
+            fetch('assets/lottie/laptop_animation.json')
+                .then(response => response.json())
+                .then(data => {
+                    // Load the Lottie animation
+                    const animationContainer = document.getElementById('lottie');
+                    lottie.loadAnimation({
+                        container: animationContainer, // the DOM element to contain the animation
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: data.animationUrl || 'assets/lottie/laptop_animation.json' // Path to the Lottie JSON animation
+                    });
+
+                    // Set the welcome message
+                    const messageElement = document.getElementById('welcome-message');
+                    messageElement.textContent = data.message || 'Polishing pixels and perfecting code just for you...'; // Fallback message if not available
+
+                    // Show splash screen for 2 seconds, then transition to loading
+                    setTimeout(() => {
+                        document.getElementById("splash").classList.add("fade-out");
+                        setTimeout(() => {
+                            document.getElementById("splash").style.display = "none";
+                            document.getElementById("loading").style.display = "block";
+                        }, 1000); // Fade out duration
+                    }, 2000); // Show splash screen for 2 seconds
+                })
+                .catch(error => {
+                    console.error('Error loading JSON file:', error);
+                    // Fallback to default content if there's an error
+                    const animationContainer = document.getElementById('lottie');
+                    lottie.loadAnimation({
+                        container: animationContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: 'default-animation.json' // Fallback animation
+                    });
+
+                    document.getElementById('welcome-message').textContent = 'Welcome to My App';
+                    // Proceed with splash fade out
+                    setTimeout(() => {
+                        document.getElementById("splash").classList.add("fade-out");
+                        setTimeout(() => {
+                            document.getElementById("splash").style.display = "none";
+                            document.getElementById("loading").style.display = "block";
+                        }, 1000); // Fade out duration
+                    }, 2000); // Show splash screen for 2 seconds
+                });
+        };
+    </script>
+    <script src="main.dart.js" defer></script>
+</body>
+</html>
