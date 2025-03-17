@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 
 class CustomColor {
-  // Primary Gold Colors
-  static const Color primary = Color(0xFFBF9B30);      // Rich gold
-  static const Color secondary = Color(0xFFDFBF68);     // Light gold
-  static const Color accent = Color(0xFF8B7355);        // Dark gold accent
+  // Primary Colors
+  static const Color primary = Color(0xFF89CFF0);    // Pastel Blue
+  static const Color secondary = Color(0xFFFF6F61);   // Soft Coral
   
   // Background Colors
-  static const Color scaffoldBg = Color(0xFFFAF9F6);   // Ivory white
-  static const Color bgLight1 = Color(0xFFFFFBF5);     // Warm white
-  static const Color bgLight2 = Color(0xFFF5EFE6);     // Light beige
+  static const Color scaffoldBg = Color(0xFFFAFAFA); // Off-White
+  static const Color bgLight1 = Color(0xFFFFFFFF);   // Pure White
+  static const Color bgLight2 = Color(0xFFF5F5F5);   // Light Grey
+  
+  // Accent Colors
+  static const Color teal = Color(0xFF3B9A99);       // Teal
+  static const Color grey = Color(0xFFD3D3D3);       // Light Gray
+  static const Color yellow = Color(0xFFFFEB3B);     // Yellow
   
   // Text Colors
-  static const Color textPrimary = Color(0xFF3C2A21);  // Deep chocolate
-  static const Color textSecondary = Color(0xFF967E76); // Warm taupe
-  static const Color textGold = Color(0xFFD4AF37);     // Metallic gold
-  static const Color textLight = Color(0xFFFFFBF5);    // Warm white
-  static const Color textAccent = Color(0xFF826F66);   // Muted brown
-  
-  // Additional Colors
-  static const Color success = Color(0xFF7D8C4F);      // Olive green
-  static const Color warning = Color(0xFFD4AF37);      // Royal gold
-  static const Color error = Color(0xFFC1666B);        // Rose gold
+  static const Color textPrimary = Color(0xFF2C2C2C);    // Dark Grey
+  static const Color textSecondary = Color(0xFF6B7280);  // Medium Grey
+  static const Color textLight = Color(0xFFFFFFFF);      // White
 }

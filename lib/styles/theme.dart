@@ -11,67 +11,48 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
   colorScheme: const ColorScheme.light(
     primary: CustomColor.primary,
     secondary: CustomColor.secondary,
+    tertiary: CustomColor.teal,
     surface: CustomColor.bgLight1,
-    error: CustomColor.error,
   ),
   
   // Text Theme
   textTheme: GoogleFonts.poppinsTextTheme().copyWith(
-    headlineLarge: const TextStyle(
-      color: CustomColor.textGold,
-      fontSize: 32,
+    headlineLarge: TextStyle(
+      color: CustomColor.textPrimary,
+      fontSize: 42,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.5,
+      shadows: [
+        Shadow(
+          color: CustomColor.primary.withOpacity(0.2),
+          offset: const Offset(2, 2),
+          blurRadius: 4,
+        ),
+      ],
     ),
     headlineMedium: const TextStyle(
       color: CustomColor.textPrimary,
-      fontSize: 24,
+      fontSize: 28,
       fontWeight: FontWeight.w600,
       letterSpacing: -0.3,
     ),
     titleLarge: const TextStyle(
-      color: CustomColor.primary,
+      color: CustomColor.teal,
       fontSize: 20,
       fontWeight: FontWeight.w600,
-      letterSpacing: 0.15,
-    ),
-    titleMedium: const TextStyle(
-      color: CustomColor.textAccent,
-      fontSize: 18,
-      fontWeight: FontWeight.w500,
       letterSpacing: 0.15,
     ),
     bodyLarge: const TextStyle(
       color: CustomColor.textPrimary,
       fontSize: 16,
       letterSpacing: 0.5,
-      height: 1.5,
+      height: 1.6,
     ),
     bodyMedium: const TextStyle(
       color: CustomColor.textSecondary,
       fontSize: 14,
       letterSpacing: 0.25,
-      height: 1.4,
-    ),
-    labelLarge: const TextStyle(
-      color: CustomColor.primary,
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0.5,
-    ),
-  ),
-  
-  // Card Theme
-  cardTheme: CardTheme(
-    color: CustomColor.bgLight1,
-    elevation: 4,
-    shadowColor: CustomColor.primary.withOpacity(0.2),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-      side: BorderSide(
-        color: CustomColor.secondary.withOpacity(0.1),
-        width: 1,
-      ),
+      height: 1.5,
     ),
   ),
   
@@ -84,16 +65,26 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
         borderRadius: BorderRadius.circular(12),
       ),
       elevation: 4,
-      shadowColor: CustomColor.primary.withOpacity(0.3),
+      shadowColor: CustomColor.primary.withOpacity(0.4),
       padding: const EdgeInsets.symmetric(
         horizontal: 24,
         vertical: 16,
       ),
       textStyle: GoogleFonts.poppins(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         fontSize: 16,
         letterSpacing: 0.5,
       ),
+    ),
+  ),
+  
+  // Card Theme
+  cardTheme: CardTheme(
+    color: CustomColor.bgLight1,
+    elevation: 8,
+    shadowColor: CustomColor.primary.withOpacity(0.1),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
     ),
   ),
   
@@ -104,7 +95,7 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(
-        color: CustomColor.secondary.withOpacity(0.2),
+        color: CustomColor.grey.withOpacity(0.3),
       ),
     ),
     focusedBorder: OutlineInputBorder(
@@ -117,18 +108,15 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(
-        color: CustomColor.secondary.withOpacity(0.2),
+        color: CustomColor.grey.withOpacity(0.3),
       ),
     ),
-    labelStyle: const TextStyle(
-      color: CustomColor.textSecondary,
+    hoverColor: CustomColor.primary.withOpacity(0.3),
+    labelStyle: TextStyle(
+      color: CustomColor.textSecondary.withOpacity(0.8),
     ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: CustomColor.error,
-        width: 2,
-      ),
+    floatingLabelStyle: const TextStyle(
+      color: CustomColor.primary,
     ),
   ),
   
@@ -138,10 +126,11 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
     size: 24,
   ),
   
-  // Divider Theme
-  dividerTheme: DividerThemeData(
-    color: CustomColor.secondary.withOpacity(0.2),
-    thickness: 1,
-    space: 24,
+  // Floating Action Button Theme
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: CustomColor.secondary,
+    foregroundColor: CustomColor.textLight,
+    elevation: 4,
+    splashColor: CustomColor.yellow.withOpacity(0.3),
   ),
 );

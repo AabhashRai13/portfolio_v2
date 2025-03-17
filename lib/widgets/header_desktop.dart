@@ -12,11 +12,6 @@ class HeaderDesktop extends StatelessWidget {
   });
   final Function(int) onNavMenuTap;
 
-  // Define gold colors for consistent use
-  static const Color goldPrimary = Color(0xFFBF9B30);    // Rich gold
-  static const Color goldLight = Color(0xFFDFBF68);      // Light gold
-  static const Color goldDark = Color(0xFF8B7355);       // Dark gold accent
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,32 +22,29 @@ class HeaderDesktop extends StatelessWidget {
       ),
       width: double.maxFinite,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(35),
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: goldLight.withOpacity(0.3),
+          color: CustomColor.primary.withOpacity(0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: goldPrimary.withOpacity(0.08),
+            color: CustomColor.primary.withOpacity(0.1),
             blurRadius: 20,
-            offset: const Offset(0, 5),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(35),
+        borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             child: Row(
               children: [
-                _AnimatedLogo(
-                  onTap: () {},
-                  goldColor: goldPrimary,
-                ),
+                const _AnimatedLogo(),
                 const Spacer(),
                 for (int i = 0; i < navTitles.length; i++)
                   Padding(
@@ -60,8 +52,6 @@ class HeaderDesktop extends StatelessWidget {
                     child: _NavButton(
                       title: navTitles[i],
                       onTap: () => onNavMenuTap(i),
-                      goldColor: goldPrimary,
-                      goldLight: goldLight,
                     ),
                   ),
               ],
@@ -74,13 +64,7 @@ class HeaderDesktop extends StatelessWidget {
 }
 
 class _AnimatedLogo extends StatefulWidget {
-  final VoidCallback onTap;
-  final Color goldColor;
-
-  const _AnimatedLogo({
-    required this.onTap,
-    required this.goldColor,
-  });
+  const _AnimatedLogo();
 
   @override
   State<_AnimatedLogo> createState() => _AnimatedLogoState();
@@ -98,24 +82,26 @@ class _AnimatedLogoState extends State<_AnimatedLogo> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
         decoration: BoxDecoration(
-          color: isHovered ? widget.goldColor.withOpacity(0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
+          color: isHovered ? CustomColor.primary.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: ShaderMask(
-          shaderCallback: (bounds) => LinearGradient(
-            colors: [
-              widget.goldColor,
-              HeaderDesktop.goldLight,
-            ],
-          ).createShader(bounds),
-          child: Text(
-            'AR',
-            style: GoogleFonts.poppins(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white, // This will be masked by the gradient
+        child: Row(
+          children: [
+            Text(
+              'AR',
+              style: GoogleFonts.poppins(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                foreground: Paint()
+                  ..shader =const LinearGradient(
+                    colors: [
+                      CustomColor.primary,
+                      CustomColor.secondary,
+                    ],
+                  ).createShader(const Rect.fromLTWH(0.0, 0.0, 50.0, 50.0)),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -125,14 +111,10 @@ class _AnimatedLogoState extends State<_AnimatedLogo> {
 class _NavButton extends StatefulWidget {
   final String title;
   final VoidCallback onTap;
-  final Color goldColor;
-  final Color goldLight;
 
   const _NavButton({
     required this.title,
     required this.onTap,
-    required this.goldColor,
-    required this.goldLight,
   });
 
   @override
@@ -147,24 +129,27 @@ class _NavButtonState extends State<_NavButton> {
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: isHovered ? CustomColor.primary.withOpacity(0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(25),
-          border: isHovered ? Border.all(
-            color: CustomColor.primary.withOpacity(0.3),
-            width: 1,
-          ) : null,
-        ),
-        child: Text(
-          widget.title,
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: isHovered ? FontWeight.w600 : FontWeight.w500,
-            color: isHovered ? CustomColor.primary : CustomColor.textGold,
-            letterSpacing: 0.3,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: isHovered ? CustomColor.primary.withOpacity(0.1) : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isHovered ? CustomColor.primary : Colors.transparent,
+              width: 1.5,
+            ),
+          ),
+          child: Text(
+            widget.title,
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: isHovered ? FontWeight.w600 : FontWeight.w500,
+              color: isHovered ? CustomColor.primary : CustomColor.textPrimary,
+              letterSpacing: 0.3,
+            ),
           ),
         ),
       ),
