@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 const List<Map> platformItems = [
   {
     "img": "assets/android_icon.png",
@@ -19,35 +22,33 @@ const List<Map> platformItems = [
 
 const List<Map> skillItems = [
   {
-    "img": "assets/flutter.png",
+    "icon": FontAwesomeIcons.flutter,
     "title": "Flutter",
+    "color": Colors.blue,
   },
   {
-    "img": "assets/dart.png",
-    "title": "Dart",
+    "icon": FontAwesomeIcons.fire,
+    "title": "Firebase",
+    "color": Colors.yellow,
   },
   {
-    "img": "assets/html5.png",
-    "title": "HTML5",
-  },
-  {
-    "img": "assets/css3.png",
-    "title": "CSS3",
-  },
-  {
-    "img": "assets/javascript.png",
+    "icon": FontAwesomeIcons.js,
     "title": "JS",
+    "color": Colors.yellow,
   },
   {
-    "img": "assets/hugo.png",
-    "title": "Hugo",
-  },
-  {
-    "img": "assets/docker.png",
-    "title": "Docker",
-  },
-  {
-    "img": "assets/python.png",
+    "icon": FontAwesomeIcons.python,
     "title": "Python",
-  }
+    "color": Colors.blue,
+  },
+  {
+    "icon": FontAwesomeIcons.react,
+    "title": "React",
+    "color": Colors.blue,
+  },
+  {
+    "icon": FontAwesomeIcons.nodeJs,
+    "title": "Node.js",
+    "color": Colors.green,
+  },
 ];
