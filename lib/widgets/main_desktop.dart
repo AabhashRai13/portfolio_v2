@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/widgets/get_in_touch_button.dart';
 import 'package:my_portfolio/widgets/skill_orbit_animation.dart';
 
 import '../constants/colors.dart';
@@ -10,7 +11,6 @@ class MainDesktop extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final screenHeight = screenSize.height;
-    final screenWidth = screenSize.width;
 
     return Container(
       margin: const EdgeInsets.symmetric(
@@ -20,7 +20,7 @@ class MainDesktop extends StatelessWidget {
       constraints: const BoxConstraints(
         minHeight: 350.0,
       ),
-      child: Row(
+      child: const Row(
         children: [
           Expanded(
             flex: 1,
@@ -28,7 +28,7 @@ class MainDesktop extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // intro message
-                const Text(
+                Text(
                   "Hi,\nI'm Aabhash Rai\nA Flutter Developer",
                   style: TextStyle(
                     fontSize: 30,
@@ -37,19 +37,13 @@ class MainDesktop extends StatelessWidget {
                     color: CustomColor.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: 15),
                 // contact btn
-                SizedBox(
-                  width: 250.0,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text("Get in touch"),
-                  ),
-                )
+                GetInTouchButton()
               ],
             ),
           ),
-          const Expanded(
+           Expanded(
             flex: 2,
             child: SkillOrbitDemo(),
           ),

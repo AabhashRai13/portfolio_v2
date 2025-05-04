@@ -2,11 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/constants/skill_items.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:my_portfolio/resources/asset_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_portfolio/widgets/bounce_man_animation.dart';
-
-void main() => runApp(const MaterialApp(home: SkillOrbitDemo()));
 
 class SkillOrbitDemo extends StatefulWidget {
   const SkillOrbitDemo({super.key});
@@ -35,7 +32,7 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
     final int n = skillItems.length;
     const numRings = 2; // You can adjust this
     final int iconsPerRing = (n / numRings).ceil();
-    const baseRadius = 140;
+    const baseRadius = 160;
     const ringSpacing = 100; // Distance between rings
 
     int iconIndex = 0;

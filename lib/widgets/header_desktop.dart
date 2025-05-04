@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_portfolio/widgets/animated_logo.dart';
 import '../constants/nav_items.dart';
 import '../constants/colors.dart';
 
@@ -43,17 +44,29 @@ class HeaderDesktop extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const _AnimatedLogo(),
+                const AnimatedLogo(),
                 const Spacer(),
-                for (int i = 0; i < navTitles.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: _NavButton(
-                      title: navTitles[i],
-                      onTap: () => onNavMenuTap(i),
-                    ),
+                Flexible(
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      for (int i = 0; i < navTitles.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 10,
+                          ),
+                          child: _NavButton(
+                            title: navTitles[i],
+                            onTap: () => onNavMenuTap(i),
+                          ),
+                        ),
+                    ],
                   ),
+                ),
               ],
             ),
           ),
@@ -63,50 +76,8 @@ class HeaderDesktop extends StatelessWidget {
   }
 }
 
-class _AnimatedLogo extends StatefulWidget {
-  const _AnimatedLogo();
 
-  @override
-  State<_AnimatedLogo> createState() => _AnimatedLogoState();
-}
 
-class _AnimatedLogoState extends State<_AnimatedLogo> {
-  bool isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => isHovered = true),
-      onExit: (_) => setState(() => isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-        decoration: BoxDecoration(
-          color: isHovered ? CustomColor.primary.withOpacity(0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Text(
-              'AR',
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                foreground: Paint()
-                  ..shader =const LinearGradient(
-                    colors: [
-                      CustomColor.primary,
-                      CustomColor.secondary,
-                    ],
-                  ).createShader(const Rect.fromLTWH(0.0, 0.0, 50.0, 50.0)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _NavButton extends StatefulWidget {
   final String title;
@@ -135,7 +106,9 @@ class _NavButtonState extends State<_NavButton> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: isHovered ? CustomColor.primary.withOpacity(0.1) : Colors.transparent,
+            color: isHovered
+                ? CustomColor.primary.withOpacity(0.1)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isHovered ? CustomColor.primary : Colors.transparent,

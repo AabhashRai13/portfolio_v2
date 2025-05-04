@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/widgets/animated_logo.dart';
 
 import '../styles/style.dart';
-import 'site_logo.dart';
 
 class HeaderMobile extends StatelessWidget {
   const HeaderMobile({
@@ -19,9 +19,7 @@ class HeaderMobile extends StatelessWidget {
       decoration: kHeaderDecoration,
       child: Row(
         children: [
-          SiteLogo(
-            onTap: onLogoTap,
-          ),
+          const AnimatedLogo(),
           const Spacer(),
           IconButton(
             onPressed: onMenuTap,

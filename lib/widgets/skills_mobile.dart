@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../constants/colors.dart';
 import '../constants/skill_items.dart';
@@ -51,7 +52,10 @@ class SkillsMobile extends StatelessWidget {
                   ),
                   backgroundColor: CustomColor.bgLight2,
                   label: Text(skillItems[i]["title"]),
-                  avatar: Image.asset(skillItems[i]["img"]),
+                  avatar: FaIcon(
+                    skillItems[i]["icon"],
+                    color: skillItems[i]["color"],
+                  ),
                 ),
             ],
           )
