@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/resources/asset_manager.dart';
+import 'package:my_portfolio/widgets/skill_orbit_animation.dart';
 
 import '../constants/colors.dart';
 
@@ -21,36 +21,37 @@ class MainDesktop extends StatelessWidget {
         minHeight: 350.0,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // intro message
-              const Text(
-                "Hi,\nI'm Aabhash Rai\nA Flutter Developer",
-                style: TextStyle(
-                  fontSize: 30,
-                  height: 1.5,
-                  fontWeight: FontWeight.bold,
-                  color: CustomColor.textPrimary,
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // intro message
+                const Text(
+                  "Hi,\nI'm Aabhash Rai\nA Flutter Developer",
+                  style: TextStyle(
+                    fontSize: 30,
+                    height: 1.5,
+                    fontWeight: FontWeight.bold,
+                    color: CustomColor.textPrimary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              // contact btn
-              SizedBox(
-                width: 250.0,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text("Get in touch"),
-                ),
-              )
-            ],
+                const SizedBox(height: 15),
+                // contact btn
+                SizedBox(
+                  width: 250.0,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: const Text("Get in touch"),
+                  ),
+                )
+              ],
+            ),
           ),
-          // avatar img
-          Image.asset(
-            ImageAssets.myAvatar,
-            width: screenWidth / 2,
+          const Expanded(
+            flex: 2,
+            child: SkillOrbitDemo(),
           ),
         ],
       ),

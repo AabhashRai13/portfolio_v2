@@ -4,6 +4,7 @@ import 'package:my_portfolio/constants/skill_items.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:my_portfolio/resources/asset_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:my_portfolio/widgets/bounce_man_animation.dart';
 
 void main() => runApp(const MaterialApp(home: SkillOrbitDemo()));
 
@@ -34,8 +35,8 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
     final int n = skillItems.length;
     const numRings = 2; // You can adjust this
     final int iconsPerRing = (n / numRings).ceil();
-    const baseRadius = 120;
-    const ringSpacing = 60; // Distance between rings
+    const baseRadius = 140;
+    const ringSpacing = 100; // Distance between rings
 
     int iconIndex = 0;
     for (int ring = 0; ring < numRings; ring++) {
@@ -89,44 +90,45 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
 
   @override
   Widget build(BuildContext context) {
-    final center = MediaQuery.of(context).size.center(Offset.zero);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final Size widgetSize =
+            Size(constraints.maxWidth, constraints.maxHeight);
+        final Offset center = widgetSize.center(Offset.zero);
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Center image (you)
-          const Align(
-            alignment: Alignment.center,
-            child: CircleAvatar(
-              radius: 100,
-              backgroundImage: AssetImage(ImageAssets.myAvatar),
+        return Stack(
+          children: [
+            // Center image (you)
+            const Align(
+              alignment: Alignment.center,
+              child: BounceManAnimation(),
             ),
-          ),
-          // Orbiting icons
-          ..._icons.map((icon) {
-            double angle =
-                icon.initialAngle + _elapsedSeconds * 2 * pi * icon.speed;
-            final pos = _calculatePosition(
-                angle, icon.baseRadius, center, const Size(70, 70));
-            return Positioned(
-              left: pos.dx,
-              top: pos.dy,
-              child: FaIcon(
-                icon.iconData,
-                size: 70,
-                color: icon.color,
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(4, 4),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
+            // Orbiting icons
+            ..._icons.map((icon) {
+              double angle =
+                  icon.initialAngle + _elapsedSeconds * 2 * pi * icon.speed;
+              final pos = _calculatePosition(
+                  angle, icon.baseRadius, center, const Size(70, 70));
+              return Positioned(
+                left: pos.dx,
+                top: pos.dy,
+                child: FaIcon(
+                  icon.iconData,
+                  size: 70,
+                  color: icon.color,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(4, 4),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        );
+      },
     );
   }
 }

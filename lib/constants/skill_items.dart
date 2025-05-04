@@ -19,7 +19,6 @@ const List<Map> platformItems = [
     "title": "Desktop Dev",
   }
 ];
-
 const List<Map> skillItems = [
   {
     "icon": FontAwesomeIcons.flutter,
@@ -29,7 +28,7 @@ const List<Map> skillItems = [
   {
     "icon": FontAwesomeIcons.fire,
     "title": "Firebase",
-    "color": Colors.yellow,
+    "color": Color(0xFFFFCA28),
   },
   {
     "icon": FontAwesomeIcons.js,
@@ -39,16 +38,36 @@ const List<Map> skillItems = [
   {
     "icon": FontAwesomeIcons.python,
     "title": "Python",
-    "color": Colors.blue,
+    "color": Color(0xFFFFDE57),
   },
   {
-    "icon": FontAwesomeIcons.react,
-    "title": "React",
-    "color": Colors.blue,
+    "icon": FontAwesomeIcons.android,
+    "title": "Android",
+    "color": Color(0xFFA4C639),
+  },
+  {
+    "icon": FontAwesomeIcons.apple,
+    "title": "Apple",
+    "color": Color(0xFF1D1D1F),
   },
   {
     "icon": FontAwesomeIcons.nodeJs,
     "title": "Node.js",
     "color": Colors.green,
+  },
+  {
+    "icon": FontAwesomeIcons.stripe,
+    "title": "Stripe",
+    "color": Color(0xFF635BFF),
+  },
+  {
+    "icon": FontAwesomeIcons.googlePay,
+    "title": "Google Pay",
+    "color": Color(0xFF4285F4),
+  },
+  {
+    "icon": FontAwesomeIcons.applePay,
+    "title": "Apple Pay",
+    "color": Color(0xFF000000),
   },
 ];

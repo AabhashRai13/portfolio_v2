@@ -1,0 +1,122 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:my_portfolio/resources/asset_manager.dart';
+
+class BounceManAnimation extends StatefulWidget {
+  const BounceManAnimation({super.key});
+
+  @override
+  State<BounceManAnimation> createState() => _BounceManAnimationState();
+}
+
+class _BounceManAnimationState extends State<BounceManAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves
+          .easeInOut, // You can try Curves.bounceInOut for a bouncier effect
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            // The bounce goes from 0 to -40 pixels (up)
+            final double bounce = -20 * _animation.value;
+            return Transform.translate(
+              offset: Offset(0, bounce),
+              child: child,
+            );
+          },
+          child: const CircleAvatar(
+            radius: 125,
+            backgroundImage: AssetImage(ImageAssets.meditatingMan),
+            backgroundColor: Colors.white,
+          ),
+        ),
+        AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            final double t = _animation.value;
+
+            // Shadow width/height/opacity as before
+            final double shadowWidth = 120 + 40 * (1 - t);
+            final double shadowHeight = 24 - 8 * (1 - t);
+            final double shadowOpacity = 0.18 + 0.10 * (1 - t);
+
+            return CustomPaint(
+              size: Size(shadowWidth, shadowHeight),
+              painter: IrregularShadowPainter(
+                opacity: shadowOpacity,
+                t: t,
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class IrregularShadowPainter extends CustomPainter {
+  final double opacity;
+  final double t; // animation value
+
+  IrregularShadowPainter({required this.opacity, required this.t});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black.withOpacity(opacity)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+
+    final path = Path();
+
+    // Draw an ellipse with a little "wobble" for irregularity
+    final double cx = size.width / 2;
+    final double cy = size.height / 2;
+    const points = 32;
+    for (int i = 0; i <= points; i++) {
+      final double theta = 2 * pi * i / points;
+      // Wobble amplitude and frequency
+      final double wobble = 1 + 0.08 * sin(theta * 3 + t * 2 * pi);
+      final double x = cx + (size.width / 2) * cos(theta) * wobble;
+      final double y = cy + (size.height / 2) * sin(theta) * wobble;
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant IrregularShadowPainter oldDelegate) =>
+      oldDelegate.opacity != opacity || oldDelegate.t != t;
+}
