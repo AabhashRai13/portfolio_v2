@@ -29,9 +29,9 @@ class SkillsMobile extends StatelessWidget {
                   vertical: 10.0,
                   horizontal: 20.0,
                 ),
-                leading: Image.asset(
+                leading: FaIcon(
                   platformItems[i]["img"],
-                  width: 26.0,
+                  size: 26.0,
                 ),
                 title: Text(platformItems[i]["title"]),
               ),

@@ -4,10 +4,14 @@ import 'package:my_portfolio/constants/colors.dart';
 
 class CustomSectionHeading extends StatelessWidget {
   final String text;
+  final String? subText;
+  final IconData? icon;
 
   const CustomSectionHeading({
     super.key,
     required this.text,
+    this.subText,
+    this.icon,
   });
 
   @override
@@ -17,8 +21,7 @@ class CustomSectionHeading extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.workspaces_outline,
-                color: CustomColor.primary, size: 32),
+            if (icon != null) Icon(icon, color: CustomColor.primary, size: 32),
             const SizedBox(width: 10),
             ShaderMask(
               shaderCallback: (Rect bounds) {
@@ -29,7 +32,7 @@ class CustomSectionHeading extends StatelessWidget {
                 ).createShader(bounds);
               },
               child: Text(
-                "Portfolio",
+                text,
                 style: GoogleFonts.poppins(
                   fontSize: 38,
                   fontWeight: FontWeight.bold,
@@ -53,7 +56,7 @@ class CustomSectionHeading extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          "A selection of my favorite projects",
+          subText ?? "A selection of my favorite projects",
           style: GoogleFonts.poppins(
             fontSize: 18,
             color: CustomColor.textSecondary,

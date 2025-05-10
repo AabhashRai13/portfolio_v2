@@ -3,20 +3,20 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 const List<Map> platformItems = [
   {
-    "img": "assets/android_icon.png",
-    "title": "Android Dev",
+    "img": FontAwesomeIcons.android,
+    "title": "Android",
   },
   {
-    "img": "assets/web_icon.png",
-    "title": "Web Dev",
+    "img": FontAwesomeIcons.globe,
+    "title": "Web",
   },
   {
-    "img": "assets/ios_icon.png",
-    "title": "IOS Dev",
+    "img": FontAwesomeIcons.apple,
+    "title": "IOS",
   },
   {
-    "img": "assets/desktop_icon.png",
-    "title": "Desktop Dev",
+    "img": FontAwesomeIcons.server,
+    "title": "Backend",
   }
 ];
 const List<Map> skillItems = [
@@ -32,7 +32,7 @@ const List<Map> skillItems = [
   },
   {
     "icon": FontAwesomeIcons.js,
-    "title": "JS",
+    "title": "JavaScript",
     "color": Colors.yellow,
   },
   {

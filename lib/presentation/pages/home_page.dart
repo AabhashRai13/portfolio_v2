@@ -3,6 +3,7 @@ import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/presentation/portfolio/portfolio.dart';
 import 'package:my_portfolio/presentation/widgets/contact_section.dart';
+import 'package:my_portfolio/presentation/widgets/custom_text_heading.dart';
 import 'package:my_portfolio/presentation/widgets/main_desktop.dart';
 import 'package:my_portfolio/presentation/widgets/main_mobile.dart';
 import 'package:my_portfolio/presentation/widgets/skills_desktop.dart';
@@ -90,13 +91,10 @@ class _HomeMainPageState extends State<HomeMainPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // title
-                      const Text(
-                        "What I can do",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: CustomColor.textPrimary,
-                        ),
+                      const CustomSectionHeading(
+                        text: "What I can do",
+                        icon: Icons.computer,
+                        subText: "My mastery arsenal.",
                       ),
                       const SizedBox(height: 50),
 
@@ -111,9 +109,9 @@ class _HomeMainPageState extends State<HomeMainPage> {
                 const SizedBox(height: 30),
 
                 // PROJECTS
-               Portfolio(
-                key: navbarKeys[2],
-               ),
+                Portfolio(
+                  key: navbarKeys[2],
+                ),
 
                 const SizedBox(height: 30),
 

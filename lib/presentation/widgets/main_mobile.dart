@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/presentation/widgets/bounce_man_animation.dart';
+import 'package:my_portfolio/presentation/widgets/bounce_man_animation_mobile.dart';
 import 'package:my_portfolio/presentation/widgets/description.dart';
-
 
 class MainMobile extends StatelessWidget {
   const MainMobile({super.key});
@@ -22,12 +21,13 @@ class MainMobile extends StatelessWidget {
       ),
       child: const Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // avatar img
-          BounceManAnimation(),
           SizedBox(height: 30),
-          // intro message
+          BounceManAnimationMobile(),
+          SizedBox(height: 10),
+          //intro message
           Description(),
         ],
       ),
