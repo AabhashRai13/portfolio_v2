@@ -8,18 +8,33 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.maxLines = 1,
     this.hintText,
+    this.isEmail = false,
   });
   final TextEditingController? controller;
   final int maxLines;
   final String? hintText;
+  final bool isEmail;
+
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       maxLines: maxLines,
       style: const TextStyle(
-        color: CustomColor.scaffoldBg,
+        color: Colors.black,
       ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'This field is required';
+        }
+        if (isEmail) {
+          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+          if (!emailRegex.hasMatch(value.trim())) {
+            return 'Enter a valid email';
+          }
+        }
+        return null;
+      },
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(16),
         filled: true,

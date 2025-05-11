@@ -41,7 +41,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
             ? null
             : DrawerMobile(onNavItemTap: (int navIndex) {
                 scaffoldKey.currentState?.closeEndDrawer();
-                scrollToSection(navIndex);
+                scrollToSection(navIndex: navIndex);
               }),
         body: Container(
           decoration: const BoxDecoration(
@@ -66,7 +66,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
                 // MAIN
                 if (constraints.maxWidth >= kMinDesktopWidth)
                   HeaderDesktop(onNavMenuTap: (int navIndex) {
-                    scrollToSection(navIndex);
+                    scrollToSection(navIndex: navIndex);
                   })
                 else
                   HeaderMobile(
@@ -77,9 +77,13 @@ class _HomeMainPageState extends State<HomeMainPage> {
                   ),
 
                 if (constraints.maxWidth >= kMinDesktopWidth)
-                  const MainDesktop()
+                  MainDesktop(
+                    scrollToSection: scrollToContact,
+                  )
                 else
-                  const MainMobile(),
+                  MainMobile(
+                    scrollToSection: scrollToContact,
+                  ),
 
                 // SKILLS
                 Container(
@@ -131,14 +135,23 @@ class _HomeMainPageState extends State<HomeMainPage> {
     });
   }
 
-  void scrollToSection(int navIndex) {
+  void scrollToSection({int? navIndex}) {
     if (navIndex == 4) {
       // open a blog page
       html.launchUrl(Uri.parse(SnsLinks.blog));
       return;
     }
 
-    final key = navbarKeys[navIndex];
+    final key = navbarKeys[navIndex ?? 3];
+    Scrollable.ensureVisible(
+      key.currentContext!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollToContact() {
+    final key = navbarKeys[3];
     Scrollable.ensureVisible(
       key.currentContext!,
       duration: const Duration(milliseconds: 500),

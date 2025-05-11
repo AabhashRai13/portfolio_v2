@@ -3,7 +3,8 @@ import 'package:my_portfolio/presentation/widgets/bounce_man_animation_mobile.da
 import 'package:my_portfolio/presentation/widgets/description.dart';
 
 class MainMobile extends StatelessWidget {
-  const MainMobile({super.key});
+  final Function scrollToSection;
+  const MainMobile({super.key, required this.scrollToSection});
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +20,16 @@ class MainMobile extends StatelessWidget {
       constraints: const BoxConstraints(
         minHeight: 560.0,
       ),
-      child: const Column(
+      child:  Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // avatar img
-          SizedBox(height: 30),
-          BounceManAnimationMobile(),
-          SizedBox(height: 10),
+          const SizedBox(height: 30),
+      const     BounceManAnimationMobile(),
+          const SizedBox(height: 10),
           //intro message
-          Description(),
+          Description(scrollToSection: scrollToSection),
         ],
       ),
     );

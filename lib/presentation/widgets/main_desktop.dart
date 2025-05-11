@@ -3,7 +3,8 @@ import 'package:my_portfolio/presentation/widgets/description.dart';
 import 'package:my_portfolio/presentation/widgets/skill_orbit_animation.dart';
 
 class MainDesktop extends StatelessWidget {
-  const MainDesktop({super.key});
+  final Function scrollToSection;
+  const MainDesktop({super.key, required this.scrollToSection});
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +19,18 @@ class MainDesktop extends StatelessWidget {
         minHeight: 350.0,
       ),
       child: screenSize.width < 750
-          ? const Description()
-          : const Row(
+          ? Description(
+              scrollToSection: scrollToSection,
+            )
+          :  Row(
               children: [
                 Expanded(
                   flex: 1,
-                  child: Description(),
+                  child: Description(
+                    scrollToSection: scrollToSection,
+                  ),
                 ),
-                Expanded(
+             const   Expanded(
                   flex: 2,
                   child: SkillOrbitDemo(),
                 ),

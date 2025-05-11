@@ -8,7 +8,10 @@ import 'package:my_portfolio/presentation/widgets/get_in_touch_button.dart';
 class Description extends StatelessWidget {
   const Description({
     super.key,
+    required this.scrollToSection,
   });
+
+  final Function scrollToSection;
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +145,7 @@ class Description extends StatelessWidget {
 
           const SizedBox(height: 25),
           // contact btn with hover effects and shadow
-          const GetInTouchButton(),
+          GetInTouchButton(scrollToSection: scrollToSection),
         ],
       ),
     );

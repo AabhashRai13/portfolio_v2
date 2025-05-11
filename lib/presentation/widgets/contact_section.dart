@@ -1,178 +1,227 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
-
+import 'package:my_portfolio/services/contact_services.dart';
 import '../../constants/colors.dart';
 import 'custom_text_field.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart' as html;
 
 class ContactSection extends StatelessWidget {
-  const ContactSection({super.key});
+  ContactSection({super.key});
+  final ContactServices contactServices = ContactServices();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(25, 20, 25, 60),
-      color: CustomColor.bgLight1,
-      child: Column(
-        children: [
-          // title
-          const Text(
-            "Get in touch",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-              color: CustomColor.textPrimary,
+    return Form(
+      key: contactServices.formKey,
+      child: Container(
+        color: CustomColor.bgLight1,
+        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 0),
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 700),
+            padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 32),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: CustomColor.primary.withOpacity(0.08),
+                  blurRadius: 32,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title with icon
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.mail_rounded,
+                        color: CustomColor.primary, size: 28),
+                    SizedBox(width: 10),
+                    Text(
+                      "Get in touch",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                        color: CustomColor.primary,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                // Name and email fields
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth >= kMinDesktopWidth) {
+                      return Row(
+                        children: [
+                          Flexible(
+                            child: CustomTextField(
+                              hintText: "Your name",
+                              controller: contactServices.nameController,
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          Flexible(
+                            child: CustomTextField(
+                              hintText: "Your email",
+                              controller: contactServices.emailController,
+                              isEmail: true,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return Column(
+                      children: [
+                        CustomTextField(
+                          hintText: "Your name",
+                          controller: contactServices.nameController,
+                        ),
+                        const SizedBox(height: 15),
+                        CustomTextField(
+                          hintText: "Your email",
+                          controller: contactServices.emailController,
+                          isEmail: true,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 18),
+                CustomTextField(
+                  hintText: "Your phone number",
+                  controller: contactServices.phoneController,
+                ),
+                const SizedBox(height: 18),
+                // Message field
+                CustomTextField(
+                  hintText: "Your message",
+                  maxLines: 8,
+                  controller: contactServices.messageController,
+                ),
+                const SizedBox(height: 24),
+                // Send button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: CustomColor.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 4,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      textStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                    onPressed: () {
+                      contactServices.submitForm(context);
+                    },
+                    icon: const Icon(Icons.send_rounded, size: 20),
+                    label: const Text("Send Message"),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                // Divider
+                Container(
+                  width: 80,
+                  height: 2,
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(2),
+                    gradient: const LinearGradient(
+                      colors: [CustomColor.primary, CustomColor.pastelRed],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // Social icons
+                const Wrap(
+                  spacing: 18,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _ContactIconButton(
+                      icon: FontAwesomeIcons.github,
+                      url: SnsLinks.github,
+                    ),
+                    _ContactIconButton(
+                      icon: FontAwesomeIcons.linkedin,
+                      url: SnsLinks.linkedIn,
+                    ),
+                    _ContactIconButton(
+                      icon: FontAwesomeIcons.instagram,
+                      url: SnsLinks.instagram,
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-
-          const SizedBox(height: 50),
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 700,
-              maxHeight: 100,
-            ),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                if (constraints.maxWidth >= kMinDesktopWidth) {
-                  return buildNameEmailFieldDesktop();
-                }
-
-                // else
-                return buildNameEmailFieldMobile();
-              },
-            ),
-          ),
-          const SizedBox(height: 15),
-          // message
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 700,
-            ),
-            child: const CustomTextField(
-              hintText: "Your message",
-              maxLines: 16,
-            ),
-          ),
-          const SizedBox(height: 20),
-          // send button
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 700,
-            ),
-            child: SizedBox(
-              width: double.maxFinite,
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text("Get in touch"),
-              ),
-            ),
-          ),
-          const SizedBox(height: 30),
-
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 300,
-            ),
-            child: const Divider(),
-          ),
-          const SizedBox(height: 15),
-
-          // SNS icon button links
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            alignment: WrapAlignment.center,
-            children: [
-              InkWell(
-                onTap: () {
-                  html.launchUrl(Uri.parse(SnsLinks.github));
-                },
-                child: Image.asset(
-                  "assets/github.png",
-                  width: 28,
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  html.launchUrl(Uri.parse(SnsLinks.linkedIn));
-                },
-                child: Image.asset(
-                  "assets/linkedin.png",
-                  width: 28,
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  html.launchUrl(Uri.parse(SnsLinks.facebook));
-                },
-                child: Image.asset(
-                  "assets/facebook.png",
-                  width: 28,
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  html.launchUrl(Uri.parse(SnsLinks.instagram));
-                },
-                child: Image.asset(
-                  "assets/instagram.png",
-                  width: 28,
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                      html.launchUrl(Uri.parse(SnsLinks.telegram));
-                },
-                child: Image.asset(
-                  "assets/telegram.png",
-                  width: 28,
-                ),
-              ),
-            ],
-          )
-        ],
+        ),
       ),
     );
   }
+}
 
-  Row buildNameEmailFieldDesktop() {
-    return const Row(
-      children: [
-        // name
-        Flexible(
-          child: CustomTextField(
-            hintText: "Your name",
-          ),
-        ),
-        SizedBox(width: 15),
-        // email
-        Flexible(
-          child: CustomTextField(
-            hintText: "Your email",
-          ),
-        ),
-      ],
-    );
-  }
+class _ContactIconButton extends StatefulWidget {
+  final IconData icon;
+  final String url;
+  const _ContactIconButton({required this.icon, required this.url});
 
-  Column buildNameEmailFieldMobile() {
-    return const Column(
-      children: [
-        // name
-        Flexible(
-          child: CustomTextField(
-            hintText: "Your name",
+  @override
+  State<_ContactIconButton> createState() => _ContactIconButtonState();
+}
+
+class _ContactIconButtonState extends State<_ContactIconButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: () => html.launchUrl(Uri.parse(widget.url)),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: _hovered
+                ? CustomColor.primary.withOpacity(0.12)
+                : const Color(0xFFF7F8FA),
+            shape: BoxShape.circle,
+            boxShadow: _hovered
+                ? [
+                    BoxShadow(
+                      color: CustomColor.primary.withOpacity(0.18),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : [],
+          ),
+          child: Center(
+            child: FaIcon(
+              widget.icon,
+              color: CustomColor.primary,
+              size: 22,
+            ),
           ),
         ),
-        SizedBox(height: 15),
-        // email
-        Flexible(
-          child: CustomTextField(
-            hintText: "Your email",
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
