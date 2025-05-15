@@ -40,7 +40,7 @@ class _BounceManAnimationStateMobile extends State<BounceManAnimationMobile>
   Widget build(BuildContext context) {
     // Responsive sizing
     final screenWidth = MediaQuery.of(context).size.width;
-    final avatarRadius = screenWidth < 400 ? 70.0 : 95.0;
+    final avatarRadius = screenWidth < 400 ? 90.0 : 120.0;
     final bounceHeight = screenWidth < 400 ? 12.0 : 18.0;
     final shadowBaseWidth = screenWidth < 400 ? 60.0 : 90.0;
     final shadowBaseHeight = screenWidth < 400 ? 12.0 : 18.0;
@@ -57,10 +57,23 @@ class _BounceManAnimationStateMobile extends State<BounceManAnimationMobile>
               child: child,
             );
           },
-          child: CircleAvatar(
-            radius: avatarRadius,
-            backgroundImage: const AssetImage(ImageAssets.meditatingMan),
-            backgroundColor: Colors.white,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Image.asset(
+                ImageAssets.mandala,
+                width: avatarRadius,
+                height: avatarRadius,
+              ),
+              Transform.translate(
+                offset: const Offset(7, 0), // Move 10 pixels to the right
+                child: Image.asset(
+                  ImageAssets.meditatingMan,
+                  width: avatarRadius,
+                  height: avatarRadius,
+                ),
+              ),
+            ],
           ),
         ),
         AnimatedBuilder(

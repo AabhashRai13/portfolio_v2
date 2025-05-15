@@ -2,8 +2,56 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/constants/skill_items.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:my_portfolio/entity/orbit_icon.dart';
 import 'package:my_portfolio/presentation/widgets/bounce_man_animation.dart';
+import 'package:my_portfolio/presentation/widgets/animated_icons.dart';
+
+class OrbitLinesPainter extends CustomPainter {
+  final List<double> radii;
+  final Offset center;
+
+  OrbitLinesPainter({required this.radii, required this.center});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey.withOpacity(0.4)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    for (final radius in radii) {
+      // Create a path for the circle
+      final path = Path()
+        ..addOval(Rect.fromCircle(center: center, radius: radius));
+
+      // Create a dash pattern
+      final dashPath = Path();
+      const dashWidth = 5.0;
+      const dashSpace = 5.0;
+      const dashArray = [dashWidth, dashSpace];
+
+      // Draw the dashed circle
+      final dashPathMetrics = path.computeMetrics();
+      for (final metric in dashPathMetrics) {
+        double distance = 0;
+        while (distance < metric.length) {
+          final length = dashArray[0];
+          dashPath.addPath(
+            metric.extractPath(distance, distance + length),
+            Offset.zero,
+          );
+          distance += length + dashArray[1];
+        }
+      }
+
+      canvas.drawPath(dashPath, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant OrbitLinesPainter oldDelegate) =>
+      oldDelegate.center != center || oldDelegate.radii != radii;
+}
 
 class SkillOrbitDemo extends StatefulWidget {
   const SkillOrbitDemo({super.key});
@@ -16,7 +64,7 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
     with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
   double _elapsedSeconds = 0;
-  final List<_OrbitingIcon> _icons = [];
+  final List<OrbitingIcon> _icons = [];
 
   @override
   void initState() {
@@ -55,7 +103,7 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
         }
 
         _icons.add(
-          _OrbitingIcon(
+          OrbitingIcon(
             iconData: skill["icon"] as IconData,
             baseRadius: radius,
             speed: speed,
@@ -93,8 +141,19 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
             Size(constraints.maxWidth, constraints.maxHeight);
         final Offset center = widgetSize.center(Offset.zero);
 
+        // Get unique radii for orbit lines
+        final radii = _icons.map((icon) => icon.baseRadius).toSet().toList();
+
         return Stack(
           children: [
+            // Orbit lines
+            CustomPaint(
+              size: widgetSize,
+              painter: OrbitLinesPainter(
+                radii: radii,
+                center: center,
+              ),
+            ),
             // Center image (you)
             const Align(
               alignment: Alignment.center,
@@ -109,18 +168,7 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
               return Positioned(
                 left: pos.dx,
                 top: pos.dy,
-                child: FaIcon(
-                  icon.iconData,
-                  size: 70,
-                  color: icon.color,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(4, 4),
-                    ),
-                  ],
-                ),
+                child: AnimatedSkillIcons(icon: icon),
               );
             }),
           ],
@@ -128,28 +176,4 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
       },
     );
   }
-}
-
-class _OrbitingIcon {
-  final IconData iconData;
-  final double baseRadius;
-  double speed;
-  final double initialAngle;
-  final double wobbleFreq;
-  final double wobbleAmp;
-  double targetSpeed;
-  double speedLerpT;
-  final Color color;
-
-  _OrbitingIcon({
-    required this.iconData,
-    required this.baseRadius,
-    required this.speed,
-    required this.initialAngle,
-    required this.wobbleFreq,
-    required this.wobbleAmp,
-    required this.targetSpeed,
-    required this.speedLerpT,
-    required this.color,
-  });
 }

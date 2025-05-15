@@ -8,13 +8,14 @@ import 'package:my_portfolio/presentation/widgets/main_desktop.dart';
 import 'package:my_portfolio/presentation/widgets/main_mobile.dart';
 import 'package:my_portfolio/presentation/widgets/skills_desktop.dart';
 import 'package:my_portfolio/presentation/widgets/skills_mobile.dart';
+import 'package:my_portfolio/presentation/youtube/youtube_player.dart';
 import 'package:my_portfolio/resources/configs/app.dart';
 import '../../constants/size.dart';
-import 'package:url_launcher/url_launcher.dart' as html;
 import '../widgets/drawer_mobile.dart';
 import '../widgets/footer.dart';
 import '../widgets/header_desktop.dart';
 import '../widgets/header_mobile.dart';
+import 'package:universal_html/html.dart' as html;
 
 class HomeMainPage extends StatefulWidget {
   const HomeMainPage({super.key});
@@ -26,7 +27,7 @@ class HomeMainPage extends StatefulWidget {
 class _HomeMainPageState extends State<HomeMainPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final scrollController = ScrollController();
-  final List<GlobalKey> navbarKeys = List.generate(4, (index) => GlobalKey());
+  final List<GlobalKey> navbarKeys = List.generate(5, (index) => GlobalKey());
 
   @override
   Widget build(BuildContext context) {
@@ -112,16 +113,23 @@ class _HomeMainPageState extends State<HomeMainPage> {
                 ),
                 const SizedBox(height: 30),
 
+                // INTRO VIDEO
+                YoutubePlayerScreen(
+                  key: navbarKeys[2],
+                ),
+
+                const SizedBox(height: 30),
+
                 // PROJECTS
                 Portfolio(
-                  key: navbarKeys[2],
+                  key: navbarKeys[3],
                 ),
 
                 const SizedBox(height: 30),
 
                 // CONTACT
                 ContactSection(
-                  key: navbarKeys[3],
+                  key: navbarKeys[4],
                 ),
                 const SizedBox(height: 30),
 
@@ -136,9 +144,12 @@ class _HomeMainPageState extends State<HomeMainPage> {
   }
 
   void scrollToSection({int? navIndex}) {
-    if (navIndex == 4) {
+    if (navIndex == 5) {
       // open a blog page
-      html.launchUrl(Uri.parse(SnsLinks.blog));
+      html.window.open(
+        SnsLinks.resume,
+        "docx",
+      );
       return;
     }
 

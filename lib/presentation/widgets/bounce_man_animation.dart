@@ -51,10 +51,23 @@ class _BounceManAnimationState extends State<BounceManAnimation>
               child: child,
             );
           },
-          child: const CircleAvatar(
-            radius: 125,
-            backgroundImage: AssetImage(ImageAssets.meditatingMan),
-            backgroundColor: Colors.white,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Image.asset(
+                ImageAssets.light,
+                width: 300,
+                height: 300,
+              ),
+              Transform.translate(
+                offset: const Offset(10, 0), // Move 10 pixels to the right
+                child: Image.asset(
+                  ImageAssets.meditatingMan,
+                  width: 200,
+                  height: 200,
+                ),
+              ),
+            ],
           ),
         ),
         AnimatedBuilder(

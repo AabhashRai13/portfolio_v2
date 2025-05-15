@@ -90,6 +90,7 @@ class ProjectCardState extends State<ProjectCard> {
                           )
                         : Row(
                             mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
                                 widget.projectIcon!,
@@ -98,10 +99,13 @@ class ProjectCardState extends State<ProjectCard> {
                               SizedBox(
                                 width: width * 0.01,
                               ),
-                              Text(
-                                widget.projectTitle,
-                                style: AppText.b2b,
-                                textAlign: TextAlign.center,
+                              Flexible(
+                                child: Text(
+                                  widget.projectTitle,
+                                  style: AppText.b2b,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           )
