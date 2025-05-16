@@ -7,10 +7,16 @@ import 'custom_text_field.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart' as html;
 
-class ContactSection extends StatelessWidget {
-  ContactSection({super.key});
-  final ContactServices contactServices = ContactServices();
+class ContactSection extends StatefulWidget {
+  const ContactSection({super.key});
 
+  @override
+  State<ContactSection> createState() => _ContactSectionState();
+}
+
+class _ContactSectionState extends State<ContactSection> {
+  final ContactServices contactServices = ContactServices();
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -44,7 +50,7 @@ class ContactSection extends StatelessWidget {
                         color: CustomColor.primary, size: 28),
                     SizedBox(width: 10),
                     Text(
-                      "Get in touch",
+                      "Get In Touch",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 26,
@@ -125,11 +131,21 @@ class ContactSection extends StatelessWidget {
                         letterSpacing: 1.1,
                       ),
                     ),
-                    onPressed: () {
-                      contactServices.submitForm(context);
-                    },
-                    icon: const Icon(Icons.send_rounded, size: 20),
-                    label: const Text("Send Message"),
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            setState(() => isLoading = true);
+                            await contactServices.submitForm(context);
+                            setState(() => isLoading = false);
+                          },
+                    icon: isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Icon(Icons.send_rounded, size: 20),
+                    label: isLoading
+                        ? const Text("Sending...")
+                        : const Text("Send Message"),
                   ),
                 ),
                 const SizedBox(height: 30),

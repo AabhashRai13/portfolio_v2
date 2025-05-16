@@ -97,9 +97,9 @@ class _HomeMainPageState extends State<HomeMainPage> {
                     children: [
                       // title
                       const CustomSectionHeading(
-                        text: "What I can do",
+                        text: "What I Can Do",
                         icon: Icons.computer,
-                        subText: "My mastery arsenal.",
+                        subText: "My Mastery Arsenal.",
                       ),
                       const SizedBox(height: 50),
 
@@ -162,7 +162,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
   }
 
   void scrollToContact() {
-    final key = navbarKeys[3];
+    final key = navbarKeys[4];
     Scrollable.ensureVisible(
       key.currentContext!,
       duration: const Duration(milliseconds: 500),

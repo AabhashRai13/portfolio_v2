@@ -13,20 +13,20 @@ class MainMobile extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(
-        horizontal: 40.0,
+        horizontal: 5.0,
         vertical: 30.0,
       ),
       height: screenHeight,
       constraints: const BoxConstraints(
         minHeight: 560.0,
       ),
-      child:  Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // avatar img
           const SizedBox(height: 30),
-      const     BounceManAnimationMobile(),
+          const BounceManAnimationMobile(),
           const SizedBox(height: 10),
           //intro message
           Description(scrollToSection: scrollToSection),

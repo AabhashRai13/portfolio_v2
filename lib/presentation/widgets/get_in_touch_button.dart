@@ -25,10 +25,10 @@ class GetInTouchButton extends StatelessWidget {
             ? 12.0
             : 15.0;
     final fontSize = SizeConfig.screenWidth < 600
-        ? 14.0
+        ? 20.0
         : SizeConfig.screenWidth < 900
-            ? 15.0
-            : 16.0;
+            ? 25.0
+            : 26.0;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,

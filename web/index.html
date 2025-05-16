@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <!-- Favicon for Web -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon.png">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="icons/manifest.json">
+    <meta name="theme-color" content="#6200EA">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flutter Web App</title>
@@ -11,38 +22,54 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #252734; /* scaffoldBg */
-            color: #EAEAEB; /* whitePrimary */
+            background-color: #252734;
+            /* scaffoldBg */
+            color: #EAEAEB;
+            /* whitePrimary */
             font-family: Arial, sans-serif;
         }
+
         .splash-container {
             position: fixed;
             width: 100%;
             height: 100vh;
-            background-color: #252734; /* scaffoldBg */
+            background-color: #252734;
+            /* scaffoldBg */
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             transition: opacity 1s ease-in-out;
         }
+
         .lottie-container {
             width: 200px;
             height: 200px;
         }
+
         .loading-text {
             font-size: 18px;
             font-weight: bold;
-            color: #C8C9CE; /* textFieldBg */
+            color: #C8C9CE;
+            /* textFieldBg */
             margin-top: 10px;
         }
+
         .fade-out {
             opacity: 0;
             pointer-events: none;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.10/lottie.min.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('flutter-first-frame', function () {
+                navigator.serviceWorker.register('flutter_service_worker.js');
+            });
+        }
+    </script>
 </head>
+
 <body>
     <div class="splash-container" id="splash">
         <div class="lottie-container" id="lottie"></div>
@@ -110,4 +137,5 @@
     </script>
     <script src="main.dart.js" defer></script>
 </body>
+
 </html>

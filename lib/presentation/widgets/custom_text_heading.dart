@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/constants/size.dart';
+import 'package:my_portfolio/resources/size_config.dart';
 
 class CustomSectionHeading extends StatelessWidget {
   final String text;
@@ -34,7 +36,8 @@ class CustomSectionHeading extends StatelessWidget {
               child: Text(
                 text,
                 style: GoogleFonts.poppins(
-                  fontSize: 38,
+                  fontSize:
+                      SizeConfig.screenWidth >= kMinDesktopWidth ? 38 : 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   letterSpacing: 1.2,
