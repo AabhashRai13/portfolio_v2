@@ -32,15 +32,11 @@ class SkillsDesktop extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: CustomColor.primary.withOpacity(0.08),
+                        color: CustomColor.primary.withOpacity(0.6),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
                     ],
-                    border: Border.all(
-                      color: CustomColor.primary.withOpacity(0.2),
-                      width: 2,
-                    ),
                   ),
                   child: Row(
                     children: [

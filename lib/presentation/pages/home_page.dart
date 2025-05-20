@@ -111,7 +111,6 @@ class _HomeMainPageState extends State<HomeMainPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 30),
 
                 // INTRO VIDEO
                 YoutubePlayerScreen(
@@ -131,7 +130,6 @@ class _HomeMainPageState extends State<HomeMainPage> {
                 ContactSection(
                   key: navbarKeys[4],
                 ),
-                const SizedBox(height: 30),
 
                 // FOOTER
                 const Footer(),

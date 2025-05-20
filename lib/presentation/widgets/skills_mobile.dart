@@ -40,21 +40,36 @@ class SkillsMobile extends StatelessWidget {
 
           // skills
           Wrap(
-            spacing: 10.0,
-            runSpacing: 10.0,
+            spacing: 12.0,
+            runSpacing: 12.0,
             alignment: WrapAlignment.center,
             children: [
               for (int i = 0; i < skillItems.length; i++)
-                Chip(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 16.0,
+                Container(
+                  width: 150,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  backgroundColor: CustomColor.bgLight2,
-                  label: Text(skillItems[i]["title"]),
-                  avatar: FaIcon(
-                    skillItems[i]["icon"],
-                    color: skillItems[i]["color"],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FaIcon(
+                        skillItems[i]["icon"],
+                        color: skillItems[i]["color"],
+                        size: 22,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        skillItems[i]["title"],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
             ],

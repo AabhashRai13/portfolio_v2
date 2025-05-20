@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/presentation/widgets/custom_text_heading.dart';
 import 'package:my_portfolio/presentation/widgets/project_card.dart';
-import 'package:my_portfolio/resources/configs/app_dimensions.dart';
 import 'package:my_portfolio/resources/configs/space.dart';
 import 'package:my_portfolio/services/url_launcher_services.dart';
 import 'package:my_portfolio/utils/project_utils.dart';
@@ -42,29 +41,32 @@ class PortfolioMobileTab extends StatelessWidget {
         ),
         Space.y!,
         SizedBox(
-          height: AppDimensions.normalize(16),
-          width: AppDimensions.normalize(60),
+          height: MediaQuery.of(context).size.height * 0.05,
+          width: MediaQuery.of(context).size.width * 0.3,
           child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: CustomColor.pastelRed, // Light pastel purple
+              backgroundColor: CustomColor.pastelRed,
               elevation: 6,
               shadowColor: const Color(0xFFDEBFF3).withOpacity(0.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.02,
+                vertical: MediaQuery.of(context).size.height * 0.015,
+              ),
             ),
             onPressed: () => urlLauncherServices.openURL(StaticUtils.gitHub),
-            icon: const Icon(
+            icon: Icon(
               Icons.explore_rounded,
-              size: 20,
+              size: MediaQuery.of(context).size.width * 0.04,
               color: Colors.white,
             ),
-            label: const Text(
+            label: Text(
               'See More',
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontSize: MediaQuery.of(context).size.width * 0.035,
                 color: Colors.white,
                 letterSpacing: 1.05,
               ),

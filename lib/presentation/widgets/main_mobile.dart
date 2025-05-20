@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/presentation/widgets/bounce_man_animation_mobile.dart';
 import 'package:my_portfolio/presentation/widgets/description.dart';
+import 'package:my_portfolio/resources/size_config.dart';
 
 class MainMobile extends StatelessWidget {
   final Function scrollToSection;
@@ -16,18 +16,17 @@ class MainMobile extends StatelessWidget {
         horizontal: 5.0,
         vertical: 30.0,
       ),
-      height: screenHeight,
-      constraints: const BoxConstraints(
-        minHeight: 560.0,
+      height: screenHeight * 0.7,
+      constraints: BoxConstraints(
+        minHeight: getProportionateScreenHeight(400),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // avatar img
-          const SizedBox(height: 30),
-          const BounceManAnimationMobile(),
-          const SizedBox(height: 10),
+          SizedBox(height: getProportionateScreenHeight(70)),
+
           //intro message
           Description(scrollToSection: scrollToSection),
         ],
