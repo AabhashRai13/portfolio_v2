@@ -15,7 +15,7 @@ class Footer extends StatelessWidget {
         color: const Color(0xFFF7F8FA),
         border: Border(
           top: BorderSide(
-            color: CustomColor.primary.withOpacity(0.12),
+            color: CustomColor.primary.withValues(alpha: 0.12),
             width: 2,
           ),
         ),

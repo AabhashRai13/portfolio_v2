@@ -33,7 +33,7 @@ class _ContactSectionState extends State<ContactSection> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: CustomColor.primary.withOpacity(0.08),
+                  color: CustomColor.primary.withValues(alpha: 0.08),
                   blurRadius: 32,
                   offset: const Offset(0, 8),
                 ),
@@ -216,13 +216,13 @@ class _ContactIconButtonState extends State<_ContactIconButton> {
           height: 44,
           decoration: BoxDecoration(
             color: _hovered
-                ? CustomColor.primary.withOpacity(0.12)
+                ? CustomColor.primary.withValues(alpha: 0.12)
                 : const Color(0xFFF7F8FA),
             shape: BoxShape.circle,
             boxShadow: _hovered
                 ? [
                     BoxShadow(
-                      color: CustomColor.primary.withOpacity(0.18),
+                      color: CustomColor.primary.withValues(alpha: 0.18),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

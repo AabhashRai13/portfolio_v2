@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/presentation/portfolio/portfolio.dart';
+import 'package:my_portfolio/presentation/services/mouse_pointer_animation_service.dart';
 import 'package:my_portfolio/presentation/widgets/contact_section.dart';
 import 'package:my_portfolio/presentation/widgets/custom_text_heading.dart';
 import 'package:my_portfolio/presentation/widgets/main_desktop.dart';
@@ -9,7 +10,9 @@ import 'package:my_portfolio/presentation/widgets/main_mobile.dart';
 import 'package:my_portfolio/presentation/widgets/skills_desktop.dart';
 import 'package:my_portfolio/presentation/widgets/skills_mobile.dart';
 import 'package:my_portfolio/presentation/youtube/youtube_player.dart';
+import 'package:my_portfolio/resources/asset_manager.dart';
 import 'package:my_portfolio/resources/configs/app.dart';
+import 'package:my_portfolio/resources/size_config.dart';
 import '../../constants/size.dart';
 import '../widgets/drawer_mobile.dart';
 import '../widgets/footer.dart';
@@ -25,9 +28,11 @@ class HomeMainPage extends StatefulWidget {
 }
 
 class _HomeMainPageState extends State<HomeMainPage> {
+  final MousePointerAnimation _mousePointerAnimation = MousePointerAnimation();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final scrollController = ScrollController();
   final List<GlobalKey> navbarKeys = List.generate(5, (index) => GlobalKey());
+  Offset? _mousePosition;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +42,6 @@ class _HomeMainPageState extends State<HomeMainPage> {
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
         key: scaffoldKey,
-        backgroundColor: Colors.transparent,
         endDrawer: constraints.maxWidth >= kMinDesktopWidth
             ? null
             : DrawerMobile(onNavItemTap: (int navIndex) {
@@ -48,13 +52,14 @@ class _HomeMainPageState extends State<HomeMainPage> {
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               center: Alignment.topLeft,
-              radius: 1.2,
+              radius: 2.0,
               colors: [
-                Color(0xFFF5F7FA),
-                Color(0xFFE3E6EC),
-                Color(0xFFFAFAFA),
+                Color(0xFFFFF1E6), // Light cream
+                Color(0xFFF5DCC6), // Beige-pink accent
+                Color(0xFFD7B49E), // Soft tan
+                Color(0xFFB08968), // Richer warm brown
               ],
-              stops: [0.0, 0.6, 1.0],
+              stops: [0.1, 0.4, 0.7, 1.0],
             ),
           ),
           child: SingleChildScrollView(
@@ -78,8 +83,15 @@ class _HomeMainPageState extends State<HomeMainPage> {
                   ),
 
                 if (constraints.maxWidth >= kMinDesktopWidth)
-                  MainDesktop(
-                    scrollToSection: scrollToContact,
+                  MouseRegion(
+                    onHover: (event) =>
+                        _mousePointerAnimation.handleMouseMove(event, context),
+                    onExit: (event) =>
+                        _mousePointerAnimation.handleMouseExit(event),
+                    child: MainDesktop(
+                      scrollToSection: scrollToContact,
+                      mousePosition: _mousePosition,
+                    ),
                   )
                 else
                   MainMobile(
@@ -90,7 +102,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
                 Container(
                   key: navbarKeys[1],
                   width: screenWidth,
-                  padding: const EdgeInsets.fromLTRB(25, 20, 25, 60),
+                  padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
                   color: CustomColor.bgLight1,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -108,16 +120,30 @@ class _HomeMainPageState extends State<HomeMainPage> {
                         const SkillsDesktop()
                       else
                         const SkillsMobile(),
+                      const SizedBox(
+                        height: 10,
+                      ),
                     ],
                   ),
                 ),
 
                 // INTRO VIDEO
-                YoutubePlayerScreen(
-                  key: navbarKeys[2],
+                SizedBox(
+                  height: getProportionateScreenHeight(700),
+                  width: double.infinity,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(
+                        ImageAssets.creamCurtain,
+                        fit: BoxFit.fill,
+                      ),
+                      YoutubePlayerScreen(
+                        key: navbarKeys[2],
+                      ),
+                    ],
+                  ),
                 ),
-
-                const SizedBox(height: 30),
 
                 // PROJECTS
                 Portfolio(

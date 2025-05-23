@@ -8,13 +8,14 @@ class CustomSectionHeading extends StatelessWidget {
   final String text;
   final String? subText;
   final IconData? icon;
+  final bool? isVideoHeading;
 
-  const CustomSectionHeading({
-    super.key,
-    required this.text,
-    this.subText,
-    this.icon,
-  });
+  const CustomSectionHeading(
+      {super.key,
+      required this.text,
+      this.subText,
+      this.icon,
+      this.isVideoHeading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -25,25 +26,37 @@ class CustomSectionHeading extends StatelessWidget {
           children: [
             if (icon != null) Icon(icon, color: CustomColor.primary, size: 32),
             const SizedBox(width: 10),
-            ShaderMask(
-              shaderCallback: (Rect bounds) {
-                return const LinearGradient(
-                  colors: [CustomColor.primary, CustomColor.pastelRed],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ).createShader(bounds);
-              },
-              child: Text(
-                text,
-                style: GoogleFonts.poppins(
-                  fontSize:
-                      SizeConfig.screenWidth >= kMinDesktopWidth ? 38 : 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 1.2,
-                ),
-              ),
-            ),
+            isVideoHeading!
+                ? Text(
+                    text,
+                    style: GoogleFonts.poppins(
+                      fontSize:
+                          SizeConfig.screenWidth >= kMinDesktopWidth ? 38 : 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white.withValues(alpha: 0.7),
+                      letterSpacing: 1.2,
+                    ),
+                  )
+                : ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return const LinearGradient(
+                        colors: [CustomColor.primary, CustomColor.pastelRed],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(bounds);
+                    },
+                    child: Text(
+                      text,
+                      style: GoogleFonts.poppins(
+                        fontSize: SizeConfig.screenWidth >= kMinDesktopWidth
+                            ? 38
+                            : 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white.withValues(alpha: 0.7),
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
           ],
         ),
         const SizedBox(height: 6),
@@ -52,8 +65,8 @@ class CustomSectionHeading extends StatelessWidget {
           height: 4,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(2),
-            gradient: const LinearGradient(
-              colors: [CustomColor.primary, CustomColor.pastelRed],
+            gradient:  LinearGradient(
+              colors:isVideoHeading!?[Colors.white.withValues(alpha: 0.7), Colors.white.withValues(alpha: 0.7)]: [CustomColor.primary, CustomColor.pastelRed],
             ),
           ),
         ),
@@ -62,7 +75,7 @@ class CustomSectionHeading extends StatelessWidget {
           subText ?? "A selection of my favorite projects",
           style: GoogleFonts.poppins(
             fontSize: 18,
-            color: CustomColor.textSecondary,
+            color:isVideoHeading!?Colors.white.withValues(alpha: 0.7): CustomColor.textSecondary,
             fontWeight: FontWeight.w400,
           ),
         ),

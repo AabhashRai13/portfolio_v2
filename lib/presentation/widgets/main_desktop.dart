@@ -4,7 +4,9 @@ import 'package:my_portfolio/presentation/widgets/skill_orbit_animation.dart';
 
 class MainDesktop extends StatelessWidget {
   final Function scrollToSection;
-  const MainDesktop({super.key, required this.scrollToSection});
+  final Offset? mousePosition;
+  const MainDesktop(
+      {super.key, required this.scrollToSection, this.mousePosition});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class MainDesktop extends StatelessWidget {
       margin: const EdgeInsets.symmetric(
         horizontal: 20.0,
       ),
-      height: screenHeight / 1.2,
+      height: screenSize.width < 750? screenHeight*0.7 :screenHeight * 1.4,
       constraints: const BoxConstraints(
         minHeight: 350.0,
       ),
@@ -22,17 +24,19 @@ class MainDesktop extends StatelessWidget {
           ? Description(
               scrollToSection: scrollToSection,
             )
-          :  Row(
+          : Column(
               children: [
+                SizedBox(
+                  height: screenHeight*0.8,
+                  child: SkillOrbitDemo(
+                    mousePosition: mousePosition,
+                  ),
+                ),
                 Expanded(
                   flex: 1,
                   child: Description(
                     scrollToSection: scrollToSection,
                   ),
-                ),
-             const   Expanded(
-                  flex: 2,
-                  child: SkillOrbitDemo(),
                 ),
               ],
             ),

@@ -15,8 +15,9 @@ class Description extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     final screenSize = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0), // improve alignment
+      padding:  EdgeInsets.symmetric(horizontal: 40.0, vertical: screenSize.width < 750? 20:0), // improve alignment
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start, // align text to left
@@ -29,7 +30,7 @@ class Description extends StatelessWidget {
                 fontSize: 28,
                 height: 1.5,
                 fontWeight: FontWeight.bold,
-                color: CustomColor.textPrimary,
+                color: CustomColor.textPrimary, // dark brown
               ),
               children: [
                 const TextSpan(
@@ -38,7 +39,7 @@ class Description extends StatelessWidget {
                 TextSpan(
                   text: "HIGH-PERFORMING APPS\n",
                   style: GoogleFonts.poppins(
-                    color: CustomColor.pastelRed,
+                    color: CustomColor.textPrimary, // dark brown
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
@@ -48,8 +49,8 @@ class Description extends StatelessWidget {
                 TextSpan(
                   text: "SCALABLE ARCHITECTURE",
                   style: GoogleFonts.poppins(
-                    color: CustomColor.primary,
-                    fontWeight: FontWeight.w900, // darkened weight for contrast
+                    color: CustomColor.primary, // light brown
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ],
@@ -68,11 +69,11 @@ class Description extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 height: 1.7,
-                color: CustomColor.textPrimary,
+                color: CustomColor.textPrimary, // dark brown
                 letterSpacing: 0.5,
                 shadows: [
                   Shadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 4,
                     offset: const Offset(1, 2),
                   ),
@@ -83,7 +84,7 @@ class Description extends StatelessWidget {
                 TextSpan(
                   text: "Aabhash Rai",
                   style: GoogleFonts.poppins(
-                    color: CustomColor.secondary,
+                    color: CustomColor.textPrimary, // dark brown
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -92,7 +93,7 @@ class Description extends StatelessWidget {
                 const TextSpan(
                   text: "Flutter developer",
                   style: TextStyle(
-                    color: CustomColor.primary,
+                    color: CustomColor.primary, // light brown
                     fontWeight: FontWeight.w900,
                     fontSize: 18,
                   ),
@@ -101,44 +102,17 @@ class Description extends StatelessWidget {
                 const TextSpan(
                   text: "5 years of experience",
                   style: TextStyle(
-                    color: CustomColor.pastelRed,
-                    fontWeight: FontWeight.bold,
+                    color: CustomColor.primary, // light brown
+                    fontWeight: FontWeight.w900,
                     fontSize: 18,
                   ),
                 ),
                 const TextSpan(text: ". I'm a blend of "),
                 const TextSpan(
-                  text: "creativity",
+                  text: "creativity, innovation, professionalism, and passion",
                   style: TextStyle(
-                    color: CustomColor.pastelRed,
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                const TextSpan(text: ", "),
-                const TextSpan(
-                  text: "innovation",
-                  style: TextStyle(
-                    color: CustomColor.pastelRed,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                const TextSpan(text: ", "),
-                TextSpan(
-                  text: "professionalism",
-                  style: GoogleFonts.poppins(
-                    color: CustomColor.pastelRed,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                const TextSpan(text: ", and "),
-                TextSpan(
-                  text: "passion",
-                  style: GoogleFonts.poppins(
-                    color: CustomColor.pastelRed,
-                    fontWeight: FontWeight.bold,
+                    color: CustomColor.textPrimary, // dark brown
                     fontSize: 18,
                   ),
                 ),

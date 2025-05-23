@@ -4,6 +4,7 @@ import 'package:my_portfolio/presentation/widgets/custom_text_heading.dart';
 import 'package:my_portfolio/presentation/widgets/project_card.dart';
 import 'package:my_portfolio/resources/configs/app_dimensions.dart';
 import 'package:my_portfolio/resources/configs/space.dart';
+import 'package:my_portfolio/resources/size_config.dart';
 import 'package:my_portfolio/services/url_launcher_services.dart';
 import 'package:my_portfolio/utils/project_utils.dart';
 import 'package:my_portfolio/utils/static_utils.dart';
@@ -41,7 +42,7 @@ class _PortfolioDesktopState extends State<PortfolioDesktop> {
   Widget build(BuildContext context) {
     return Container(
       padding:
-          Space.h ?? EdgeInsets.symmetric(horizontal: AppDimensions.space(0.5)),
+          Space.h ?? EdgeInsets.symmetric(horizontal: AppDimensions.space(0.2)),
       child: Column(
         children: [
           const CustomSectionHeading(
@@ -57,32 +58,38 @@ class _PortfolioDesktopState extends State<PortfolioDesktop> {
           ),
           Space.y2 ?? SizedBox(height: AppDimensions.space(2)),
           SizedBox(
-            height: AppDimensions.normalize(16),
-            width: AppDimensions.normalize(60),
+            height: getProportionateScreenHeight(60),
+            width: getProportionateScreenWidth(80),
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: CustomColor.pastelRed, // Light pastel purple
-                elevation: 6,
-                shadowColor: const Color(0xFFDEBFF3).withOpacity(0.5),
+                backgroundColor:
+                    CustomColor.pastelRed, // Keep your pastel color
+                elevation: 4,
+                shadowColor: CustomColor.primary.withValues(alpha: 0.18),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(18), // More pill-like
                 ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+                textStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  letterSpacing: 1.1,
+                ),
               ),
               onPressed: () => urlLauncherServices.openURL(StaticUtils.gitHub),
-              icon: const Icon(
+              icon: Icon(
                 Icons.explore_rounded,
-                size: 20,
+                size: getProportionateScreenHeight(16),
                 color: Colors.white,
               ),
-              label: const Text(
+              label: Text(
                 'See More',
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
                   color: Colors.white,
-                  letterSpacing: 1.05,
+                  fontWeight: FontWeight.bold,
+                  fontSize: getProportionateScreenHeight(20),
+                  letterSpacing: 1.1,
                 ),
               ),
             ),

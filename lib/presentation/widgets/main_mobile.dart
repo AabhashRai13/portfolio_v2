@@ -25,7 +25,7 @@ class MainMobile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // avatar img
-          SizedBox(height: getProportionateScreenHeight(70)),
+          SizedBox(height: getProportionateScreenHeight(20)),
 
           //intro message
           Description(scrollToSection: scrollToSection),

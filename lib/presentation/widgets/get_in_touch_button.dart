@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/resources/size_config.dart';
 
 class GetInTouchButton extends StatelessWidget {
@@ -43,15 +44,12 @@ class GetInTouchButton extends StatelessWidget {
             vertical: verticalPadding,
           ),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF71C4EF), Color(0xFF50A7D9)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: CustomColor.pastelRed,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: const Color(0xFFBFA181)
+                    .withValues(alpha: 0.25), // Soft brown shadow
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),

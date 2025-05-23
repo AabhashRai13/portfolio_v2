@@ -107,7 +107,7 @@ class IrregularShadowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black.withOpacity(opacity)
+      ..color = Colors.black.withValues(alpha: opacity)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
 
     final path = Path();

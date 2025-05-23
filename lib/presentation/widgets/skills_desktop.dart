@@ -32,7 +32,7 @@ class SkillsDesktop extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: CustomColor.primary.withOpacity(0.6),
+                        color: CustomColor.primary.withValues(alpha: 0.6),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -65,7 +65,7 @@ class SkillsDesktop extends StatelessWidget {
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: CustomColor.primary.withOpacity(0.08),
+                          color: CustomColor.primary.withValues(alpha: 0.08),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -118,13 +118,13 @@ class SkillsDesktop extends StatelessWidget {
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
                         BoxShadow(
-                          color: CustomColor.primary.withOpacity(0.12),
+                          color: CustomColor.primary.withValues(alpha: 0.12),
                           blurRadius: 18,
                           offset: const Offset(0, 6),
                         ),
                       ],
                       border: Border.all(
-                        color: skillItems[i]["color"].withOpacity(0.2),
+                        color: skillItems[i]["color"].withValues(alpha: 0.2),
                         width: 2,
                       ),
                     ),
@@ -169,6 +169,8 @@ class SkillsDesktop extends StatelessWidget {
             ),
           ),
         )
+    ,
+
       ],
     );
   }
@@ -178,8 +180,8 @@ class SkillsDesktop extends StatelessWidget {
     // If the color is too light, use a darker tint
     final hsl = HSLColor.fromColor(iconColor);
     if (hsl.lightness > 0.7) {
-      return iconColor.withOpacity(0.25);
+      return iconColor.withValues(alpha: 0.25);
     }
-    return iconColor.withOpacity(0.12);
+    return iconColor.withValues(alpha: 0.12);
   }
 }

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/constants/skill_items.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:my_portfolio/entity/orbit_icon.dart';
-import 'package:my_portfolio/presentation/widgets/bounce_man_animation.dart';
 import 'package:my_portfolio/presentation/widgets/animated_icons.dart';
+import 'package:my_portfolio/presentation/widgets/dash_3d.dart';
 
 class OrbitLinesPainter extends CustomPainter {
   final List<double> radii;
@@ -15,7 +15,7 @@ class OrbitLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.4)
+      ..color = Colors.black.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -54,7 +54,8 @@ class OrbitLinesPainter extends CustomPainter {
 }
 
 class SkillOrbitDemo extends StatefulWidget {
-  const SkillOrbitDemo({super.key});
+  final Offset? mousePosition;
+  const SkillOrbitDemo({super.key, this.mousePosition});
 
   @override
   SkillOrbitDemoState createState() => SkillOrbitDemoState();
@@ -155,9 +156,11 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
               ),
             ),
             // Center image (you)
-            const Align(
+             Align(
               alignment: Alignment.center,
-              child: BounceManAnimation(),
+              child: FlutterDash3D(
+                mousePosition: widget.mousePosition,
+              ),
             ),
             // Orbiting icons
             ..._icons.map((icon) {

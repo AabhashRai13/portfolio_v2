@@ -11,7 +11,7 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
   colorScheme: const ColorScheme.light(
     primary: CustomColor.primary,
     secondary: CustomColor.secondary,
-    tertiary: CustomColor.teal,
+    tertiary: CustomColor.accent,
     surface: CustomColor.bgLight1,
   ),
   
@@ -24,7 +24,7 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
       letterSpacing: -0.5,
       shadows: [
         Shadow(
-          color: CustomColor.primary.withOpacity(0.2),
+          color: CustomColor.primary.withValues(alpha: 0.2),
           offset: const Offset(2, 2),
           blurRadius: 4,
         ),
@@ -37,7 +37,7 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
       letterSpacing: -0.3,
     ),
     titleLarge: const TextStyle(
-      color: CustomColor.teal,
+      color: CustomColor.accent,
       fontSize: 20,
       fontWeight: FontWeight.w600,
       letterSpacing: 0.15,
@@ -52,7 +52,7 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
       color: CustomColor.textSecondary,
       fontSize: 14,
       letterSpacing: 0.25,
-      height: 1.5,
+      height: 1.5,  
     ),
   ),
   
@@ -65,7 +65,7 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
         borderRadius: BorderRadius.circular(12),
       ),
       elevation: 4,
-      shadowColor: CustomColor.primary.withOpacity(0.4),
+      shadowColor: CustomColor.primary.withValues(alpha: 0.4),
       padding: const EdgeInsets.symmetric(
         horizontal: 24,
         vertical: 16,
@@ -79,10 +79,10 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
   ),
   
   // Card Theme
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     color: CustomColor.bgLight1,
     elevation: 8,
-    shadowColor: CustomColor.primary.withOpacity(0.1),
+    shadowColor: CustomColor.primary.withValues(alpha: 0.1),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     ),
@@ -95,7 +95,7 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(
-        color: CustomColor.grey.withOpacity(0.3),
+        color: CustomColor.grey.withValues(alpha: 0.3),
       ),
     ),
     focusedBorder: OutlineInputBorder(
@@ -108,12 +108,12 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(
-        color: CustomColor.grey.withOpacity(0.3),
+        color: CustomColor.grey.withValues(alpha: 0.3),
       ),
     ),
-    hoverColor: CustomColor.primary.withOpacity(0.3),
+    hoverColor: CustomColor.primary.withValues(alpha: 0.3),
     labelStyle: TextStyle(
-      color: CustomColor.textSecondary.withOpacity(0.8),
+      color: CustomColor.textSecondary.withValues(alpha: 0.8),
     ),
     floatingLabelStyle: const TextStyle(
       color: CustomColor.primary,
@@ -131,6 +131,6 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
     backgroundColor: CustomColor.secondary,
     foregroundColor: CustomColor.textLight,
     elevation: 4,
-    splashColor: CustomColor.yellow.withOpacity(0.3),
+    splashColor: CustomColor.yellow.withValues(alpha: 0.3),
   ),
 );

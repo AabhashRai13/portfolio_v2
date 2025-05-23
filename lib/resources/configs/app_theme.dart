@@ -17,7 +17,7 @@ class AppTheme {
     scaffold: const Color(0xfffefefe),
     scaffoldDark: const Color(0xfffcfcfc),
     text: const Color(0xff484848),
-    textSub2: Colors.black.withOpacity(0.25),
+    textSub2: Colors.black.withValues(alpha: 0.25),
   );
 
   static AppCoreTheme dark = _core.copyWith(
@@ -25,7 +25,7 @@ class AppTheme {
     backgroundSub: const Color(0xff1c1c1e),
     scaffold: const Color(0xff0e0e0e),
     text: Colors.white,
-    textSub2: Colors.white.withOpacity(0.25),
+    textSub2: Colors.white.withValues(alpha: 0.25),
   );
 
   static AppCoreTheme? c;

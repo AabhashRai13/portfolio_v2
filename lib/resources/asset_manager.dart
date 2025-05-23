@@ -9,4 +9,5 @@ class ImageAssets {
       "$imagePath/meditating_man_low_res.jpeg";
   static const String mandala = "$imagePath/mandala.png";
   static const String light = "$imagePath/light.png";
+  static const String creamCurtain = "$imagePath/cream_curtain.png";
 }

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_portfolio/presentation/widgets/animated_logo.dart';
+import 'package:my_portfolio/presentation/widgets/frosted_container_widget.dart';
 import 'package:my_portfolio/resources/size_config.dart';
 import '../../constants/nav_items.dart';
 import '../../constants/colors.dart';
@@ -16,28 +17,9 @@ class HeaderDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return FrostedGlassContainer(
       height: 75.0,
-      margin: const EdgeInsets.symmetric(
-        vertical: 15.0,
-        horizontal: 30.0,
-      ),
       width: double.maxFinite,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: CustomColor.primary.withOpacity(0.1),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: CustomColor.primary.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
@@ -50,7 +32,7 @@ class HeaderDesktop extends StatelessWidget {
               children: [
                 const AnimatedLogo(),
                 const Spacer(),
-                if (SizeConfig.screenWidth >= 1000)
+                if (SizeConfig.screenWidth >= 1100)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -129,21 +111,21 @@ class _NavButtonState extends State<_NavButton> {
             color: widget.isResume
                 ? (isHovered
                     ? CustomColor.secondary
-                    : CustomColor.secondary.withOpacity(0.1))
+                    : CustomColor.secondary.withValues(alpha: 0.1))
                 : (isHovered
-                    ? CustomColor.primary.withOpacity(0.1)
+                    ? CustomColor.primary.withValues(alpha: 0.1)
                     : Colors.transparent),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: widget.isResume
-                  ? CustomColor.secondary
-                  : (isHovered ? CustomColor.primary : Colors.transparent),
+                  ?isHovered ? CustomColor.secondary: Colors.white
+                  : (isHovered ? Colors.black : Colors.transparent),
               width: widget.isResume ? 2 : 1.5,
             ),
             boxShadow: widget.isResume
                 ? [
                     BoxShadow(
-                      color: CustomColor.secondary.withOpacity(0.1),
+                      color: CustomColor.secondary.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -158,8 +140,8 @@ class _NavButtonState extends State<_NavButton> {
                   ? FontWeight.w600
                   : (isHovered ? FontWeight.w600 : FontWeight.w500),
               color: widget.isResume
-                  ? (isHovered ? Colors.white : CustomColor.secondary)
-                  : (isHovered ? CustomColor.primary : CustomColor.textPrimary),
+                  ?  Colors.white
+                  : CustomColor.textPrimary,
               letterSpacing: 0.3,
             ),
           ),

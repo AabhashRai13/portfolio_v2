@@ -4,6 +4,7 @@ import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/presentation/widgets/custom_text_heading.dart';
 import 'package:my_portfolio/presentation/widgets/project_card.dart';
 import 'package:my_portfolio/resources/configs/space.dart';
+import 'package:my_portfolio/resources/size_config.dart';
 import 'package:my_portfolio/services/url_launcher_services.dart';
 import 'package:my_portfolio/utils/project_utils.dart';
 import 'package:my_portfolio/utils/static_utils.dart';
@@ -41,34 +42,35 @@ class PortfolioMobileTab extends StatelessWidget {
         ),
         Space.y!,
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.05,
-          width: MediaQuery.of(context).size.width * 0.3,
+          height: getProportionateScreenHeight(60),
+          width: getProportionateScreenWidth(200),
           child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
               backgroundColor: CustomColor.pastelRed,
-              elevation: 6,
-              shadowColor: const Color(0xFFDEBFF3).withOpacity(0.5),
+              elevation: 4,
+              shadowColor: CustomColor.primary.withValues(alpha: 0.18),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(28),
               ),
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.02,
-                vertical: MediaQuery.of(context).size.height * 0.015,
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                letterSpacing: 1.1,
               ),
             ),
             onPressed: () => urlLauncherServices.openURL(StaticUtils.gitHub),
             icon: Icon(
               Icons.explore_rounded,
-              size: MediaQuery.of(context).size.width * 0.04,
+              size: getProportionateScreenHeight(16),
               color: Colors.white,
             ),
             label: Text(
               'See More',
               style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: MediaQuery.of(context).size.width * 0.035,
                 color: Colors.white,
-                letterSpacing: 1.05,
+                fontWeight: FontWeight.bold,
+                fontSize: getProportionateScreenHeight(18),
+                letterSpacing: 1.1,
               ),
             ),
           ),
