@@ -3,8 +3,9 @@ import 'package:my_portfolio/presentation/widgets/description.dart';
 import 'package:my_portfolio/resources/size_config.dart';
 
 class MainMobile extends StatelessWidget {
+  const MainMobile({required this.scrollToSection, super.key});
+
   final Function scrollToSection;
-  const MainMobile({super.key, required this.scrollToSection});
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +14,14 @@ class MainMobile extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(
-        horizontal: 5.0,
-        vertical: 30.0,
+        horizontal: 5,
+        vertical: 30,
       ),
-      height: screenHeight * 0.7,
+      height: screenHeight * 0.8,
       constraints: BoxConstraints(
-        minHeight: getProportionateScreenHeight(400),
+        minHeight: getProportionateScreenHeight(500),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // avatar img
           SizedBox(height: getProportionateScreenHeight(20)),

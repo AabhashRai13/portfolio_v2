@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/presentation/pages/home_page.dart';
 import 'package:my_portfolio/resources/size_config.dart';
-import 'styles/theme.dart';
+import 'package:my_portfolio/styles/theme.dart';
 
 void main() async {
   runApp(const MyApp());

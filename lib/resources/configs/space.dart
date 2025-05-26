@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'ui.dart';
-import 'app_dimensions.dart';
+import 'package:my_portfolio/resources/configs/app_dimensions.dart';
+import 'package:my_portfolio/resources/configs/ui.dart';
 
 class Space {
   static Widget? x;

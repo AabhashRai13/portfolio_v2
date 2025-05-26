@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'app_core_theme.dart';
+import 'package:my_portfolio/resources/configs/app_core_theme.dart';
 
 class AppTheme {
   static final _core = AppCoreTheme(
@@ -31,7 +31,7 @@ class AppTheme {
   static AppCoreTheme? c;
 
   // Init
-  static init(BuildContext context) {
+  static void init(BuildContext context) {
     c = isDark(context) ? dark : light;
   }
 

@@ -4,24 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_3d_controller/flutter_3d_controller.dart';
 
 class MousePointerAnimation {
-  static final MousePointerAnimation _instance =
-      MousePointerAnimation._internal();
   factory MousePointerAnimation() {
     return _instance;
   }
   MousePointerAnimation._internal();
+  static final MousePointerAnimation _instance =
+      MousePointerAnimation._internal();
 
   Flutter3DController? controller = Flutter3DController();
   bool _isModelLoaded = false;
 
-  static const double _initialCameraTheta = 0.0;
-  static const double _initialCameraPhi = 80.0;
+  static const double _initialCameraTheta = 0;
+  static const double _initialCameraPhi = 80;
   static const double _initialCameraRadius =
-      100.0; // Dash might appear small with this radius
+      100; // Dash might appear small with this radius
 
-  static const double _yawSensitivity = 90.0;
-  static const double _pitchSensitivity = 80.0;
-  static const double _maxPitchDeviationFromHorizontal = 80.0;
+  static const double _yawSensitivity = 90;
+  static const double _pitchSensitivity = 80;
+  static const double _maxPitchDeviationFromHorizontal = 80;
 
   /// Initializes the animation service with the 3D controller.
   /// Sets up listeners for model loading and initial camera/animation.
@@ -42,18 +42,19 @@ class MousePointerAnimation {
 
       // Set initial camera orbit
       controller!.setCameraOrbit(
-          _initialCameraTheta, _initialCameraPhi, _initialCameraRadius);
+          _initialCameraTheta, _initialCameraPhi, _initialCameraRadius,);
 
       // Play animation
       controller!.getAvailableAnimations().then((animations) {
         if (animations.isNotEmpty) {
-          String animationToPlay = animations.firstWhere(
-              (name) => name.toLowerCase().contains('idle'),
-              orElse: () => animations.first);
+          final animationToPlay = animations.firstWhere(
+            (name) => name.toLowerCase().contains('idle'),
+            orElse: () => animations.first,
+          );
           controller!.playAnimation(animationName: animationToPlay);
         } else {}
-      }).catchError((e) {
-        log("MousePointerAnimation: Error getting animations: $e");
+      }).catchError((Object e) {
+        log('MousePointerAnimation: Error getting animations: $e');
       });
     }
     controller?.onModelLoaded.removeListener(_onModelLoadedCallback);
@@ -78,14 +79,14 @@ class MousePointerAnimation {
     final centerX = normX - 0.5;
     final centerY = normY - 0.5;
 
-    final double targetTheta =
+    final  targetTheta =
         _initialCameraTheta - (centerX * _yawSensitivity);
-    final double phiOffset = -centerY * _pitchSensitivity;
-    final double targetPhi = _initialCameraPhi + phiOffset;
+    final  phiOffset = -centerY * _pitchSensitivity;
+    final  targetPhi = _initialCameraPhi + phiOffset;
 
-    const double minPhi = 90.0 - _maxPitchDeviationFromHorizontal;
-    const double maxPhi = 90.0 + _maxPitchDeviationFromHorizontal;
-    final double clampedPhi = targetPhi.clamp(minPhi, maxPhi);
+    const  minPhi = 90.0 - _maxPitchDeviationFromHorizontal;
+    const  maxPhi = 90.0 + _maxPitchDeviationFromHorizontal;
+    final  clampedPhi = targetPhi.clamp(minPhi, maxPhi);
 
     controller!.setCameraOrbit(targetTheta, clampedPhi, _initialCameraRadius);
   }
@@ -96,7 +97,7 @@ class MousePointerAnimation {
       return;
     }
     controller!.setCameraOrbit(
-        _initialCameraTheta, _initialCameraPhi, _initialCameraRadius);
+        _initialCameraTheta, _initialCameraPhi, _initialCameraRadius,);
   }
 
   void dispose() {

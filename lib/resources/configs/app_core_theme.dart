@@ -1,25 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppCoreTheme {
-  Color? primary;
-  Color? primaryLight;
-  Color? primaryDark;
-
-  Color? accent;
-  Color? accentLight;
-  Color? accentDark;
-
-  Color? background;
-  Color? backgroundSub;
-  Color? scaffold;
-  Color? scaffoldDark;
-
-  Color? text;
-  Color? textSub;
-  Color? textSub2;
-
-  Color? shadow; // Normal shadowOnBackground
-  Color? shadowSub; // Shadow light
+class AppCoreTheme { // Shadow light
 
   AppCoreTheme({
     this.primary,
@@ -38,6 +19,25 @@ class AppCoreTheme {
     this.shadow,
     this.shadowSub,
   });
+  Color? primary;
+  Color? primaryLight;
+  Color? primaryDark;
+
+  Color? accent;
+  Color? accentLight;
+  Color? accentDark;
+
+  Color? background;
+  Color? backgroundSub;
+  Color? scaffold;
+  Color? scaffoldDark;
+
+  Color? text;
+  Color? textSub;
+  Color? textSub2;
+
+  Color? shadow; // Normal shadowOnBackground
+  Color? shadowSub;
 
   AppCoreTheme copyWith({
     Color? primary,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../constants/colors.dart';
-import '../../constants/skill_items.dart';
+import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/constants/skill_items.dart';
 
 class SkillsMobile extends StatelessWidget {
   const SkillsMobile({super.key});
@@ -11,37 +11,37 @@ class SkillsMobile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        maxWidth: 500.0,
+        maxWidth: 500,
       ),
       child: Column(
         children: [
           // platforms
           for (int i = 0; i < platformItems.length; i++)
             Container(
-              margin: const EdgeInsets.only(bottom: 5.0),
+              margin: const EdgeInsets.only(bottom: 5),
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: CustomColor.bgLight2,
-                borderRadius: BorderRadius.circular(5.0),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(
-                  vertical: 10.0,
-                  horizontal: 20.0,
+                  vertical: 10,
+                  horizontal: 20,
                 ),
                 leading: FaIcon(
-                  platformItems[i]["img"],
-                  size: 26.0,
+                  platformItems[i]['img'] as IconData,
+                  size: 26,
                 ),
-                title: Text(platformItems[i]["title"]),
+                title: Text(platformItems[i]['title'] as String),
               ),
             ),
           const SizedBox(height: 50),
 
           // skills
           Wrap(
-            spacing: 12.0,
-            runSpacing: 12.0,
+            spacing: 12,
+            runSpacing: 12,
             alignment: WrapAlignment.center,
             children: [
               for (int i = 0; i < skillItems.length; i++)
@@ -57,13 +57,13 @@ class SkillsMobile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FaIcon(
-                        skillItems[i]["icon"],
-                        color: skillItems[i]["color"],
+                        skillItems[i]['icon'] as IconData,
+                        color: skillItems[i]['color'] as Color,
                         size: 22,
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        skillItems[i]["title"],
+                        skillItems[i]['title'] as String,
                         style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
@@ -73,7 +73,7 @@ class SkillsMobile extends StatelessWidget {
                   ),
                 ),
             ],
-          )
+          ),
         ],
       ),
     );

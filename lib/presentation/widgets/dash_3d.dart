@@ -4,8 +4,8 @@ import 'package:my_portfolio/presentation/services/mouse_pointer_animation_servi
 import 'package:my_portfolio/resources/size_config.dart';
 
 class FlutterDash3D extends StatefulWidget {
-  final Offset? mousePosition;
   const FlutterDash3D({super.key, this.mousePosition});
+  final Offset? mousePosition;
 
   @override
   State<FlutterDash3D> createState() => _FlutterDash3DState();
@@ -20,7 +20,7 @@ class _FlutterDash3DState extends State<FlutterDash3D> {
     super.initState();
     _mousePointerAnimation.initialize();
     _mousePointerAnimation.controller?.onModelLoaded.addListener(() {
-      if (_mousePointerAnimation.controller?.onModelLoaded.value == true) {
+      if (_mousePointerAnimation.controller?.onModelLoaded.value??false) {
         setState(() {
           _isModelLoaded = true;
         });
@@ -36,6 +36,9 @@ class _FlutterDash3DState extends State<FlutterDash3D> {
           height: getProportionateScreenHeight(200),
           width: getProportionateScreenWidth(200),
           child: Flutter3DViewer(
+            activeGestureInterceptor: false,
+            progressBarColor: Colors.transparent,
+            enableTouch: false,
             controller: _mousePointerAnimation.controller,
             src: 'assets/3d_models/flutter_dash.glb',
           ),

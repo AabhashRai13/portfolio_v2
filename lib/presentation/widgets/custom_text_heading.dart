@@ -5,17 +5,16 @@ import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/resources/size_config.dart';
 
 class CustomSectionHeading extends StatelessWidget {
+
+  const CustomSectionHeading(
+      {required this.text, super.key,
+      this.subText,
+      this.icon,
+      this.isVideoHeading = false,});
   final String text;
   final String? subText;
   final IconData? icon;
   final bool? isVideoHeading;
-
-  const CustomSectionHeading(
-      {super.key,
-      required this.text,
-      this.subText,
-      this.icon,
-      this.isVideoHeading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +25,7 @@ class CustomSectionHeading extends StatelessWidget {
           children: [
             if (icon != null) Icon(icon, color: CustomColor.primary, size: 32),
             const SizedBox(width: 10),
-            isVideoHeading!
-                ? Text(
+            if (isVideoHeading!) Text(
                     text,
                     style: GoogleFonts.poppins(
                       fontSize:
@@ -36,8 +34,7 @@ class CustomSectionHeading extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.7),
                       letterSpacing: 1.2,
                     ),
-                  )
-                : ShaderMask(
+                  ) else ShaderMask(
                     shaderCallback: (Rect bounds) {
                       return const LinearGradient(
                         colors: [CustomColor.primary, CustomColor.pastelRed],
@@ -66,16 +63,19 @@ class CustomSectionHeading extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(2),
             gradient:  LinearGradient(
-              colors:isVideoHeading!?[Colors.white.withValues(alpha: 0.7), Colors.white.withValues(alpha: 0.7)]: [CustomColor.primary, CustomColor.pastelRed],
+              colors:isVideoHeading!?[Colors.white.withValues(alpha: 0.7), 
+              Colors.white.withValues(alpha: 0.7),]
+              : [CustomColor.primary, CustomColor.pastelRed],
             ),
           ),
         ),
         const SizedBox(height: 10),
         Text(
-          subText ?? "A selection of my favorite projects",
+          subText ?? 'A selection of my favorite projects',
           style: GoogleFonts.poppins(
             fontSize: 18,
-            color:isVideoHeading!?Colors.white.withValues(alpha: 0.7): CustomColor.textSecondary,
+            color:isVideoHeading!?Colors.white.withValues(alpha: 0.7)
+            : CustomColor.textSecondary,
             fontWeight: FontWeight.w400,
           ),
         ),

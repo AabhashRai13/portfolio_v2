@@ -20,8 +20,8 @@ class _PortfolioDesktopState extends State<PortfolioDesktop> {
   final UrlLauncherServices urlLauncherServices = UrlLauncherServices();
 
   List<ProjectCard> _buildProjectCards() {
-    final List<ProjectCard> cards = [];
-    for (int i = 0; i < ProjectUtils.banners.length; i++) {
+    final cards = <ProjectCard>[];
+    for (var i = 0; i < ProjectUtils.banners.length; i++) {
       if (i < ProjectUtils.icons.length &&
           i < ProjectUtils.links.length &&
           i < ProjectUtils.titles.length) {
@@ -46,7 +46,7 @@ class _PortfolioDesktopState extends State<PortfolioDesktop> {
       child: Column(
         children: [
           const CustomSectionHeading(
-            text: "\nPortfolio",
+            text: '\nPortfolio',
           ),
           Space.y!,
           Wrap(
@@ -93,7 +93,7 @@ class _PortfolioDesktopState extends State<PortfolioDesktop> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

@@ -1,16 +1,18 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/skill_items.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/constants/skill_items.dart';
 import 'package:my_portfolio/entity/orbit_icon.dart';
 import 'package:my_portfolio/presentation/widgets/animated_icons.dart';
 import 'package:my_portfolio/presentation/widgets/dash_3d.dart';
 
 class OrbitLinesPainter extends CustomPainter {
+  OrbitLinesPainter({required this.radii, required this.center});
+
   final List<double> radii;
   final Offset center;
-
-  OrbitLinesPainter({required this.radii, required this.center});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -54,8 +56,8 @@ class OrbitLinesPainter extends CustomPainter {
 }
 
 class SkillOrbitDemo extends StatefulWidget {
-  final Offset? mousePosition;
   const SkillOrbitDemo({super.key, this.mousePosition});
+  final Offset? mousePosition;
 
   @override
   SkillOrbitDemoState createState() => SkillOrbitDemoState();
@@ -78,21 +80,21 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
       ..start();
 
     final random = Random();
-    final int n = skillItems.length;
+    final n = skillItems.length;
     const numRings = 2; // You can adjust this
-    final int iconsPerRing = (n / numRings).ceil();
+    final iconsPerRing = (n / numRings).ceil();
     const baseRadius = 160;
     const ringSpacing = 100; // Distance between rings
 
-    int iconIndex = 0;
-    for (int ring = 0; ring < numRings; ring++) {
-      double radius = (baseRadius + ring * ringSpacing) as double;
-      int iconsThisRing = (ring == numRings - 1)
+    var iconIndex = 0;
+    for (var ring = 0; ring < numRings; ring++) {
+      final radius = (baseRadius + ring * ringSpacing) as double;
+      final iconsThisRing = (ring == numRings - 1)
           ? n - iconIndex // last ring gets the remainder
           : iconsPerRing;
-      for (int i = 0; i < iconsThisRing; i++) {
-        var skill = skillItems[iconIndex++];
-        double angle = (2 * pi * i) / iconsThisRing;
+      for (var i = 0; i < iconsThisRing; i++) {
+        final skill = skillItems[iconIndex++];
+        final angle = (2 * pi * i) / iconsThisRing;
 
         // Set speed: ring 0 (inner) = fixed, ring 1 (outer) = random
         double speed;
@@ -105,15 +107,15 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
 
         _icons.add(
           OrbitingIcon(
-            iconData: skill["icon"] as IconData,
+            iconData: skill['icon'] as IconData,
             baseRadius: radius,
             speed: speed,
             initialAngle: angle,
             wobbleFreq: 0.5 + random.nextDouble() * 1.5,
             wobbleAmp: 10 + random.nextDouble() * 20,
             targetSpeed: min(0.6, 0.2 + random.nextDouble() * 0.4),
-            speedLerpT: 1.0,
-            color: skill["color"] as Color,
+            speedLerpT: 1,
+            color: CustomColor.textPrimary,
           ),
         );
       }
@@ -127,7 +129,7 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
   }
 
   Offset _calculatePosition(
-      double angle, double radius, Offset center, Size iconSize) {
+      double angle, double radius, Offset center, Size iconSize,) {
     return Offset(
       center.dx + cos(angle) * radius - iconSize.width / 2,
       center.dy + sin(angle) * radius - iconSize.height / 2,
@@ -138,9 +140,8 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final Size widgetSize =
-            Size(constraints.maxWidth, constraints.maxHeight);
-        final Offset center = widgetSize.center(Offset.zero);
+        final widgetSize = Size(constraints.maxWidth, constraints.maxHeight);
+        final center = widgetSize.center(Offset.zero);
 
         // Get unique radii for orbit lines
         final radii = _icons.map((icon) => icon.baseRadius).toSet().toList();
@@ -156,18 +157,17 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
               ),
             ),
             // Center image (you)
-             Align(
-              alignment: Alignment.center,
+            Align(
               child: FlutterDash3D(
                 mousePosition: widget.mousePosition,
               ),
             ),
             // Orbiting icons
             ..._icons.map((icon) {
-              double angle =
+              final angle =
                   icon.initialAngle + _elapsedSeconds * 2 * pi * icon.speed;
               final pos = _calculatePosition(
-                  angle, icon.baseRadius, center, const Size(70, 70));
+                  angle, icon.baseRadius, center, const Size(70, 70),);
               return Positioned(
                 left: pos.dx,
                 top: pos.dy,

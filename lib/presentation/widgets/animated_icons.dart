@@ -4,8 +4,7 @@ import 'package:my_portfolio/entity/orbit_icon.dart';
 
 class AnimatedSkillIcons extends StatelessWidget {
   const AnimatedSkillIcons({
-    super.key,
-    required this.icon,
+    required this.icon, super.key,
   });
 
   final OrbitingIcon icon;

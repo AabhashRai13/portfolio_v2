@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/presentation/widgets/animated_logo.dart';
 
-import '../../styles/style.dart';
+import 'package:my_portfolio/styles/style.dart';
 
 class HeaderMobile extends StatelessWidget {
   const HeaderMobile({
@@ -14,7 +14,7 @@ class HeaderMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50.0,
+      height: 50,
       margin: const EdgeInsets.fromLTRB(40, 5, 20, 5),
       decoration: kHeaderDecoration,
       child: Row(

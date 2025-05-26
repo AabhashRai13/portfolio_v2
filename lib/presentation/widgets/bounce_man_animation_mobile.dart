@@ -51,7 +51,7 @@ class _BounceManAnimationStateMobile extends State<BounceManAnimationMobile>
         AnimatedBuilder(
           animation: _animation,
           builder: (context, child) {
-            final double bounce = -bounceHeight * _animation.value;
+            final bounce = -bounceHeight * _animation.value;
             return Transform.translate(
               offset: Offset(0, bounce),
               child: child,
@@ -79,10 +79,10 @@ class _BounceManAnimationStateMobile extends State<BounceManAnimationMobile>
         AnimatedBuilder(
           animation: _animation,
           builder: (context, child) {
-            final double t = _animation.value;
-            final double shadowWidth = shadowBaseWidth + 20 * (1 - t);
-            final double shadowHeight = shadowBaseHeight - 4 * (1 - t);
-            final double shadowOpacity = 0.18 + 0.10 * (1 - t);
+            final t = _animation.value;
+            final shadowWidth = shadowBaseWidth + 20 * (1 - t);
+            final shadowHeight = shadowBaseHeight - 4 * (1 - t);
+            final shadowOpacity = 0.18 + 0.10 * (1 - t);
 
             return CustomPaint(
               size: Size(shadowWidth, shadowHeight),
@@ -99,10 +99,10 @@ class _BounceManAnimationStateMobile extends State<BounceManAnimationMobile>
 }
 
 class IrregularShadowPainter extends CustomPainter {
-  final double opacity;
-  final double t;
 
   IrregularShadowPainter({required this.opacity, required this.t});
+  final double opacity;
+  final double t;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -111,14 +111,14 @@ class IrregularShadowPainter extends CustomPainter {
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
 
     final path = Path();
-    final double cx = size.width / 2;
-    final double cy = size.height / 2;
+    final cx = size.width / 2;
+    final cy = size.height / 2;
     const points = 32;
-    for (int i = 0; i <= points; i++) {
-      final double theta = 2 * pi * i / points;
-      final double wobble = 1 + 0.08 * sin(theta * 3 + t * 2 * pi);
-      final double x = cx + (size.width / 2) * cos(theta) * wobble;
-      final double y = cy + (size.height / 2) * sin(theta) * wobble;
+    for (var i = 0; i <= points; i++) {
+      final theta = 2 * pi * i / points;
+      final wobble = 1 + 0.08 * sin(theta * 3 + t * 2 * pi);
+      final x = cx + (size.width / 2) * cos(theta) * wobble;
+      final y = cy + (size.height / 2) * sin(theta) * wobble;
       if (i == 0) {
         path.moveTo(x, y);
       } else {

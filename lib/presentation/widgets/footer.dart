@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../constants/colors.dart';
+import 'package:my_portfolio/constants/colors.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -28,7 +28,7 @@ class Footer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
                Text(
-                "Made by ",
+                'Made by ',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   color: CustomColor.textSecondary,
@@ -36,7 +36,7 @@ class Footer extends StatelessWidget {
                 ),
               ),
               Text(
-                "Aabhash Rai",
+                'Aabhash Rai',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: CustomColor.primary,
@@ -52,7 +52,7 @@ class Footer extends StatelessWidget {
               ),
               SizedBox(width: 6),
               Text(
-                "with",
+                'with',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   color: CustomColor.textSecondary,
@@ -69,7 +69,7 @@ class Footer extends StatelessWidget {
           ),
           SizedBox(height: 6),
           Text(
-            "Built with Flutter 3.24",
+            'Built with Flutter 3.24',
             style: TextStyle(
               fontWeight: FontWeight.w400,
               color: CustomColor.textSecondary,

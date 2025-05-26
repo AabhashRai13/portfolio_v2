@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
 
 class OrbitingIcon {
-  final IconData iconData;
-  final double baseRadius;
-  double speed;
-  final double initialAngle;
-  final double wobbleFreq;
-  final double wobbleAmp;
-  double targetSpeed;
-  double speedLerpT;
-  final Color color;
 
   OrbitingIcon({
     required this.iconData,
@@ -22,4 +13,13 @@ class OrbitingIcon {
     required this.speedLerpT,
     required this.color,
   });
+  final IconData iconData;
+  final double baseRadius;
+  double speed;
+  final double initialAngle;
+  final double wobbleFreq;
+  final double wobbleAmp;
+  double targetSpeed;
+  double speedLerpT;
+  final Color color;
 }

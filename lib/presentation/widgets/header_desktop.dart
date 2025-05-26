@@ -2,23 +2,23 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/constants/nav_items.dart';
 import 'package:my_portfolio/presentation/widgets/animated_logo.dart';
 import 'package:my_portfolio/presentation/widgets/frosted_container_widget.dart';
 import 'package:my_portfolio/resources/size_config.dart';
-import '../../constants/nav_items.dart';
-import '../../constants/colors.dart';
 
 class HeaderDesktop extends StatelessWidget {
   const HeaderDesktop({
-    super.key,
     required this.onNavMenuTap,
+    super.key,
   });
-  final Function(int) onNavMenuTap;
+  final void Function(int) onNavMenuTap;
 
   @override
   Widget build(BuildContext context) {
     return FrostedGlassContainer(
-      height: 75.0,
+      height: 75,
       width: double.maxFinite,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
@@ -27,7 +27,6 @@ class HeaderDesktop extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const AnimatedLogo(),
@@ -80,15 +79,14 @@ class HeaderDesktop extends StatelessWidget {
 }
 
 class _NavButton extends StatefulWidget {
-  final String title;
-  final VoidCallback onTap;
-  final bool isResume;
-
-  const _NavButton({
+    const _NavButton({
     required this.title,
     required this.onTap,
     required this.isResume,
   });
+  final String title;
+  final VoidCallback onTap;
+  final bool isResume;
 
   @override
   State<_NavButton> createState() => _NavButtonState();
@@ -118,7 +116,9 @@ class _NavButtonState extends State<_NavButton> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: widget.isResume
-                  ?isHovered ? CustomColor.secondary: Colors.white
+                  ? isHovered
+                      ? CustomColor.secondary
+                      : Colors.white
                   : (isHovered ? Colors.black : Colors.transparent),
               width: widget.isResume ? 2 : 1.5,
             ),
@@ -139,9 +139,7 @@ class _NavButtonState extends State<_NavButton> {
               fontWeight: widget.isResume
                   ? FontWeight.w600
                   : (isHovered ? FontWeight.w600 : FontWeight.w500),
-              color: widget.isResume
-                  ?  Colors.white
-                  : CustomColor.textPrimary,
+              color: widget.isResume ? Colors.white : CustomColor.textPrimary,
               letterSpacing: 0.3,
             ),
           ),

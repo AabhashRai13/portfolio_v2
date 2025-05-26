@@ -19,13 +19,9 @@ class YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
   void initState() {
     super.initState();
     _controller = YoutubePlayerController.fromVideoId(
-      videoId: "jRT0dsBE3Tg",
-      autoPlay: false,
+      videoId: 'jRT0dsBE3Tg',
       params: const YoutubePlayerParams(
-        showControls: true,
-        mute: false,
         showFullscreenButton: true,
-        loop: false,
       ),
     );
 
@@ -42,19 +38,17 @@ class YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
   height: getProportionateScreenHeight(600),
   width: double.infinity,
   child: Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       const SizedBox(height: 20),
       const CustomSectionHeading(
-        text: "Intro Video",
-        subText: "Know me in less than 60 seconds",
+        text: 'Intro Video',
+        subText: 'Know me in less than 60 seconds',
         isVideoHeading: true,
       ),
       const SizedBox(height: 20),
       Container(
         constraints: BoxConstraints(
-          maxWidth: double.infinity,
           maxHeight: getProportionateScreenHeight(400),
         ),
         child: AspectRatio(

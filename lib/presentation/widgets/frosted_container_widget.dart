@@ -2,16 +2,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class FrostedGlassContainer extends StatelessWidget {
+
+  const FrostedGlassContainer({
+    required this.height, required this.width, required this.child, super.key,
+  });
   final double height;
   final double width;
   final Widget child;
-
-  const FrostedGlassContainer({
-    super.key,
-    required this.height,
-    required this.width,
-    required this.child,
-  });
 
   @override
   Widget build(BuildContext context) {

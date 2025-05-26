@@ -45,7 +45,7 @@ class _BounceManAnimationState extends State<BounceManAnimation>
           animation: _animation,
           builder: (context, child) {
             // The bounce goes from 0 to -40 pixels (up)
-            final double bounce = -20 * _animation.value;
+            final bounce = -20 * _animation.value;
             return Transform.translate(
               offset: Offset(0, bounce),
               child: child,
@@ -73,12 +73,12 @@ class _BounceManAnimationState extends State<BounceManAnimation>
         AnimatedBuilder(
           animation: _animation,
           builder: (context, child) {
-            final double t = _animation.value;
+            final t = _animation.value;
 
             // Shadow width/height/opacity as before
-            final double shadowWidth = 120 + 40 * (1 - t);
-            final double shadowHeight = 24 - 8 * (1 - t);
-            final double shadowOpacity = 0.18 + 0.10 * (1 - t);
+            final shadowWidth = 120 + 40 * (1 - t);
+            final shadowHeight = 24 - 8 * (1 - t);
+            final shadowOpacity = 0.18 + 0.10 * (1 - t);
 
             return CustomPaint(
               size: Size(shadowWidth, shadowHeight),
@@ -94,11 +94,11 @@ class _BounceManAnimationState extends State<BounceManAnimation>
   }
 }
 
-class IrregularShadowPainter extends CustomPainter {
-  final double opacity;
-  final double t; // animation value
+class IrregularShadowPainter extends CustomPainter { // animation value
 
   IrregularShadowPainter({required this.opacity, required this.t});
+  final double opacity;
+  final double t;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -109,15 +109,15 @@ class IrregularShadowPainter extends CustomPainter {
     final path = Path();
 
     // Draw an ellipse with a little "wobble" for irregularity
-    final double cx = size.width / 2;
-    final double cy = size.height / 2;
+    final cx = size.width / 2;
+    final cy = size.height / 2;
     const points = 32;
-    for (int i = 0; i <= points; i++) {
-      final double theta = 2 * pi * i / points;
+    for (var i = 0; i <= points; i++) {
+      final theta = 2 * pi * i / points;
       // Wobble amplitude and frequency
-      final double wobble = 1 + 0.08 * sin(theta * 3 + t * 2 * pi);
-      final double x = cx + (size.width / 2) * cos(theta) * wobble;
-      final double y = cy + (size.height / 2) * sin(theta) * wobble;
+      final wobble = 1 + 0.08 * sin(theta * 3 + t * 2 * pi);
+      final x = cx + (size.width / 2) * cos(theta) * wobble;
+      final y = cy + (size.height / 2) * sin(theta) * wobble;
       if (i == 0) {
         path.moveTo(x, y);
       } else {

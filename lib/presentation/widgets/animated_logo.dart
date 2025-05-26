@@ -40,7 +40,7 @@ class AnimatedLogoState extends State<AnimatedLogo> {
                       CustomColor.primary,
                       CustomColor.secondary,
                     ],
-                  ).createShader(const Rect.fromLTWH(0.0, 0.0, 50.0, 50.0)),
+                  ).createShader(const Rect.fromLTWH(0, 0, 50, 50)),
               ),
             ),
           ],

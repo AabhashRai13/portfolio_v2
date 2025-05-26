@@ -5,8 +5,8 @@ import 'package:my_portfolio/resources/size_config.dart';
 
 class GetInTouchButton extends StatelessWidget {
   const GetInTouchButton({
-    super.key,
     required this.scrollToSection,
+    super.key,
   });
 
   final Function scrollToSection;
@@ -34,9 +34,7 @@ class GetInTouchButton extends StatelessWidget {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () {
-          scrollToSection();
-        },
+        onTap: () => scrollToSection,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: EdgeInsets.symmetric(

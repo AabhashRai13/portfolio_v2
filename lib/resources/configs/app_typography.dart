@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'app_dimensions.dart';
-import 'core_theme.dart';
+import 'package:my_portfolio/resources/configs/app_dimensions.dart';
+import 'package:my_portfolio/resources/configs/core_theme.dart';
 
 class AppText {
   static TextStyle? btn;
@@ -26,7 +26,7 @@ class AppText {
   static TextStyle? l2;
   static TextStyle? l2b;
 
-  static init() {
+  static void init() {
     const b = FontWeight.bold;
     const baseStyle = TextStyle(fontFamily: fontFamily);
 

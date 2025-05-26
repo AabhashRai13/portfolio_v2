@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/presentation/portfolio/portfolio.dart';
 import 'package:my_portfolio/presentation/services/mouse_pointer_animation_service.dart';
 import 'package:my_portfolio/presentation/widgets/contact_section.dart';
 import 'package:my_portfolio/presentation/widgets/custom_text_heading.dart';
+import 'package:my_portfolio/presentation/widgets/drawer_mobile.dart';
+import 'package:my_portfolio/presentation/widgets/footer.dart';
+import 'package:my_portfolio/presentation/widgets/header_desktop.dart';
+import 'package:my_portfolio/presentation/widgets/header_mobile.dart';
 import 'package:my_portfolio/presentation/widgets/main_desktop.dart';
 import 'package:my_portfolio/presentation/widgets/main_mobile.dart';
 import 'package:my_portfolio/presentation/widgets/skills_desktop.dart';
@@ -13,11 +18,6 @@ import 'package:my_portfolio/presentation/youtube/youtube_player.dart';
 import 'package:my_portfolio/resources/asset_manager.dart';
 import 'package:my_portfolio/resources/configs/app.dart';
 import 'package:my_portfolio/resources/size_config.dart';
-import '../../constants/size.dart';
-import '../widgets/drawer_mobile.dart';
-import '../widgets/footer.dart';
-import '../widgets/header_desktop.dart';
-import '../widgets/header_mobile.dart';
 import 'package:universal_html/html.dart' as html;
 
 class HomeMainPage extends StatefulWidget {
@@ -47,12 +47,12 @@ class _HomeMainPageState extends State<HomeMainPage> {
             : DrawerMobile(onNavItemTap: (int navIndex) {
                 scaffoldKey.currentState?.closeEndDrawer();
                 scrollToSection(navIndex: navIndex);
-              }),
+              },),
         body: Container(
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               center: Alignment.topLeft,
-              radius: 2.0,
+              radius: 2,
               colors: [
                 Color(0xFFFFF1E6), // Light cream
                 Color(0xFFF5DCC6), // Beige-pink accent
@@ -64,7 +64,6 @@ class _HomeMainPageState extends State<HomeMainPage> {
           ),
           child: SingleChildScrollView(
             controller: scrollController,
-            scrollDirection: Axis.vertical,
             child: Column(
               children: [
                 SizedBox(key: navbarKeys.first),
@@ -73,7 +72,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
                 if (constraints.maxWidth >= kMinDesktopWidth)
                   HeaderDesktop(onNavMenuTap: (int navIndex) {
                     scrollToSection(navIndex: navIndex);
-                  })
+                  },)
                 else
                   HeaderMobile(
                     onLogoTap: () {},
@@ -83,15 +82,9 @@ class _HomeMainPageState extends State<HomeMainPage> {
                   ),
 
                 if (constraints.maxWidth >= kMinDesktopWidth)
-                  MouseRegion(
-                    onHover: (event) =>
-                        _mousePointerAnimation.handleMouseMove(event, context),
-                    onExit: (event) =>
-                        _mousePointerAnimation.handleMouseExit(event),
-                    child: MainDesktop(
-                      scrollToSection: scrollToContact,
-                      mousePosition: _mousePosition,
-                    ),
+                  MainDesktop(
+                    scrollToSection: scrollToContact,
+      
                   )
                 else
                   MainMobile(
@@ -99,31 +92,38 @@ class _HomeMainPageState extends State<HomeMainPage> {
                   ),
 
                 // SKILLS
-                Container(
-                  key: navbarKeys[1],
-                  width: screenWidth,
-                  padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-                  color: CustomColor.bgLight1,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // title
-                      const CustomSectionHeading(
-                        text: "What I Can Do",
-                        icon: Icons.computer,
-                        subText: "My Mastery Arsenal.",
-                      ),
-                      const SizedBox(height: 50),
+                MouseRegion(
+                  onHover: (event) =>
+                      _mousePointerAnimation.handleMouseMove(event, context),
+                  onExit: _mousePointerAnimation.handleMouseExit,
+                  child: Container(
+                    key: navbarKeys[1],
+                    width: screenWidth,
+                    padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+                    color: CustomColor.bgLight1,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // title
+                        const CustomSectionHeading(
+                          text: 'What I Can Do',
+                          icon: Icons.computer,
+                          subText: 'My Mastery Arsenal.',
+                        ),
+                        const SizedBox(height: 50),
 
-                      // platforms and skills
-                      if (constraints.maxWidth >= kMedDesktopWidth)
-                        const SkillsDesktop()
-                      else
-                        const SkillsMobile(),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                    ],
+                        // platforms and skills
+                        if (constraints.maxWidth >= kMedDesktopWidth)
+                           SkillsDesktop(
+                        mousePosition: _mousePosition,
+                          )
+                        else
+                          const SkillsMobile(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -164,7 +164,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
           ),
         ),
       );
-    });
+    },);
   }
 
   void scrollToSection({int? navIndex}) {
@@ -172,7 +172,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
       // open a blog page
       html.window.open(
         SnsLinks.resume,
-        "docx",
+        'docx',
       );
       return;
     }

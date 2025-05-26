@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../constants/colors.dart';
+import 'package:my_portfolio/constants/colors.dart';
 
 ThemeData get kCustomTheme => ThemeData.light().copyWith(
   scaffoldBackgroundColor: CustomColor.scaffoldBg,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
+import 'package:my_portfolio/presentation/widgets/custom_text_field.dart';
 import 'package:my_portfolio/services/contact_services.dart';
-import '../../constants/colors.dart';
-import 'custom_text_field.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart' as html;
 
 class ContactSection extends StatefulWidget {
@@ -23,7 +23,7 @@ class _ContactSectionState extends State<ContactSection> {
       key: contactServices.formKey,
       child: Container(
         color: CustomColor.bgLight1,
-        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 0),
+        padding: const EdgeInsets.symmetric(vertical: 60),
         child: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 700),
@@ -47,10 +47,10 @@ class _ContactSectionState extends State<ContactSection> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.mail_rounded,
-                        color: CustomColor.primary, size: 28),
+                        color: CustomColor.primary, size: 28,),
                     SizedBox(width: 10),
                     Text(
-                      "Get In Touch",
+                      'Get In Touch',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 26,
@@ -69,14 +69,14 @@ class _ContactSectionState extends State<ContactSection> {
                         children: [
                           Flexible(
                             child: CustomTextField(
-                              hintText: "Your name",
+                              hintText: 'Your name',
                               controller: contactServices.nameController,
                             ),
                           ),
                           const SizedBox(width: 15),
                           Flexible(
                             child: CustomTextField(
-                              hintText: "Your email",
+                              hintText: 'Your email',
                               controller: contactServices.emailController,
                               isEmail: true,
                             ),
@@ -87,12 +87,12 @@ class _ContactSectionState extends State<ContactSection> {
                     return Column(
                       children: [
                         CustomTextField(
-                          hintText: "Your name",
+                          hintText: 'Your name',
                           controller: contactServices.nameController,
                         ),
                         const SizedBox(height: 15),
                         CustomTextField(
-                          hintText: "Your email",
+                          hintText: 'Your email',
                           controller: contactServices.emailController,
                           isEmail: true,
                         ),
@@ -102,13 +102,13 @@ class _ContactSectionState extends State<ContactSection> {
                 ),
                 const SizedBox(height: 18),
                 CustomTextField(
-                  hintText: "Your phone number",
+                  hintText: 'Your phone number',
                   controller: contactServices.phoneController,
                 ),
                 const SizedBox(height: 18),
                 // Message field
                 CustomTextField(
-                  hintText: "Your message",
+                  hintText: 'Your message',
                   maxLines: 8,
                   controller: contactServices.messageController,
                 ),
@@ -144,8 +144,8 @@ class _ContactSectionState extends State<ContactSection> {
                           )
                         : const Icon(Icons.send_rounded, size: 20),
                     label: isLoading
-                        ? const Text("Sending...")
-                        : const Text("Send Message"),
+                        ? const Text('Sending...')
+                        : const Text('Send Message'),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -192,9 +192,9 @@ class _ContactSectionState extends State<ContactSection> {
 }
 
 class _ContactIconButton extends StatefulWidget {
+  const _ContactIconButton({required this.icon, required this.url});
   final IconData icon;
   final String url;
-  const _ContactIconButton({required this.icon, required this.url});
 
   @override
   State<_ContactIconButton> createState() => _ContactIconButtonState();

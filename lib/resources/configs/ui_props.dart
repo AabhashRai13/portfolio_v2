@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'app_dimensions.dart';
-import 'app_theme.dart';
+import 'package:my_portfolio/resources/configs/app_dimensions.dart';
+import 'package:my_portfolio/resources/configs/app_theme.dart';
 
 abstract class UIProps {
   // Animations
@@ -13,7 +13,7 @@ abstract class UIProps {
   static EdgeInsets? btnPadSm;
 
   // Radius
-  static double radius = 6.0;
+  static double radius = 6;
   static BorderRadius? tabRadius;
   static BorderRadius? buttonRadius;
   static BorderRadius? cardRadius;
@@ -25,20 +25,20 @@ abstract class UIProps {
   // BoxDecoration
   static BoxDecoration? boxCard;
 
-  static init() {
+  static void init() {
     initRadius();
     initButtons();
     initShadows();
     initBoxDecorations();
   }
 
-  static initRadius() {
+  static void initRadius() {
     tabRadius = BorderRadius.circular(radius * 2);
     buttonRadius = BorderRadius.circular(radius);
     cardRadius = BorderRadius.circular(radius * 2);
   }
 
-  static initButtons() {
+  static void initButtons() {
     borderButton = BoxDecoration(
       borderRadius: UIProps.buttonRadius,
       border: Border.all(
@@ -56,7 +56,7 @@ abstract class UIProps {
     );
   }
 
-  static initShadows() {
+  static void initShadows() {
     cardShadow = [
       BoxShadow(
         color: AppTheme.c!.shadowSub!,
@@ -65,7 +65,7 @@ abstract class UIProps {
     ];
   }
 
-  static initBoxDecorations() {
+  static void initBoxDecorations() {
     boxCard = BoxDecoration(
       borderRadius: cardRadius,
       boxShadow: cardShadow,

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
 import 'package:emailjs/emailjs.dart' as emailjs;
+import 'package:flutter/material.dart';
 import 'package:my_portfolio/keys.dart';
 
 class ContactServices {
@@ -21,7 +21,7 @@ class ContactServices {
 
   Future<void> submitForm(BuildContext context) async {
     if (formKey.currentState!.validate()) {
-      Map<String, dynamic> templateParams = {
+      final templateParams = <String, dynamic>{
         'name': nameController.text.trim(),
         'email': emailController.text.trim(),
         'message': messageController.text.trim(),
@@ -44,7 +44,7 @@ class ContactServices {
             const SnackBar(content: Text('Form submitted successfully')),
           );
         }
-      } catch (error) { 
+      } on Exception catch (error) {
         log('$error');
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

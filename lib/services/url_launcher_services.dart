@@ -7,5 +7,5 @@ class UrlLauncherServices {
       );
 
 // Tools & Tech
-  final kTools = ["Flutter", "Dart", "Firebase", "Node", "Express"];
+  final kTools = ['Flutter', 'Dart', 'Firebase', 'Node', 'Express'];
 }

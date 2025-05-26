@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ui.dart';
+import 'package:my_portfolio/resources/configs/ui.dart';
 
 class AppDimensions {
   static double? maxContainerWidth;
@@ -11,10 +11,10 @@ class AppDimensions {
 
   static Size? size;
 
-  static init() {
+  static void init() {
     ratio = UI.width! / UI.height!;
-    double pixelDensity = UI.mediaQuery().devicePixelRatio;
-    ratio = (ratio) + ((pixelDensity + ratio) / 2);
+    final pixelDensity = UI.mediaQuery().devicePixelRatio;
+    ratio = ratio + ((pixelDensity + ratio) / 2);
 
     if (UI.width! <= 380 && pixelDensity >= 3) {
       ratio *= 0.85;
@@ -26,7 +26,7 @@ class AppDimensions {
     padding = ratio * 3;
   }
 
-  static _initLargeScreens() {
+  static void _initLargeScreens() {
     const safe = 2.4;
 
     ratio *= 1.5;
@@ -36,7 +36,7 @@ class AppDimensions {
     }
   }
 
-  static _initSmallScreensHighDensity() {
+  static void _initSmallScreensHighDensity() {
     if (!UI.sm! && ratio > 2.0) {
       ratio = 2.0;
     }
