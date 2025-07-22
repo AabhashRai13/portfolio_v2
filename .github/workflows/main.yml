@@ -26,14 +26,11 @@ jobs:
       - name: Create keys.dart
         run: |
           mkdir -p lib
-          cat > lib/keys.dart <<EOF
-const String emailJsServiceId = '${{ secrets.EMAILJS_SERVICE_ID }}';
-const String emailJsTemplateId = '${{ secrets.EMAILJS_TEMPLATE_ID }}';
-const String emailJsPublicKey = '${{ secrets.EMAILJS_PUBLIC_KEY }}';
-const String emailJsPrivateKey = '${{ secrets.EMAILJS_PRIVATE_KEY }}';
-EOF
+          echo "const String emailJsServiceId = '${{ secrets.EMAILJS_SERVICE_ID }}';" > lib/keys.dart
+          echo "const String emailJsTemplateId = '${{ secrets.EMAILJS_TEMPLATE_ID }}';" >> lib/keys.dart
+          echo "const String emailJsPublicKey = '${{ secrets.EMAILJS_PUBLIC_KEY }}';" >> lib/keys.dart
+          echo "const String emailJsPrivateKey = '${{ secrets.EMAILJS_PRIVATE_KEY }}';" >> lib/keys.dart
     
-
       - run: flutter build apk --release --split-per-abi
       - run: |
           flutter build ios --no-codesign
