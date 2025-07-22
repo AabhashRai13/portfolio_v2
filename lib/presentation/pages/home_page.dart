@@ -35,136 +35,150 @@ class _HomeMainPageState extends State<HomeMainPage> {
   Offset? _mousePosition;
 
   @override
+  void dispose() {
+    _mousePointerAnimation.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
     App.init(context);
-    return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        key: scaffoldKey,
-        endDrawer: constraints.maxWidth >= kMinDesktopWidth
-            ? null
-            : DrawerMobile(onNavItemTap: (int navIndex) {
-                scaffoldKey.currentState?.closeEndDrawer();
-                scrollToSection(navIndex: navIndex);
-              },),
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(
-              center: Alignment.topLeft,
-              radius: 2,
-              colors: [
-                Color(0xFFFFF1E6), // Light cream
-                Color(0xFFF5DCC6), // Beige-pink accent
-                Color(0xFFD7B49E), // Soft tan
-                Color(0xFFB08968), // Richer warm brown
-              ],
-              stops: [0.1, 0.4, 0.7, 1.0],
-            ),
-          ),
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              children: [
-                SizedBox(key: navbarKeys.first),
-
-                // MAIN
-                if (constraints.maxWidth >= kMinDesktopWidth)
-                  HeaderDesktop(onNavMenuTap: (int navIndex) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+          key: scaffoldKey,
+          endDrawer: constraints.maxWidth >= kMinDesktopWidth
+              ? null
+              : DrawerMobile(
+                  onNavItemTap: (int navIndex) {
+                    scaffoldKey.currentState?.closeEndDrawer();
                     scrollToSection(navIndex: navIndex);
-                  },)
-                else
-                  HeaderMobile(
-                    onLogoTap: () {},
-                    onMenuTap: () {
-                      scaffoldKey.currentState?.openEndDrawer();
-                    },
+                  },
+                ),
+          body: Container(
+            decoration: const BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.topLeft,
+                radius: 2,
+                colors: [
+                  Color(0xFFFFF1E6), // Light cream
+                  Color(0xFFF5DCC6), // Beige-pink accent
+                  Color(0xFFD7B49E), // Soft tan
+                  Color(0xFFB08968), // Richer warm brown
+                ],
+                stops: [0.1, 0.4, 0.7, 1.0],
+              ),
+            ),
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                children: [
+                  SizedBox(key: navbarKeys.first),
+
+                  // MAIN
+                  if (constraints.maxWidth >= kMinDesktopWidth)
+                    HeaderDesktop(
+                      onNavMenuTap: (int navIndex) {
+                        scrollToSection(navIndex: navIndex);
+                      },
+                    )
+                  else
+                    HeaderMobile(
+                      onLogoTap: () {},
+                      onMenuTap: () {
+                        scaffoldKey.currentState?.openEndDrawer();
+                      },
+                    ),
+
+                  if (constraints.maxWidth >= kMinDesktopWidth)
+                    MainDesktop(
+                      scrollToSection: scrollToContact,
+                    )
+                  else
+                    MainMobile(
+                      scrollToSection: scrollToContact,
+                    ),
+
+                  // SKILLS
+                  MouseRegion(
+                    onHover: (event) =>
+                        _mousePointerAnimation.handleMouseMove(event, context),
+                    onExit: _mousePointerAnimation.handleMouseExit,
+                    child: Container(
+                      key: navbarKeys[1],
+                      width: screenWidth,
+                      padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+                      color: CustomColor.bgLight1,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // title
+                          const CustomSectionHeading(
+                            text: 'What I Can Do',
+                            icon: Icons.computer,
+                            subText: 'My Mastery Arsenal.',
+                          ),
+                          const SizedBox(height: 50),
+
+                          // platforms and skills
+                          if (constraints.maxWidth >= kMedDesktopWidth)
+                            SkillsDesktop(
+                              mousePosition: _mousePosition,
+                            )
+                          else
+                            const SkillsMobile(),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
-                if (constraints.maxWidth >= kMinDesktopWidth)
-                  MainDesktop(
-                    scrollToSection: scrollToContact,
-      
-                  )
-                else
-                  MainMobile(
-                    scrollToSection: scrollToContact,
-                  ),
-
-                // SKILLS
-                MouseRegion(
-                  onHover: (event) =>
-                      _mousePointerAnimation.handleMouseMove(event, context),
-                  onExit: _mousePointerAnimation.handleMouseExit,
-                  child: Container(
-                    key: navbarKeys[1],
-                    width: screenWidth,
-                    padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-                    color: CustomColor.bgLight1,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                  // INTRO VIDEO
+                  SizedBox(
+                    height: constraints.maxWidth >= kMinDesktopWidth
+                        ? getProportionateScreenHeight(700)
+                        : getProportionateScreenHeight(500),
+                    width: double.infinity,
+                    child: Stack(
+                      fit: StackFit.expand,
                       children: [
-                        // title
-                        const CustomSectionHeading(
-                          text: 'What I Can Do',
-                          icon: Icons.computer,
-                          subText: 'My Mastery Arsenal.',
+                        Image.asset(
+                          ImageAssets.creamCurtain,
+                          fit: BoxFit.fill,
                         ),
-                        const SizedBox(height: 50),
-
-                        // platforms and skills
-                        if (constraints.maxWidth >= kMedDesktopWidth)
-                           SkillsDesktop(
-                        mousePosition: _mousePosition,
-                          )
-                        else
-                          const SkillsMobile(),
-                        const SizedBox(
-                          height: 10,
+                        YoutubePlayerScreen(
+                          key: navbarKeys[2],
+                          isMobile: constraints.maxWidth < kMinDesktopWidth,
                         ),
                       ],
                     ),
                   ),
-                ),
 
-                // INTRO VIDEO
-                SizedBox(
-                  height: getProportionateScreenHeight(700),
-                  width: double.infinity,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.asset(
-                        ImageAssets.creamCurtain,
-                        fit: BoxFit.fill,
-                      ),
-                      YoutubePlayerScreen(
-                        key: navbarKeys[2],
-                      ),
-                    ],
+                  // PROJECTS
+                  Portfolio(
+                    key: navbarKeys[3],
                   ),
-                ),
 
-                // PROJECTS
-                Portfolio(
-                  key: navbarKeys[3],
-                ),
+                  const SizedBox(height: 30),
 
-                const SizedBox(height: 30),
+                  // CONTACT
+                  ContactSection(
+                    key: navbarKeys[4],
+                  ),
 
-                // CONTACT
-                ContactSection(
-                  key: navbarKeys[4],
-                ),
-
-                // FOOTER
-                const Footer(),
-              ],
+                  // FOOTER
+                  const Footer(),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },);
+        );
+      },
+    );
   }
 
   void scrollToSection({int? navIndex}) {

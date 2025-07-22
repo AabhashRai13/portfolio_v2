@@ -69,7 +69,7 @@ class Footer extends StatelessWidget {
           ),
           SizedBox(height: 6),
           Text(
-            'Built with Flutter 3.24',
+            'Built with Flutter 3.32',
             style: TextStyle(
               fontWeight: FontWeight.w400,
               color: CustomColor.textSecondary,

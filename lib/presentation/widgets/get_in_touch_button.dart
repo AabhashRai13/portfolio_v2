@@ -9,7 +9,7 @@ class GetInTouchButton extends StatelessWidget {
     super.key,
   });
 
-  final Function scrollToSection;
+  final VoidCallback scrollToSection;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class GetInTouchButton extends StatelessWidget {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () => scrollToSection,
+        onTap: scrollToSection,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: EdgeInsets.symmetric(

@@ -42,6 +42,8 @@ dependencies:
   flutter_3d_controller: ^2.2.0
   flutter_bloc: ^9.1.1
   equatable: ^2.0.7
+  flame:
+
 
 
 
@@ -70,11 +72,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/
     - assets/images/
     - assets/projects/
     - assets/lottie/
     - assets/3d_models/flutter_dash.glb
+   
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

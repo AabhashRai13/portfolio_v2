@@ -29,6 +29,12 @@ class _FlutterDash3DState extends State<FlutterDash3D> {
   }
 
   @override
+  void dispose() {
+    _mousePointerAnimation.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [

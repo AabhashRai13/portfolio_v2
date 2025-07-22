@@ -18,6 +18,13 @@ class ContactServices {
     messageController.dispose();
     phoneController.dispose();
   }
+void clearForm(){
+  nameController.clear();
+  emailController.clear();
+  messageController.clear();
+  phoneController.clear();
+}
+
 
   Future<void> submitForm(BuildContext context) async {
     if (formKey.currentState!.validate()) {
@@ -27,9 +34,9 @@ class ContactServices {
         'message': messageController.text.trim(),
         'phone': phoneController.text.trim(),
       };
-
+          
       try {
-        await emailjs.send(
+     await emailjs.send(
           emailJsServiceId,
           emailJsTemplateId,
           templateParams,
@@ -38,11 +45,12 @@ class ContactServices {
             privateKey: emailJsPrivateKey,
           ),
         );
-        log('SUCCESS!');
+       
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Form submitted successfully')),
           );
+          clearForm();
         }
       } on Exception catch (error) {
         log('$error');

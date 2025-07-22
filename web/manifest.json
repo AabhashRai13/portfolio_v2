@@ -1,12 +1,11 @@
 {
-    "name": "my_portfolio",
-    "short_name": "my_portfolio",
+    "name": "Aabhash's Portfolio",
+    "short_name": "Portfolio",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#E6A4A4",
+    "theme_color": "#6200EA",
+    "description": "Aabhash's personal portfolio website.",
     "prefer_related_applications": false,
     "icons": [
         {

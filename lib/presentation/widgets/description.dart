@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_portfolio/constants/colors.dart';
@@ -10,11 +11,12 @@ class Description extends StatelessWidget {
     required this.scrollToSection, super.key,
   });
 
-  final Function scrollToSection;
+  final VoidCallback scrollToSection;
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+  
     return Padding(
       padding: EdgeInsets.symmetric(
           horizontal: 40,
@@ -61,6 +63,7 @@ class Description extends StatelessWidget {
             const SizedBox(height: 20)
           else
             const SizedBox(height: 10),
+            if(screenSize.height > 500)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -94,6 +97,7 @@ class Description extends StatelessWidget {
           ),
           const SizedBox(height: 25),
           // contact btn with hover effects and shadow
+           if (screenSize.height > 300)
           GetInTouchButton(scrollToSection: scrollToSection),
         ],
       ),

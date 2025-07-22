@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,55 +21,52 @@ class HeaderDesktop extends StatelessWidget {
       width: double.maxFinite,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const AnimatedLogo(),
-                const Spacer(),
-                if (SizeConfig.screenWidth >= 1100)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      for (int i = 0; i < navTitles.length; i++)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 10,
-                          ),
-                          child: _NavButton(
-                            title: navTitles[i],
-                            onTap: () => onNavMenuTap(i),
-                            isResume: i == 5,
-                          ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const AnimatedLogo(),
+              const Spacer(),
+              if (SizeConfig.screenWidth >= 1100)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (int i = 0; i < navTitles.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 10,
                         ),
-                    ],
-                  )
-                else
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      for (int i = navTitles.length - 2;
-                          i < navTitles.length;
-                          i++)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 10,
-                          ),
-                          child: _NavButton(
-                            title: navTitles[i],
-                            onTap: () => onNavMenuTap(i),
-                            isResume: i == 5,
-                          ),
+                        child: _NavButton(
+                          title: navTitles[i],
+                          onTap: () => onNavMenuTap(i),
+                          isResume: i == 5,
                         ),
-                    ],
-                  ),
-              ],
-            ),
+                      ),
+                  ],
+                )
+              else
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (int i = navTitles.length - 2;
+                        i < navTitles.length;
+                        i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 10,
+                        ),
+                        child: _NavButton(
+                          title: navTitles[i],
+                          onTap: () => onNavMenuTap(i),
+                          isResume: i == 5,
+                        ),
+                      ),
+                  ],
+                ),
+            ],
           ),
         ),
       ),

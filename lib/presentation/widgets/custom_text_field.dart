@@ -4,6 +4,7 @@ import 'package:my_portfolio/constants/colors.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
+    required this.inputType,
     super.key,
     this.controller,
     this.maxLines = 1,
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   final int maxLines;
   final String? hintText;
   final bool isEmail;
+  final String inputType;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class CustomTextField extends StatelessWidget {
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'This field is required';
+          return 'Please Enter your $inputType';
         }
         if (isEmail) {
           final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');

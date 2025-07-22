@@ -71,6 +71,7 @@ class _ContactSectionState extends State<ContactSection> {
                             child: CustomTextField(
                               hintText: 'Your name',
                               controller: contactServices.nameController,
+                              inputType: 'Name',
                             ),
                           ),
                           const SizedBox(width: 15),
@@ -79,6 +80,7 @@ class _ContactSectionState extends State<ContactSection> {
                               hintText: 'Your email',
                               controller: contactServices.emailController,
                               isEmail: true,
+                              inputType: 'Email',
                             ),
                           ),
                         ],
@@ -89,10 +91,12 @@ class _ContactSectionState extends State<ContactSection> {
                         CustomTextField(
                           hintText: 'Your name',
                           controller: contactServices.nameController,
+                          inputType: 'Name',
                         ),
                         const SizedBox(height: 15),
                         CustomTextField(
                           hintText: 'Your email',
+                          inputType: 'Email',
                           controller: contactServices.emailController,
                           isEmail: true,
                         ),
@@ -103,12 +107,14 @@ class _ContactSectionState extends State<ContactSection> {
                 const SizedBox(height: 18),
                 CustomTextField(
                   hintText: 'Your phone number',
+                  inputType: 'Phone Number',
                   controller: contactServices.phoneController,
                 ),
                 const SizedBox(height: 18),
                 // Message field
                 CustomTextField(
                   hintText: 'Your message',
+                  inputType: 'Message',
                   maxLines: 8,
                   controller: contactServices.messageController,
                 ),
