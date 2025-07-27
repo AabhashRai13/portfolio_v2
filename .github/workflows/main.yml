@@ -40,6 +40,9 @@ jobs:
       - name: Build Web
         run: flutter build web
       
+      - name: Remove service worker to avoid cache
+        run: rm -f build/web/flutter_service_worker.js
+
       - name: Deploy Web to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -47,7 +50,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}    # Hostinger FTP username
           password: ${{ secrets.FTP_PASSWORD }}    # FTP password
           local-dir: build/web/                     # Flutter web output folder
-          server-dir: public_html/
+          server-dir: /home/u728098782/domains/aabhashrai.com/public_html/
     
 
       - name: Push to Releases
