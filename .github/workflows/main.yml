@@ -31,6 +31,12 @@ jobs:
           echo "const String emailJsPublicKey = '${{ secrets.EMAILJS_PUBLIC_KEY }}';" >> lib/keys.dart
           echo "const String emailJsPrivateKey = '${{ secrets.EMAILJS_PRIVATE_KEY }}';" >> lib/keys.dart
 
+      - name: Clean build
+        run: flutter clean
+
+      - name: Get dependencies
+        run: flutter pub get
+      
       - name: Build Web
         run: flutter build web
       
