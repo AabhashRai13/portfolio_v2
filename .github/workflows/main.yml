@@ -40,9 +40,6 @@ jobs:
       - name: Build Web
         run: flutter build web
       
-      - name: Remove service worker to avoid cache
-        run: rm -f build/web/flutter_service_worker.js
-
       - name: Deploy Web to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
