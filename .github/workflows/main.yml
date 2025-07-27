@@ -34,14 +34,14 @@ jobs:
       - name: Build Web
         run: flutter build web
 
-      - name: Deploy Web to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        - name: Deploy Web to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4
         with:
           server: ${{ secrets.FTP_SERVER }}        # Your FTP IP or domain
           username: ${{ secrets.FTP_USERNAME }}    # Hostinger FTP username
           password: ${{ secrets.FTP_PASSWORD }}    # FTP password
-          local-dir: build/web                     # Flutter web output folder
-          server-dir: ${{ secrets.FTP_REMOTE_DIR }} # Usually /public_html/ or a subdir
+          local-dir: build/web/                     # Flutter web output folder
+          server-dir: ${{ secrets.FTP_REMOTE_DIR }} 
     
 
       - name: Push to Releases
