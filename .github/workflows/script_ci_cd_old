@@ -30,6 +30,16 @@ jobs:
           echo "const String emailJsTemplateId = '${{ secrets.EMAILJS_TEMPLATE_ID }}';" >> lib/keys.dart
           echo "const String emailJsPublicKey = '${{ secrets.EMAILJS_PUBLIC_KEY }}';" >> lib/keys.dart
           echo "const String emailJsPrivateKey = '${{ secrets.EMAILJS_PRIVATE_KEY }}';" >> lib/keys.dart
+    
+      - run: flutter build apk --release --split-per-abi
+      - run: |
+          flutter build ios --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app.ipa Payload
 
       - name: Build Web
         run: flutter build web
