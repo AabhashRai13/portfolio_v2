@@ -50,7 +50,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}        # Your FTP IP or domain
           username: ${{ secrets.FTP_USERNAME }}    # Hostinger FTP username
           password: ${{ secrets.FTP_PASSWORD }}    # FTP password
-          local-dir: build/web                     # Flutter web output folder
+          local-dir: build/web/                     # Flutter web output folder
           server-dir: ${{ secrets.FTP_REMOTE_DIR }} # Usually /public_html/ or a subdir
     
 
