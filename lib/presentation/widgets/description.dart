@@ -85,7 +85,7 @@ class Description extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     color: CustomColor.textSecondary, // light brown
                   ),),
-              Text('• 5+ years of experience',
+              Text('• 5+ years of experien',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
