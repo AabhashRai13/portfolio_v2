@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_portfolio/constants/colors.dart';
@@ -8,7 +7,8 @@ import 'package:my_portfolio/resources/size_config.dart';
 
 class Description extends StatelessWidget {
   const Description({
-    required this.scrollToSection, super.key,
+    required this.scrollToSection,
+    super.key,
   });
 
   final VoidCallback scrollToSection;
@@ -16,11 +16,12 @@ class Description extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-  
+
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: 40,
-          vertical: screenSize.width < 750 ? 20 : 0,), // improve alignment
+        horizontal: 40,
+        vertical: screenSize.width < 750 ? 20 : 0,
+      ), // improve alignment
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start, // align text to left
@@ -63,42 +64,48 @@ class Description extends StatelessWidget {
             const SizedBox(height: 20)
           else
             const SizedBox(height: 10),
-            if(screenSize.height > 500)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('I am Aabhash Rai',
+          if (screenSize.height > 500)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'I am Aabhash Rai',
                   style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: CustomColor.textPrimary, // dark brown
-                  ),),
-              Text('• Based in Sydney',
+                  ),
+                ),
+                Text(
+                  '• Based in Sydney',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: CustomColor.textSecondary, // light brown
-                  ),),
-              Text('• Flutter Developer',
+                  ),
+                ),
+                Text(
+                  '• Flutter Developer',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: CustomColor.textSecondary, // light brown
-                  ),),
-              Text('• 5+ years ',
+                  ),
+                ),
+                Text(
+                  '• 5+ years a ',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: CustomColor.textSecondary, // light brown
-                  ),),
-             
-            
-            ],
-          ),
+                  ),
+                ),
+              ],
+            ),
           const SizedBox(height: 25),
           // contact btn with hover effects and shadow
-           if (screenSize.height > 300)
-          GetInTouchButton(scrollToSection: scrollToSection),
+          if (screenSize.height > 300)
+            GetInTouchButton(scrollToSection: scrollToSection),
         ],
       ),
     );
