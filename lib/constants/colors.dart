@@ -8,7 +8,7 @@ class CustomColor {
       Color(0xFFE6A4A4); // Muted Coral (optional accent)
 
   // Background Colors
-  static const Color scaffoldBg = Color(0xFFFFF1E6); // Cream
+  static const Color scaffoldBg = Color(0xFFFFF1E6); // Crea
   static const Color bgLight1 = Color(0xFFFFF1E6); // Cream
   static const Color bgLight2 = Color(0xFFEAD7C2); // Light Brown
 
