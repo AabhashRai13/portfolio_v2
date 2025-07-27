@@ -34,7 +34,7 @@ jobs:
       - name: Build Web
         run: flutter build web
 
-        - name: Deploy Web to Hostinger via FTP
+      - name: Deploy Web to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4
         with:
           server: ${{ secrets.FTP_SERVER }}        # Your FTP IP or domain
