@@ -44,7 +44,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}    # Hostinger FTP username
           password: ${{ secrets.FTP_PASSWORD }}    # FTP password
           local-dir: build/web/                     # Flutter web output folder
-          server-dir: ${{ secrets.FTP_REMOTE_DIR }} 
+          server-dir: ${{ secrets.FTP_REMOTE_DIR }}/ 
     
 
       - name: Push to Releases
