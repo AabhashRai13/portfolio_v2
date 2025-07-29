@@ -60,6 +60,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: build/web/
-          server-dir: ./
+          server-dir: /home/u728098782/domains/aabhashrai.com/public_html
           #Optional: uncomment the line below to delete everything before deploying
           dangerous-clean-slate: true
