@@ -63,3 +63,7 @@ jobs:
           server-dir: ./
           #Optional: uncomment the line below to delete everything before deploying
           dangerous-clean-slate: true
+      
+      - name: List deployed files (optional)
+        run: ls -l build/web/
+
