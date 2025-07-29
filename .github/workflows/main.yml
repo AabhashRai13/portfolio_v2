@@ -22,7 +22,7 @@ jobs:
 
            # Step to create keys.dart
     - name: Create keys.dart
-        run: |
+      run: |
           mkdir -p lib
           echo "const String emailJsServiceId = '${{ secrets.EMAILJS_SERVICE_ID }}';" > lib/keys.dart
           echo "const String emailJsTemplateId = '${{ secrets.EMAILJS_TEMPLATE_ID }}';" >> lib/keys.dart
