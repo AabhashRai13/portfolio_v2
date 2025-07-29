@@ -52,9 +52,9 @@ jobs:
     # 🚀 Deploy to Hostinger via FTP
     - name: Deploy to Hostinger
       env:
-        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_SERVER: ftp.aabhashrai.com
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
-        lftp -e "mirror -R ./ /public_html; quit" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER
+        lftp -e "mirror -R ./ /public_html; quit" -u $FTP_USERNAME,$FTP_PASSWORD ftp.aabhashrai.com
 
