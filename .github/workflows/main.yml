@@ -56,10 +56,10 @@ jobs:
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
+          server: 46.202.138.90
+          username: u728098782
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: build/web/
-          server-dir: /home/u728098782/domains/aabhashrai.com/public_html/
+          server-dir: ./
           #Optional: uncomment the line below to delete everything before deploying
           dangerous-clean-slate: true
