@@ -27,17 +27,6 @@ jobs:
           channel: stable
           architecture: x64
 
-      # 🔒 Check for required secrets (optional but recommended)
-      - name: Verify required secrets
-        run: |
-          required_secrets=(EMAILJS_SERVICE_ID EMAILJS_TEMPLATE_ID EMAILJS_PUBLIC_KEY EMAILJS_PRIVATE_KEY FTP_SERVER FTP_USERNAME FTP_PASSWORD)
-          for secret in "${required_secrets[@]}"; do
-            if [ -z "${{ secrets[$secret] }}" ]; then
-              echo "❌ Missing required secret: $secret"
-              exit 1
-            fi
-          done
-
       # 🔑 Create keys.dart with secure secrets
       - name: Generate lib/keys.dart
         run: |
