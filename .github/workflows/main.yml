@@ -56,9 +56,4 @@ jobs:
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
-        lftp -c "
-        set ftp:list-options -a;
-        open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
-        mirror -R ./build/web /public_html;
-        bye
-        "
+        lftp -e "mirror -R ./ /public_html; quit" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER
