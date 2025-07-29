@@ -1,25 +1,45 @@
+name: "Flutter Web Build & Deploy to Hostinger"
+
 on:
+  push:
+    branches:
+      - main
+      - master
   pull_request:
     branches:
       - main
       - master
-  push:
-    branches:
-      - main
-name: "Build & Release"
+
 jobs:
-  build:
-    name: Build & Release
+  build-and-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+      # 📥 Checkout repository code
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      # ⚙️ Set up Flutter
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
           architecture: x64
 
-        # Step to create keys.dart
-      - name: Create keys.dart
+      # 🔒 Check for required secrets (optional but recommended)
+      - name: Verify required secrets
+        run: |
+          required_secrets=(EMAILJS_SERVICE_ID EMAILJS_TEMPLATE_ID EMAILJS_PUBLIC_KEY EMAILJS_PRIVATE_KEY FTP_SERVER FTP_USERNAME FTP_PASSWORD)
+          for secret in "${required_secrets[@]}"; do
+            if [ -z "${{ secrets[$secret] }}" ]; then
+              echo "❌ Missing required secret: $secret"
+              exit 1
+            fi
+          done
+
+      # 🔑 Create keys.dart with secure secrets
+      - name: Generate lib/keys.dart
         run: |
           mkdir -p lib
           echo "const String emailJsServiceId = '${{ secrets.EMAILJS_SERVICE_ID }}';" > lib/keys.dart
@@ -27,31 +47,30 @@ jobs:
           echo "const String emailJsPublicKey = '${{ secrets.EMAILJS_PUBLIC_KEY }}';" >> lib/keys.dart
           echo "const String emailJsPrivateKey = '${{ secrets.EMAILJS_PRIVATE_KEY }}';" >> lib/keys.dart
 
+      # 🧼 Clean previous build (optional but safe)
       - name: Clean build
         run: flutter clean
 
-      - name: Get dependencies
+      # 📦 Install dependencies
+      - name: Get Flutter packages
         run: flutter pub get
-      
-      - name: Build Web
+
+      # 🛠️ Build Flutter Web
+      - name: Build web release
         run: flutter build web --release
-      
-      - name: Remove service worker to avoid cache
+
+      # 🧹 Remove service worker to avoid aggressive caching (optional)
+      - name: Remove service worker
         run: rm -f build/web/flutter_service_worker.js
 
-      - name: Deploy Web to Hostinger via FTP
+      # 🚀 Deploy to Hostinger via FTP
+      - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ${{ secrets.FTP_SERVER }}        # Your FTP IP or domain
-          username: ${{ secrets.FTP_USERNAME }}    # Hostinger FTP username
-          password: ${{ secrets.FTP_PASSWORD }}    # FTP password
-          local-dir: build/web/                     # Flutter web output folder
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: build/web/
           server-dir: public_html/
-    
-
-
-
-
-
-# push to master, main, develop
-# pull request on main master
+          #Optional: uncomment the line below to delete everything before deploying
+          dangerous-clean-slate: true
