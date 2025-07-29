@@ -1,69 +1,55 @@
-name: "Flutter Web Build & Deploy to Hostinger"
+name: Flutter Web CI/CD Deploy to Hostinger
 
 on:
   push:
     branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
+      - main  # Change if your main branch is different
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
-      # 📥 Checkout repository code
-      - name: Checkout source
-        uses: actions/checkout@v3
+    # 📥 Checkout the repo
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      # ⚙️ Set up Flutter
-      - name: Set up Flutter SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          architecture: x64
+    # 🛠️ Set up Flutter SDK
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
 
-      # 🔑 Create keys.dart with secure secrets
-      - name: Generate lib/keys.dart
-        run: |
-          mkdir -p lib
-          echo "const String emailJsServiceId = '${{ secrets.EMAILJS_SERVICE_ID }}';" > lib/keys.dart
-          echo "const String emailJsTemplateId = '${{ secrets.EMAILJS_TEMPLATE_ID }}';" >> lib/keys.dart
-          echo "const String emailJsPublicKey = '${{ secrets.EMAILJS_PUBLIC_KEY }}';" >> lib/keys.dart
-          echo "const String emailJsPrivateKey = '${{ secrets.EMAILJS_PRIVATE_KEY }}';" >> lib/keys.dart
+    # 📦 Install Dart/Flutter dependencies
+    - name: Get dependencies
+      run: flutter pub get
 
-      # 🧼 Clean previous build (optional but safe)
-      - name: Clean build
-        run: flutter clean
+    # 🧼 Clean previous builds (optional but recommended)
+    - name: Clean build
+      run: flutter clean
 
-      # 📦 Install dependencies
-      - name: Get Flutter packages
-        run: flutter pub get
+    # 🛠️ Build Flutter Web
+    - name: Build Flutter Web
+      run: flutter build web --release
 
-      # 🛠️ Build Flutter Web
-      - name: Build web release
-        run: flutter build web --release
+    # 🚫 Remove service worker to avoid aggressive caching
+    - name: Remove flutter_service_worker.js
+      run: rm -f build/web/flutter_service_worker.js
 
-      # 🧹 Remove service worker to avoid aggressive caching (optional)
-      - name: Remove service worker
-        run: rm -f build/web/flutter_service_worker.js
+    # 🌐 Install lftp (FTP CLI client)
+    - name: Install FTP client (lftp)
+      run: sudo apt-get install lftp
 
-      # 🚀 Deploy to Hostinger via FTP
-      - name: Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: 46.202.138.90
-          username: u728098782
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: build/web/
-          server-dir: ./
-          #Optional: uncomment the line below to delete everything before deploying
-          dangerous-clean-slate: true
-      
-      - name: List deployed files (optional)
-        run: ls -l build/web/
-
+    # 🚀 Deploy to Hostinger via FTP
+    - name: Deploy to Hostinger
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+      run: |
+        lftp -c "
+        set ftp:list-options -a;
+        open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
+        mirror -R ./build/web /public_html;
+        bye
+        "
