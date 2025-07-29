@@ -20,6 +20,15 @@ jobs:
       with:
         channel: stable
 
+           # Step to create keys.dart
+    - name: Create keys.dart
+        run: |
+          mkdir -p lib
+          echo "const String emailJsServiceId = '${{ secrets.EMAILJS_SERVICE_ID }}';" > lib/keys.dart
+          echo "const String emailJsTemplateId = '${{ secrets.EMAILJS_TEMPLATE_ID }}';" >> lib/keys.dart
+          echo "const String emailJsPublicKey = '${{ secrets.EMAILJS_PUBLIC_KEY }}';" >> lib/keys.dart
+          echo "const String emailJsPrivateKey = '${{ secrets.EMAILJS_PRIVATE_KEY }}';" >> lib/keys.dart
+
     # 📦 Install Dart/Flutter dependencies
     - name: Get dependencies
       run: flutter pub get
