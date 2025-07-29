@@ -60,7 +60,7 @@ jobs:
           set ssl:verify-certificate no;
           set ftp:list-options -a;
           open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
-          mirror -R ./build/web /public_html;
+          mirror -R ./build/web ./;
           bye
         "
 
