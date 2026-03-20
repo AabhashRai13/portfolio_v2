@@ -2,6 +2,16 @@
 <html lang="en">
 
 <head>
+    <base href="$FLUTTER_BASE_HREF">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Aabhash's personal portfolio website.">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="theme-color" content="#6200EA">
+
     <!-- Favicon for Web -->
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
@@ -10,10 +20,7 @@
     <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon.png">
 
     <!-- PWA Manifest -->
-    <link rel="manifest" href="icons/manifest.json">
-    <meta name="theme-color" content="#6200EA">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
     <title>Say Hi to Aabhash</title>
     <style>
         body {
@@ -71,19 +78,9 @@
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.10/lottie.min.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('flutter-first-frame', function () {
-                navigator.serviceWorker.register('flutter_service_worker.js');
-            });
-        }
-    </script>
     <script type="module" src="./assets/packages/flutter_3d_controller/assets/model_viewer.min.js" defer></script>
 
 </head>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
 
 <body>
     <div class="splash-container" id="splash">
@@ -150,7 +147,7 @@
                 });
         };
     </script>
-    <script src="main.dart.js" defer></script>
+    <script src="flutter_bootstrap.js" async></script>
 </body>
 
 </html>

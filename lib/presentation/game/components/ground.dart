@@ -3,11 +3,9 @@ import 'package:flame/components.dart';
 import 'package:my_portfolio/presentation/game/flappy_game.dart';
 import 'package:my_portfolio/presentation/game/game_constants.dart';
 
-class Ground extends SpriteComponent with HasGameReference<FlappyGame> , 
+class Ground extends SpriteComponent with HasGameReference<FlappyGame> ,
 CollisionCallbacks{
-  Ground() : super(
-   
-  );
+  Ground() : super();
 
   @override
   Future<void> onLoad() async {

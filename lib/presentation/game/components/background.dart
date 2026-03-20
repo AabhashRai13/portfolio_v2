@@ -11,5 +11,4 @@ class Background extends SpriteComponent {
     super.onLoad();
     sprite = await Sprite.load('background.png');
   }
-
 }

@@ -8,7 +8,7 @@ import 'package:my_portfolio/presentation/game/components/pipe_manager.dart';
 import 'package:my_portfolio/presentation/game/components/score.dart';
 import 'package:my_portfolio/presentation/game/game_constants.dart';
 
-class FlappyGame extends FlameGame with TapDetector, HasCollisionDetection {
+class FlappyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
   late Bird bird;
   late Background background;
   late Ground ground;
@@ -50,8 +50,8 @@ class FlappyGame extends FlameGame with TapDetector, HasCollisionDetection {
   }
 
   @override
-  void onTapDown(TapDownInfo info) {
-    super.onTapDown(info);
+  void onTapDown(TapDownEvent event) {
+    super.onTapDown(event);
     bird.flap();
   }
 

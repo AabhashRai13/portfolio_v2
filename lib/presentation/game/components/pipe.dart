@@ -13,7 +13,6 @@ class Pipe extends SpriteComponent
   Future<void> onLoad() async {
     super.onLoad();
     sprite = await Sprite.load(isTopPipe ? 'pipe_top.png' : 'pipe_bottom.png');
-
     add(RectangleHitbox());
   }
 
