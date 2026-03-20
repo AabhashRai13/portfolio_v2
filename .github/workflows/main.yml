@@ -61,14 +61,23 @@ jobs:
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
       run: |
+        set -eu
+        REMOTE_DIR="${FTP_REMOTE_DIR:-/public_html}"
+        echo "Deploying to remote dir: ${REMOTE_DIR}"
         lftp -c "
           set ssl:verify-certificate no;
           set ftp:list-options -a;
           set xfer:clobber on;
+          set cmd:fail-exit yes;
           open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
+          pwd;
+          cls;
           lcd ./build/web;
-          mkdir -p $FTP_REMOTE_DIR;
-          cd $FTP_REMOTE_DIR;
+          mkdir -p $REMOTE_DIR;
+          cd $REMOTE_DIR;
+          pwd;
+          cls;
           mirror -R --delete --verbose ./ ./;
+          cls;
           bye
         "
