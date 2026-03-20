@@ -47,7 +47,9 @@ jobs:
 
     # 🌐 Install lftp (FTP CLI client)
     - name: Install FTP client (lftp)
-      run: sudo apt-get install lftp
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y lftp
 
     # 🚀 Deploy to Hostinger via FTP
     - name: Deploy to Hostinger
@@ -55,12 +57,16 @@ jobs:
         FTP_SERVER: ${{ secrets.FTP_SERVER }}
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
       run: |
         lftp -c "
           set ssl:verify-certificate no;
           set ftp:list-options -a;
+          set xfer:clobber on;
           open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
-          mirror -R ./build/web ./;
+          lcd ./build/web;
+          mkdir -p $FTP_REMOTE_DIR;
+          cd $FTP_REMOTE_DIR;
+          mirror -R --delete --verbose ./ ./;
           bye
         "
-

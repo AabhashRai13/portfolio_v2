@@ -118,7 +118,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
                           const CustomSectionHeading(
                             text: 'What I Can Do',
                             icon: Icons.computer,
-                            subText: 'My Mastery Arsenal.',
+                            subText: 'My Mastery Arsenal',
                           ),
                           const SizedBox(height: 50),
 
