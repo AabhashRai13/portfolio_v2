@@ -43,6 +43,18 @@ jobs:
     - name: Build Flutter Web
       run: flutter build web --release
 
+    # 🏷️ Add deploy marker for live verification
+    - name: Create deploy marker
+      run: |
+        cat > build/web/deploy-info.txt <<EOF
+        repo=${GITHUB_REPOSITORY}
+        branch=${GITHUB_REF_NAME}
+        commit=${GITHUB_SHA}
+        run_id=${GITHUB_RUN_ID}
+        run_number=${GITHUB_RUN_NUMBER}
+        deployed_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        EOF
+
     # 🚫 Remove service worker to avoid aggressive caching
     - name: Remove flutter_service_worker.js
       run: rm -f build/web/flutter_service_worker.js
