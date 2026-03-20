@@ -62,9 +62,10 @@ jobs:
         FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
       run: |
         set -eu
-        REMOTE_DIR="${FTP_REMOTE_DIR:-/public_html}"
-        echo "Deploying to remote dir: ${REMOTE_DIR}"
-        lftp -c "
+        REMOTE_DIR="${FTP_REMOTE_DIR:-.}"
+        echo "Requested remote dir: ${REMOTE_DIR}"
+
+        if ! lftp -c "
           set ssl:verify-certificate no;
           set ftp:list-options -a;
           set xfer:clobber on;
@@ -72,8 +73,22 @@ jobs:
           open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
           pwd;
           cls;
+          cd $REMOTE_DIR;
+          pwd;
+          bye
+        "; then
+          echo "Remote dir '${REMOTE_DIR}' is not accessible for this FTP user. Falling back to the FTP login directory."
+          REMOTE_DIR="."
+        fi
+
+        echo "Deploying to resolved remote dir: ${REMOTE_DIR}"
+        lftp -c "
+          set ssl:verify-certificate no;
+          set ftp:list-options -a;
+          set xfer:clobber on;
+          set cmd:fail-exit yes;
+          open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
           lcd ./build/web;
-          mkdir -p $REMOTE_DIR;
           cd $REMOTE_DIR;
           pwd;
           cls;
