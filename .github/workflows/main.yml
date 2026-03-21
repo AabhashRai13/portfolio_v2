@@ -82,13 +82,11 @@ jobs:
         FTP_SERVER: ${{ secrets.FTP_SERVER }}
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
       run: |
         set -eu
         
-        # 1. Strip leading slash if it exists (so /public_html becomes public_html)
-        # This prevents absolute path errors if the FTP account is restricted to a specific folder.
-        CLEAN_REMOTE_DIR=$(echo "${FTP_REMOTE_DIR:-public_html}" | sed 's/^\///')
+        # Hardcoding the Hostinger directory path so we don't rely on GitHub Secrets.
+        CLEAN_REMOTE_DIR="domains/aabhashrai.com/public_html"
         
         # 2. Try configured/cleaned dir first, then try purely public_html, lastly fallback to .
         TARGET_DIR=""
