@@ -92,14 +92,6 @@ class Description extends StatelessWidget {
                     color: CustomColor.textSecondary, // light brown
                   ),
                 ),
-                Text(
-                  '• 5+ years a ',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: CustomColor.textSecondary, // light brown
-                  ),
-                ),
               ],
             ),
           const SizedBox(height: 25),

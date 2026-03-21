@@ -43,8 +43,8 @@ jobs:
     - name: Build Flutter Web
       run: flutter build web --release
 
-    # 🏷️ Add deploy marker for live verification
-    - name: Create deploy marker
+    # 🏷️ Add deploy marker for live verification & Cache-Buster
+    - name: Create deploy marker and Cache-Buster
       run: |
         cat > build/web/deploy-info.txt <<EOF
         repo=${GITHUB_REPOSITORY}
@@ -53,6 +53,17 @@ jobs:
         run_id=${GITHUB_RUN_ID}
         run_number=${GITHUB_RUN_NUMBER}
         deployed_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        EOF
+        
+        # Force cache revalidation on Hostinger (LiteSpeed/Apache)
+        cat > build/web/.htaccess <<EOF
+        <IfModule mod_headers.c>
+            <FilesMatch "\.(html|json)$">
+                Header set Cache-Control "no-cache, no-store, must-revalidate"
+                Header set Pragma "no-cache"
+                Header set Expires 0
+            </FilesMatch>
+        </IfModule>
         EOF
 
     # 🚫 Remove service worker to avoid aggressive caching
@@ -74,26 +85,36 @@ jobs:
         FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
       run: |
         set -eu
-        REMOTE_DIR="${FTP_REMOTE_DIR:-.}"
-        echo "Requested remote dir: ${REMOTE_DIR}"
+        
+        # 1. Strip leading slash if it exists (so /public_html becomes public_html)
+        # This prevents absolute path errors if the FTP account is restricted to a specific folder.
+        CLEAN_REMOTE_DIR=$(echo "${FTP_REMOTE_DIR:-public_html}" | sed 's/^\///')
+        
+        # 2. Try configured/cleaned dir first, then try purely public_html, lastly fallback to .
+        TARGET_DIR=""
+        for DIR in "$CLEAN_REMOTE_DIR" "public_html" "."; do
+          echo "Testing if '$DIR' is accessible..."
+          if lftp -c "
+            set ssl:verify-certificate no;
+            set cmd:fail-exit yes;
+            open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
+            cd $DIR;
+            bye
+          " >/dev/null 2>&1; then
+            TARGET_DIR="$DIR"
+            echo "✅ Successfully connected to: $DIR"
+            break
+          else
+            echo "❌ Directory '$DIR' not found or not accessible."
+          fi
+        done
 
-        if ! lftp -c "
-          set ssl:verify-certificate no;
-          set ftp:list-options -a;
-          set xfer:clobber on;
-          set cmd:fail-exit yes;
-          open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
-          pwd;
-          cls;
-          cd $REMOTE_DIR;
-          pwd;
-          bye
-        "; then
-          echo "Remote dir '${REMOTE_DIR}' is not accessible for this FTP user. Falling back to the FTP login directory."
-          REMOTE_DIR="."
+        if [ -z "$TARGET_DIR" ]; then
+          echo "CRITICAL: Could not find any valid deployment directory!"
+          exit 1
         fi
 
-        echo "Deploying to resolved remote dir: ${REMOTE_DIR}"
+        echo "Deploying files to resolved remote dir: ${TARGET_DIR}"
         lftp -c "
           set ssl:verify-certificate no;
           set ftp:list-options -a;
@@ -101,7 +122,7 @@ jobs:
           set cmd:fail-exit yes;
           open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
           lcd ./build/web;
-          cd $REMOTE_DIR;
+          cd $TARGET_DIR;
           pwd;
           cls;
           mirror -R --delete --verbose ./ ./;
