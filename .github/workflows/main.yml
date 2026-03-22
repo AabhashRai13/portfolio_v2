@@ -85,12 +85,9 @@ jobs:
       run: |
         set -eu
         
-        # Hardcoding the Hostinger directory path so we don't rely on GitHub Secrets.
-        CLEAN_REMOTE_DIR="domains/aabhashrai.com/public_html"
-        
-        # 2. Try configured/cleaned dir first, then try purely public_html, lastly fallback to .
+        # Test common paths just in case, but rely heavily on . for Hostinger jailed FTP accounts.
         TARGET_DIR=""
-        for DIR in "$CLEAN_REMOTE_DIR" "public_html" "."; do
+        for DIR in "domains/aabhashrai.com/public_html" "public_html" "."; do
           echo "Testing if '$DIR' is accessible..."
           if lftp -c "
             set ssl:verify-certificate no;
