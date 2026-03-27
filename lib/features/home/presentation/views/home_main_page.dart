@@ -128,56 +128,62 @@ class _HomeMainPageState extends State<HomeMainPage> {
                 stops: [0.1, 0.4, 0.7, 1.0],
               ),
             ),
-            child: SingleChildScrollView(
+            child: CustomScrollView(
               controller: scrollController,
-              child: Column(
-                children: [
-                  SizedBox(key: _sectionKeys[HomeSection.hero]),
-                  if (constraints.maxWidth >= kMinDesktopWidth)
-                    HeaderDesktop(
-                      navigationItems: HomeController.navigationItems,
-                      onNavMenuTap: _handleNavigationItem,
-                    )
-                  else
-                    HeaderMobile(
-                      onLogoTap: () {},
-                      onMenuTap: () {
-                        scaffoldKey.currentState?.openEndDrawer();
-                      },
-                    ),
-                  if (constraints.maxWidth >= kMinDesktopWidth)
-                    MainDesktop(
-                      scrollToSection: () {
-                        _handleNavigation(
-                          _homeController.scrollToContact(),
-                        );
-                      },
-                      openResume: _homeController.openResume,
-                      openBlog: () => _handleNavigation(
-                        const HomeNavigationTarget.route(AppRoutes.blog),
-                      ),
-                      gameChild: const GamePreview(),
-                    )
-                  else
-                    MainMobile(
-                      scrollToSection: () {
-                        _handleNavigation(
-                          _homeController.scrollToContact(),
-                        );
-                      },
-                      openResume: _homeController.openResume,
-                      openBlog: () => _handleNavigation(
-                        const HomeNavigationTarget.route(AppRoutes.blog),
-                      ),
-                    ),
-                  Container(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: SizedBox(key: _sectionKeys[HomeSection.hero]),
+                ),
+                SliverToBoxAdapter(
+                  child: constraints.maxWidth >= kMinDesktopWidth
+                      ? HeaderDesktop(
+                          navigationItems: HomeController.navigationItems,
+                          onNavMenuTap: _handleNavigationItem,
+                        )
+                      : HeaderMobile(
+                          onLogoTap: () {},
+                          onMenuTap: () {
+                            scaffoldKey.currentState?.openEndDrawer();
+                          },
+                        ),
+                ),
+                SliverToBoxAdapter(
+                  child: constraints.maxWidth >= kMinDesktopWidth
+                      ? MainDesktop(
+                          scrollToSection: () {
+                            _handleNavigation(
+                              _homeController.scrollToContact(),
+                            );
+                          },
+                          openResume: _homeController.openResume,
+                          openBlog: () => _handleNavigation(
+                            const HomeNavigationTarget.route(AppRoutes.blog),
+                          ),
+                          gameChild: const GamePreview(),
+                        )
+                      : MainMobile(
+                          scrollToSection: () {
+                            _handleNavigation(
+                              _homeController.scrollToContact(),
+                            );
+                          },
+                          openResume: _homeController.openResume,
+                          openBlog: () => _handleNavigation(
+                            const HomeNavigationTarget.route(AppRoutes.blog),
+                          ),
+                        ),
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(
                     key: _sectionKeys[HomeSection.skills],
                     child: SkillsSection(
                       isDesktop: constraints.maxWidth >= kMedDesktopWidth,
                       width: screenWidth,
                     ),
                   ),
-                  SizedBox(
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(
                     key: _sectionKeys[HomeSection.introVideo],
                     height: constraints.maxWidth >= kMinDesktopWidth
                         ? 700
@@ -196,20 +202,28 @@ class _HomeMainPageState extends State<HomeMainPage> {
                       ],
                     ),
                   ),
-                  Portfolio(
+                ),
+                SliverToBoxAdapter(
+                  child: Portfolio(
                     key: _sectionKeys[HomeSection.portfolio],
                     projects: _homeController.featuredProjects,
                     onOpenMore: _homeController.openPortfolioSource,
                     onOpenProject: _homeController.openProject,
                   ),
-                  const SizedBox(height: 30),
-                  ContactSection(
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 30),
+                ),
+                SliverToBoxAdapter(
+                  child: ContactSection(
                     controller: _contactController,
                     key: _sectionKeys[HomeSection.contact],
                   ),
-                  const Footer(),
-                ],
-              ),
+                ),
+                const SliverToBoxAdapter(
+                  child: Footer(),
+                ),
+              ],
             ),
           ),
         );
