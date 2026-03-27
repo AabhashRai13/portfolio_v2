@@ -27,7 +27,7 @@ class Footer extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-               Text(
+              Text(
                 'Made by ',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,

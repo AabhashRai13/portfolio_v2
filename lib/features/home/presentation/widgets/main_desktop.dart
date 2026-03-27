@@ -5,10 +5,14 @@ import 'package:my_portfolio/features/home/presentation/widgets/frosted_containe
 class MainDesktop extends StatelessWidget {
   const MainDesktop({
     required this.scrollToSection,
+    required this.openResume,
+    required this.openBlog,
     required this.gameChild,
     super.key,
   });
   final VoidCallback scrollToSection;
+  final Future<void> Function() openResume;
+  final VoidCallback openBlog;
   final Widget gameChild;
 
   @override
@@ -27,6 +31,8 @@ class MainDesktop extends StatelessWidget {
             ),
             child: Description(
               scrollToSection: scrollToSection,
+              openResume: openResume,
+              openBlog: openBlog,
             ),
           )
         : FrostedGlassContainer(
@@ -35,6 +41,8 @@ class MainDesktop extends StatelessWidget {
             child: screenSize.width < 1000
                 ? Description(
                     scrollToSection: scrollToSection,
+                    openResume: openResume,
+                    openBlog: openBlog,
                   )
                 : Row(
                     children: [
@@ -42,6 +50,8 @@ class MainDesktop extends StatelessWidget {
                         flex: 3,
                         child: Description(
                           scrollToSection: scrollToSection,
+                          openResume: openResume,
+                          openBlog: openBlog,
                         ),
                       ),
                       Expanded(

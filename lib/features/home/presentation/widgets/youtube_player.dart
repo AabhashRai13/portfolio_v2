@@ -1,8 +1,9 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/resources/size_config.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/custom_text_heading.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/frosted_container_widget.dart';
-import 'package:my_portfolio/resources/size_config.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class YoutubePlayerScreen extends StatefulWidget {

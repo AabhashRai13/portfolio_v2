@@ -1,17 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/constants/size.dart';
+import 'package:my_portfolio/core/resources/size_config.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/get_in_touch_button.dart';
-import 'package:my_portfolio/resources/size_config.dart';
 
 class Description extends StatelessWidget {
   const Description({
     required this.scrollToSection,
+    required this.openResume,
+    required this.openBlog,
     super.key,
   });
 
   final VoidCallback scrollToSection;
+  final Future<void> Function() openResume;
+  final VoidCallback openBlog;
 
   @override
   Widget build(BuildContext context) {
@@ -103,10 +109,80 @@ class Description extends StatelessWidget {
               ],
             ),
           const SizedBox(height: 25),
-          // contact btn with hover effects and shadow
           if (screenSize.height > 300)
-            GetInTouchButton(scrollToSection: scrollToSection),
+            Wrap(
+              spacing: 14,
+              runSpacing: 14,
+              children: [
+                GetInTouchButton(scrollToSection: scrollToSection),
+                _SecondaryActionButton(
+                  label: 'Resume',
+                  onTap: openResume,
+                ),
+                _SecondaryActionButton(
+                  label: 'Blog',
+                  onTap: openBlog,
+                ),
+              ],
+            ),
         ],
+      ),
+    );
+  }
+}
+
+class _SecondaryActionButton extends StatelessWidget {
+  const _SecondaryActionButton({
+    required this.label,
+    required this.onTap,
+  });
+
+  final String label;
+  final FutureOr<void> Function()? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final horizontalPadding = SizeConfig.screenWidth < 600
+        ? 10.0
+        : SizeConfig.screenWidth < 900
+        ? 12.0
+        : 15.0;
+    final verticalPadding = SizeConfig.screenWidth < 600
+        ? 10.0
+        : SizeConfig.screenWidth < 900
+        ? 12.0
+        : 15.0;
+    final fontSize = SizeConfig.screenWidth < 600
+        ? 18.0
+        : SizeConfig.screenWidth < 900
+        ? 20.0
+        : 22.0;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap == null ? null : () => onTap!.call(),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: verticalPadding,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.65),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: CustomColor.primary.withValues(alpha: 0.25),
+            ),
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.poppins(
+              color: CustomColor.textPrimary,
+              fontSize: fontSize,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
       ),
     );
   }

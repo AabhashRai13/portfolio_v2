@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:my_portfolio/entity/orbit_icon.dart';
+import 'package:my_portfolio/features/skills/domain/models/orbiting_icon.dart';
 
 class AnimatedSkillIcons extends StatelessWidget {
   const AnimatedSkillIcons({
-    required this.icon, super.key,
+    required this.icon,
+    super.key,
   });
 
   final OrbitingIcon icon;

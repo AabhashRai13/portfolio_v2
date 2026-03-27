@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/resources/styles/style.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/animated_logo.dart';
-
-import 'package:my_portfolio/styles/style.dart';
 
 class HeaderMobile extends StatelessWidget {
   const HeaderMobile({

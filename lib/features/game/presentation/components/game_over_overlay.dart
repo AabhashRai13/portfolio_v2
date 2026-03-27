@@ -29,8 +29,11 @@ class GameOverOverlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-             const Icon(Icons.flutter_dash, color: CustomColor.pastelRed, 
-             size: 56,),
+              const Icon(
+                Icons.flutter_dash,
+                color: CustomColor.pastelRed,
+                size: 56,
+              ),
               const SizedBox(height: 16),
               Text(
                 'Game Over',
@@ -56,8 +59,10 @@ class GameOverOverlay extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 14,
+                  ),
                   textStyle: GoogleFonts.poppins(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,

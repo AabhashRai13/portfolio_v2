@@ -7,10 +7,10 @@ import 'package:my_portfolio/features/game/presentation/game_constants.dart';
 
 class Bird extends SpriteComponent with CollisionCallbacks {
   Bird()
-      : super(
-          size: Vector2(birdWidth, birdHeight),
-          position: Vector2(birdStartX, birdStartY),
-        );
+    : super(
+        size: Vector2(birdWidth, birdHeight),
+        position: Vector2(birdStartX, birdStartY),
+      );
 
   double velocity = 0;
 

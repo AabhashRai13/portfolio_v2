@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/resources/asset_manager.dart';
+import 'package:my_portfolio/core/resources/asset_manager.dart';
 
 class BounceManAnimationMobile extends StatefulWidget {
   const BounceManAnimationMobile({super.key});
@@ -99,7 +99,6 @@ class _BounceManAnimationStateMobile extends State<BounceManAnimationMobile>
 }
 
 class IrregularShadowPainter extends CustomPainter {
-
   IrregularShadowPainter({required this.opacity, required this.t});
   final double opacity;
   final double t;

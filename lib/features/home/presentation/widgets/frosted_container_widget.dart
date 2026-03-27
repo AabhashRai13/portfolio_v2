@@ -22,8 +22,6 @@ class FrostedGlassContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
-          
-
               // Backdrop and glass effect
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
@@ -31,17 +29,17 @@ class FrostedGlassContainer extends StatelessWidget {
                   height: height,
                   width: width,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha:0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha:0.25),
+                      color: Colors.white.withValues(alpha: 0.25),
                       width: 1.2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha:0.02),
+                        color: Colors.black.withValues(alpha: 0.02),
                         blurRadius: 30,
-                        offset:const Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
@@ -52,7 +50,7 @@ class FrostedGlassContainer extends StatelessWidget {
               // // Optional: Add a subtle noise texture overlay
               Positioned.fill(
                 child: IgnorePointer(
-                  child:     Container(
+                  child: Container(
                     height: height,
                     width: width,
                     decoration: BoxDecoration(

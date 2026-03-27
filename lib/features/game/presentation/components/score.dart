@@ -7,15 +7,15 @@ import 'package:my_portfolio/features/game/presentation/flappy_game.dart';
 
 class ScoreText extends TextComponent with HasGameReference<FlappyGame> {
   ScoreText()
-      : super(
-          text: '0',
-          textRenderer: TextPaint(
-            style: GoogleFonts.poppins(
-              fontSize: 40,
-              fontWeight: FontWeight.w600,
-            ),
+    : super(
+        text: '0',
+        textRenderer: TextPaint(
+          style: GoogleFonts.poppins(
+            fontSize: 40,
+            fontWeight: FontWeight.w600,
           ),
-        );
+        ),
+      );
 
   @override
   Future<void> onLoad() async {

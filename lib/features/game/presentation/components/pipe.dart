@@ -6,7 +6,7 @@ import 'package:my_portfolio/features/game/presentation/game_constants.dart';
 class Pipe extends SpriteComponent
     with CollisionCallbacks, HasGameReference<FlappyGame> {
   Pipe(Vector2 position, Vector2 size, {required this.isTopPipe})
-      : super(position: position, size: size);
+    : super(position: position, size: size);
   final bool isTopPipe;
   bool scored = false;
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_portfolio/constants/colors.dart';
-import 'package:my_portfolio/resources/size_config.dart';
+import 'package:my_portfolio/core/resources/size_config.dart';
 
 class GetInTouchButton extends StatelessWidget {
   const GetInTouchButton({
@@ -18,18 +18,18 @@ class GetInTouchButton extends StatelessWidget {
     final horizontalPadding = SizeConfig.screenWidth < 600
         ? 10.0
         : SizeConfig.screenWidth < 900
-            ? 12.0
-            : 15.0;
+        ? 12.0
+        : 15.0;
     final verticalPadding = SizeConfig.screenWidth < 600
         ? 10.0
         : SizeConfig.screenWidth < 900
-            ? 12.0
-            : 15.0;
+        ? 12.0
+        : 15.0;
     final fontSize = SizeConfig.screenWidth < 600
         ? 20.0
         : SizeConfig.screenWidth < 900
-            ? 25.0
-            : 26.0;
+        ? 25.0
+        : 26.0;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -46,8 +46,9 @@ class GetInTouchButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFBFA181)
-                    .withValues(alpha: 0.25), // Soft brown shadow
+                color: const Color(
+                  0xFFBFA181,
+                ).withValues(alpha: 0.25), // Soft brown shadow
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),

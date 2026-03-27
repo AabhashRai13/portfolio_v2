@@ -3,14 +3,14 @@ import 'package:flame/components.dart';
 import 'package:my_portfolio/features/game/presentation/flappy_game.dart';
 import 'package:my_portfolio/features/game/presentation/game_constants.dart';
 
-class Ground extends SpriteComponent with HasGameReference<FlappyGame> ,
-CollisionCallbacks{
+class Ground extends SpriteComponent
+    with HasGameReference<FlappyGame>, CollisionCallbacks {
   Ground() : super();
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    size = Vector2( 2 *game.size.x, groundHeight);
+    size = Vector2(2 * game.size.x, groundHeight);
     position = Vector2(0, game.size.y - groundHeight);
     sprite = await Sprite.load('ground.png');
     add(RectangleHitbox());
@@ -21,8 +21,8 @@ CollisionCallbacks{
     super.update(dt);
     position.x -= groundScrollSpeed * dt;
 
-    if (position.x + size.x /2 <=0) {
+    if (position.x + size.x / 2 <= 0) {
       position.x = 0;
     }
   }
-} 
+}

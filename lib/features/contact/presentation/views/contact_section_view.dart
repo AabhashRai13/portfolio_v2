@@ -4,45 +4,44 @@ import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/core/presentation/widgets/custom_text_field.dart';
-import 'package:my_portfolio/features/contact/presentation/view_models/contact_view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 
 class ContactSection extends StatefulWidget {
-  const ContactSection({super.key});
+  const ContactSection({
+    required this.controller,
+    super.key,
+  });
+
+  final ContactController controller;
 
   @override
   State<ContactSection> createState() => _ContactSectionState();
 }
 
 class _ContactSectionState extends State<ContactSection> {
-  ContactViewModel? _viewModel;
+  late final ContactController _controller;
   String? _lastFeedback;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final nextViewModel = context.read<ContactViewModel>();
-    if (_viewModel == nextViewModel) {
-      return;
-    }
-
-    _viewModel?.submitCommand.removeListener(_handleSubmitFeedback);
-    _viewModel = nextViewModel;
-    _viewModel?.submitCommand.addListener(_handleSubmitFeedback);
+  void initState() {
+    super.initState();
+    _controller = widget.controller;
+    _controller.submitCommand.addListener(_handleSubmitFeedback);
   }
 
   @override
   void dispose() {
-    _viewModel?.submitCommand.removeListener(_handleSubmitFeedback);
+    _controller.submitCommand.removeListener(_handleSubmitFeedback);
+    _controller.dispose();
     super.dispose();
   }
 
   void _handleSubmitFeedback() {
-    if (!mounted || _viewModel == null) {
+    if (!mounted) {
       return;
     }
 
-    final command = _viewModel!.submitCommand;
+    final command = _controller.submitCommand;
     if (command.isLoading) {
       return;
     }
@@ -62,15 +61,13 @@ class _ContactSectionState extends State<ContactSection> {
       ),
     );
 
-    _viewModel!.resetSubmitFeedback();
+    _controller.resetSubmitFeedback();
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<ContactViewModel>();
-
     return Form(
-      key: viewModel.formKey,
+      key: _controller.formKey,
       child: Container(
         color: CustomColor.bgLight1,
         padding: const EdgeInsets.symmetric(vertical: 60),
@@ -121,7 +118,7 @@ class _ContactSectionState extends State<ContactSection> {
                           Flexible(
                             child: CustomTextField(
                               hintText: 'Your name',
-                              controller: viewModel.nameController,
+                              controller: _controller.nameController,
                               inputType: 'Name',
                             ),
                           ),
@@ -129,7 +126,7 @@ class _ContactSectionState extends State<ContactSection> {
                           Flexible(
                             child: CustomTextField(
                               hintText: 'Your email',
-                              controller: viewModel.emailController,
+                              controller: _controller.emailController,
                               isEmail: true,
                               inputType: 'Email',
                             ),
@@ -141,14 +138,14 @@ class _ContactSectionState extends State<ContactSection> {
                       children: [
                         CustomTextField(
                           hintText: 'Your name',
-                          controller: viewModel.nameController,
+                          controller: _controller.nameController,
                           inputType: 'Name',
                         ),
                         const SizedBox(height: 15),
                         CustomTextField(
                           hintText: 'Your email',
                           inputType: 'Email',
-                          controller: viewModel.emailController,
+                          controller: _controller.emailController,
                           isEmail: true,
                         ),
                       ],
@@ -159,51 +156,56 @@ class _ContactSectionState extends State<ContactSection> {
                 CustomTextField(
                   hintText: 'Your phone number',
                   inputType: 'Phone Number',
-                  controller: viewModel.phoneController,
+                  controller: _controller.phoneController,
                 ),
                 const SizedBox(height: 18),
                 CustomTextField(
                   hintText: 'Your message',
                   inputType: 'Message',
                   maxLines: 8,
-                  controller: viewModel.messageController,
+                  controller: _controller.messageController,
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: CustomColor.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 4,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      textStyle: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        letterSpacing: 1.1,
-                      ),
-                    ),
-                    onPressed: viewModel.submitCommand.isLoading
-                        ? null
-                        : viewModel.submit,
-                    icon: viewModel.submitCommand.isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Icon(Icons.send_rounded, size: 20),
-                    label: Text(
-                      viewModel.submitCommand.isLoading
-                          ? 'Sending...'
-                          : 'Send Message',
-                    ),
+                  child: ListenableBuilder(
+                    listenable: _controller.submitCommand,
+                    builder: (context, _) {
+                      return ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: CustomColor.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 4,
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            letterSpacing: 1.1,
+                          ),
+                        ),
+                        onPressed: _controller.submitCommand.isLoading
+                            ? null
+                            : _controller.submit,
+                        icon: _controller.submitCommand.isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.send_rounded, size: 20),
+                        label: Text(
+                          _controller.submitCommand.isLoading
+                              ? 'Sending...'
+                              : 'Send Message',
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -227,17 +229,17 @@ class _ContactSectionState extends State<ContactSection> {
                     _ContactIconButton(
                       icon: FontAwesomeIcons.github,
                       url: SnsLinks.github,
-                      onTap: viewModel.openSocialLink,
+                      onTap: _controller.openSocialLink,
                     ),
                     _ContactIconButton(
                       icon: FontAwesomeIcons.linkedin,
                       url: SnsLinks.linkedIn,
-                      onTap: viewModel.openSocialLink,
+                      onTap: _controller.openSocialLink,
                     ),
                     _ContactIconButton(
                       icon: FontAwesomeIcons.instagram,
                       url: SnsLinks.instagram,
-                      onTap: viewModel.openSocialLink,
+                      onTap: _controller.openSocialLink,
                     ),
                   ],
                 ),

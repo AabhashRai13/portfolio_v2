@@ -29,8 +29,8 @@ class PipeManager extends Component with HasGameReference<FlappyGame> {
 
     final bottomPipeHeight =
         minPipeHeight + Random().nextDouble() * (maxPipeHeight - minPipeHeight);
-    final topPipeHeight = screenHeight - groundHeight 
-    - pipeGap - bottomPipeHeight;
+    final topPipeHeight =
+        screenHeight - groundHeight - pipeGap - bottomPipeHeight;
 
     final bottomPipe = Pipe(
       Vector2(game.size.x, screenHeight - groundHeight - bottomPipeHeight),

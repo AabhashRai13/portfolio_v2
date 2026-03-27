@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_portfolio/constants/colors.dart';
-import 'package:my_portfolio/resources/size_config.dart';
+import 'package:my_portfolio/core/resources/size_config.dart';
 
 class AnimatedLogo extends StatefulWidget {
   const AnimatedLogo({super.key});

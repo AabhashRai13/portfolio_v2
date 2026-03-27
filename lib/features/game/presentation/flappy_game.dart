@@ -62,7 +62,9 @@ class FlappyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
     isGameOver = true;
     pauseEngine();
 
-    overlays.add('gameOver',);
+    overlays.add(
+      'gameOver',
+    );
   }
 
   void restartGame() {
