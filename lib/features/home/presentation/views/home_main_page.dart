@@ -84,7 +84,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
     }
 
     if (target.route != null) {
-      context.push(target.route!);
+      context.go(target.route!);
       return;
     }
 
@@ -119,8 +119,9 @@ class _HomeMainPageState extends State<HomeMainPage> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        scrollController.smoothWheelEnabled =
-            _isDesktopWheelSmoothingEnabled(constraints);
+        scrollController.smoothWheelEnabled = _isDesktopWheelSmoothingEnabled(
+          constraints,
+        );
 
         return Scaffold(
           key: scaffoldKey,
@@ -157,7 +158,8 @@ class _HomeMainPageState extends State<HomeMainPage> {
                   child: constraints.maxWidth >= kMinDesktopWidth
                       ? HeaderDesktop(
                           navigationItems: HomeController.navigationItems,
-                          onNavMenuTap: (item) => _handleNavigation(item.target),
+                          onNavMenuTap: (item) =>
+                              _handleNavigation(item.target),
                         )
                       : HeaderMobile(
                           onLogoTap: () {},

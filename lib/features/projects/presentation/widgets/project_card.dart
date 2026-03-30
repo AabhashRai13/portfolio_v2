@@ -162,7 +162,8 @@ class ProjectCardState extends State<ProjectCard> {
                             color: AppTheme.c!.primary!.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(999),
                             border: Border.all(
-                              color: AppTheme.c!.primary!.withValues(alpha: 0.2),
+                              color:
+                               AppTheme.c!.primary!.withValues(alpha: 0.2),
                             ),
                           ),
                           child: Text(

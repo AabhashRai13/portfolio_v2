@@ -32,7 +32,6 @@ class _ContactSectionState extends State<ContactSection> {
   @override
   void dispose() {
     _controller.submitCommand.removeListener(_handleSubmitFeedback);
-    _controller.dispose();
     super.dispose();
   }
 

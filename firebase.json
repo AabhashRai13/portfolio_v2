@@ -1,0 +1,18 @@
+{
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "aabhash-portfolio-blog",
+          "configurations": {
+            "web": "1:505742284930:web:e23e276eab9ee36200fc9b"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
