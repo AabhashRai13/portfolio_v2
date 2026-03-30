@@ -12,6 +12,7 @@ import 'package:my_portfolio/features/blog_detail/presentation/controllers/blog_
 import 'package:my_portfolio/features/blog_list/data/datasources/blog_list_remote_data_source.dart';
 import 'package:my_portfolio/features/blog_list/data/repositories/firestore_blog_list_repository.dart';
 import 'package:my_portfolio/features/blog_list/domain/repositories/blog_list_repository.dart';
+import 'package:my_portfolio/features/blog_list/domain/usecases/get_blog_posts_use_case.dart';
 import 'package:my_portfolio/features/blog_list/presentation/controllers/blog_list_controller.dart';
 import 'package:my_portfolio/features/contact/data/repositories/email_js_contact_repository.dart';
 import 'package:my_portfolio/features/contact/domain/repositories/contact_repository.dart';
@@ -68,6 +69,11 @@ void setupDependencies() {
         requestHandler: getIt.get<FirestoreRequestHandler>(),
       ),
     )
+    ..registerLazySingleton<GetBlogPostsUseCase>(
+      () => GetBlogPostsUseCase(
+        repository: getIt.get<BlogListRepository>(),
+      ),
+    )
     ..registerLazySingleton<BlogDetailRepository>(
       () => FirestoreBlogDetailRepositoryImpl(
         remoteDataSource: getIt.get<BlogDetailRemoteDataSource>(),
@@ -98,7 +104,7 @@ void setupDependencies() {
     )
     ..registerFactory(
       () => BlogListController(
-        blogListRepository: getIt.get<BlogListRepository>(),
+        getBlogPosts: getIt.get<GetBlogPostsUseCase>(),
       ),
     )
     ..registerFactory(

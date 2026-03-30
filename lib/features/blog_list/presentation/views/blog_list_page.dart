@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/features/blog_list/domain/usecases/get_blog_posts_use_case.dart';
 import 'package:my_portfolio/features/blog_list/presentation/controllers/blog_list_controller.dart';
+import 'package:my_portfolio/features/blog_list/presentation/widgets/blog_feed_back_state.dart';
+import 'package:my_portfolio/features/blog_list/presentation/widgets/blog_hero.dart';
+import 'package:my_portfolio/features/blog_list/presentation/widgets/featured_story_card.dart';
+import 'package:my_portfolio/features/blog_list/presentation/widgets/story_card.dart';
 
 class BlogListPage extends StatefulWidget {
   const BlogListPage({required this.blogListController, super.key});
+
   final BlogListController blogListController;
 
   @override
@@ -14,12 +20,13 @@ class BlogListPage extends StatefulWidget {
 
 class _BlogListPageState extends State<BlogListPage> {
   late final BlogListController blogListController;
+  BlogPostSortOrder _sortOrder = BlogPostSortOrder.recentFirst;
 
   @override
   void initState() {
     super.initState();
     blogListController = widget.blogListController;
-    blogListController.loadBlogs();
+    blogListController.loadBlogs(sortOrder: _sortOrder);
   }
 
   @override
@@ -43,174 +50,115 @@ class _BlogListPageState extends State<BlogListPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFFF7F0),
+            colors: <Color>[
+              Color(0xFFFFFBF7),
+              Color(0xFFFFF4EA),
               Color(0xFFFFFFFF),
             ],
           ),
         ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 960),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: ListenableBuilder(
-                listenable: blogListController.loadBlogsCommand,
-                builder: (context, _) {
-                  final command = blogListController.loadBlogsCommand;
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1180),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 28,
+                ),
+                child: ListenableBuilder(
+                  listenable: blogListController.loadBlogsCommand,
+                  builder: (context, _) {
+                    final command = blogListController.loadBlogsCommand;
 
-                  if (command.isLoading && command.data.isEmpty) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                    if (command.isLoading && command.data.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  if (command.error != null) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            command.error!,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.redAccent,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 16),
-                          FilledButton.tonal(
-                            onPressed: blogListController.loadBlogs,
-                            child: const Text('Try again'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  if (command.data.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          const Text(
-                            'No blog posts yet.',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          const SizedBox(height: 16),
-                          FilledButton.tonal(
-                            onPressed: blogListController.loadBlogs,
-                            child: const Text('Refresh'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return ListView.separated(
-                    itemCount: command.data.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 18),
-                    itemBuilder: (context, index) {
-                      final post = command.data[index];
-
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(24),
-                        onTap: () => context.push(
-                          AppRoutes.blogPost(post.slug),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 18,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: post.tags
-                                    .map(
-                                      (tag) => Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: CustomColor.primary.withValues(
-                                            alpha: 0.08,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            999,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          tag,
-                                          style: const TextStyle(
-                                            color: CustomColor.primary,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                post.title,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: CustomColor.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                post.summary,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  height: 1.5,
-                                  color: CustomColor.textSecondary,
-                                ),
-                              ),
-                              const SizedBox(height: 18),
-                              Wrap(
-                                spacing: 12,
-                                runSpacing: 8,
-                                children: [
-                                  Text(
-                                    '${_formatBlogDate(post.publishedAt)} • '
-                                    '${_formatReadTime(post.readTimeMinutes)}',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: CustomColor.secondary,
-                                    ),
-                                  ),
-                                  const Text(
-                                    'Read article',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: CustomColor.primary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                    if (command.error != null) {
+                      return BlogFeedbackState(
+                        title: 'Unable to load the Blogs right now.',
+                        message: command.error!,
+                        actionLabel: 'Try again',
+                        onPressed: blogListController.loadBlogs,
                       );
-                    },
-                  );
-                },
+                    }
+
+                    if (command.data.isEmpty) {
+                      return BlogFeedbackState(
+                        title: 'No stories published yet.',
+                        message:
+                            'Fresh notes, essays, and product thinking will '
+                            'show up here soon.',
+                        actionLabel: 'Refresh',
+                        onPressed: blogListController.loadBlogs,
+                      );
+                    }
+
+                    final posts = command.data;
+                    final featuredPost = posts.first;
+                    final remainingPosts = posts
+                        .skip(1)
+                        .toList(growable: false);
+
+                    return SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          BlogHero(
+                            sortOrder: _sortOrder,
+                            onSortChanged: (value) {
+                              if (value == null) {
+                                return;
+                              }
+                              setState(() {
+                                _sortOrder = value;
+                              });
+                              blogListController.applySort(value);
+                            },
+                          ),
+                          const SizedBox(height: 34),
+                          FeaturedStoryCard(
+                            post: featuredPost,
+                            onTap: () => context.push(
+                              AppRoutes.blogPost(featuredPost.slug),
+                            ),
+                          ),
+                          if (remainingPosts.isNotEmpty) ...<Widget>[
+                            const SizedBox(height: 28),
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final isWide = constraints.maxWidth >= 880;
+                                const spacing = 24.0;
+                                final cardWidth = isWide
+                                    ? (constraints.maxWidth - spacing) / 2
+                                    : constraints.maxWidth;
+
+                                return Wrap(
+                                  spacing: spacing,
+                                  runSpacing: spacing,
+                                  children: remainingPosts
+                                      .map(
+                                        (post) => SizedBox(
+                                          width: cardWidth,
+                                          child: StoryCard(
+                                            post: post,
+                                            onTap: () => context.push(
+                                              AppRoutes.blogPost(post.slug),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(growable: false),
+                                );
+                              },
+                            ),
+                          ],
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -218,28 +166,4 @@ class _BlogListPageState extends State<BlogListPage> {
       ),
     );
   }
-}
-
-String _formatBlogDate(DateTime date) {
-  const months = <String>[
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
-  final month = months[date.month - 1];
-  return '$month ${date.day}, ${date.year}';
-}
-
-String _formatReadTime(int minutes) {
-  return '$minutes min read';
 }
