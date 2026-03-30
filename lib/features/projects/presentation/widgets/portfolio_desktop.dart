@@ -40,6 +40,7 @@ class PortfolioDesktop extends StatelessWidget {
                     banner: project.banner,
                     projectIcon: project.icon,
                     projectTitle: project.title,
+                    projectSummary: project.summary,
                     onTap: () => onOpenProject(project),
                   ),
                 )

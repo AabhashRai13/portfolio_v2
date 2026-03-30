@@ -7,6 +7,7 @@ import 'package:my_portfolio/core/resources/configs/space.dart';
 class ProjectCard extends StatefulWidget {
   const ProjectCard({
     required this.projectTitle,
+    required this.projectSummary,
     super.key,
     this.banner,
     this.projectIcon,
@@ -16,6 +17,7 @@ class ProjectCard extends StatefulWidget {
   final String? banner;
   final String? projectIcon;
   final String projectTitle;
+  final String projectSummary;
   final IconData? projectIconData;
   final VoidCallback? onTap;
 
@@ -29,6 +31,8 @@ class ProjectCardState extends State<ProjectCard> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final isCompactLayout = width <= 1135 && width >= 950;
+    final isTouchLayout = width < 950;
+    final showDetails = isTouchLayout || isHover;
 
     return InkWell(
       hoverColor: Colors.transparent,
@@ -77,6 +81,9 @@ class ProjectCardState extends State<ProjectCard> {
                 final regularIconHeight = cardHeight * 0.42;
                 final compactIconHeight = cardHeight * 0.16;
                 final iconDataSize = cardHeight * 0.28;
+                final summaryFontSize = cardHeight < 130 ? 11.0 : 12.5;
+                final titleSpacing = cardHeight < 130 ? 0.18 : 0.35;
+                final ctaFontSize = cardHeight < 130 ? 11.0 : 12.0;
 
                 return Padding(
                   padding: EdgeInsets.symmetric(
@@ -130,6 +137,42 @@ class ProjectCardState extends State<ProjectCard> {
                           textAlign: TextAlign.center,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                      if (showDetails) ...[
+                        SizedBox(height: AppDimensions.space(titleSpacing)),
+                        Text(
+                          widget.projectSummary,
+                          style: AppText.b2?.copyWith(
+                            fontSize: summaryFontSize,
+                            color: Colors.black.withValues(alpha: 0.72),
+                            height: 1.35,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: isTouchLayout ? 3 : 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: AppDimensions.space(0.25)),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppDimensions.space(0.35),
+                            vertical: AppDimensions.space(0.15),
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppTheme.c!.primary!.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: AppTheme.c!.primary!.withValues(alpha: 0.2),
+                            ),
+                          ),
+                          child: Text(
+                            'Click to explore',
+                            style: AppText.b2?.copyWith(
+                              fontSize: ctaFontSize,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.c!.primary,
+                            ),
+                          ),
                         ),
                       ],
                     ],

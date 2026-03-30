@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/core/resources/utils/static_utils.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
@@ -46,11 +45,6 @@ class HomeController {
       target: HomeNavigationTarget.scroll(HomeSection.contact),
     ),
     HomeNavigationItem(
-      title: 'Blog',
-      icon: Icons.article_outlined,
-      target: HomeNavigationTarget.route(AppRoutes.blog),
-    ),
-    HomeNavigationItem(
       title: 'Resume',
       icon: Icons.description_outlined,
       target: HomeNavigationTarget.external(SnsLinks.resume),
@@ -59,10 +53,6 @@ class HomeController {
 
   late final List<ProjectSummary> featuredProjects = _projectsRepository
       .getFeaturedProjects();
-
-  HomeNavigationTarget handleNavigationSelection(HomeNavigationItem item) {
-    return item.target;
-  }
 
   Future<void> openResume() {
     return _launchService.openExternalUrl(SnsLinks.resume);

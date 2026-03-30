@@ -49,7 +49,7 @@ class _SkillsSectionState extends State<SkillsSection> {
             ),
             const SizedBox(height: 50),
             if (widget.isDesktop)
-              const SkillsDesktop()
+              SkillsDesktop(animationService: _dash3DAnimationService)
             else
               const SkillsMobile(),
             const SizedBox(height: 10),

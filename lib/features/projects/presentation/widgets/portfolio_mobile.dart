@@ -34,6 +34,7 @@ class PortfolioMobileTab extends StatelessWidget {
             child: ProjectCard(
               projectIcon: projects[i].icon,
               projectTitle: projects[i].title,
+              projectSummary: projects[i].summary,
               onTap: () => onOpenProject(projects[i]),
             ),
           ),

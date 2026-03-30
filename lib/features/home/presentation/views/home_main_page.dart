@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
@@ -8,9 +9,9 @@ import 'package:my_portfolio/features/contact/presentation/controllers/contact_c
 import 'package:my_portfolio/features/contact/presentation/views/contact_section_view.dart';
 import 'package:my_portfolio/features/game/presentation/widgets/game_preview.dart';
 import 'package:my_portfolio/features/home/presentation/controllers/home_controller.dart';
-import 'package:my_portfolio/features/home/presentation/models/home_navigation_item.dart';
 import 'package:my_portfolio/features/home/presentation/models/home_navigation_target.dart';
 import 'package:my_portfolio/features/home/presentation/models/home_section.dart';
+import 'package:my_portfolio/features/home/presentation/services/home_wheel_scroll_coordinator.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/drawer_mobile.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/footer.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/header_desktop.dart';
@@ -39,7 +40,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
   late final HomeController _homeController;
   late final ContactController _contactController;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final scrollController = ScrollController();
+  final scrollController = HomeSmoothScrollController();
   final Map<HomeSection, GlobalKey> _sectionKeys = <HomeSection, GlobalKey>{
     HomeSection.hero: GlobalKey(),
     HomeSection.skills: GlobalKey(),
@@ -63,6 +64,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
   }
 
   void _scrollToSection(HomeSection section) {
+    scrollController.resetWheelTarget();
     final key = _sectionKeys[section];
     if (key?.currentContext == null) {
       return;
@@ -91,8 +93,22 @@ class _HomeMainPageState extends State<HomeMainPage> {
     }
   }
 
-  void _handleNavigationItem(HomeNavigationItem item) {
-    _handleNavigation(_homeController.handleNavigationSelection(item));
+  bool _isDesktopWheelSmoothingEnabled(BoxConstraints constraints) {
+    if (constraints.maxWidth < kMinDesktopWidth) {
+      return false;
+    }
+
+    if (kIsWeb) {
+      return defaultTargetPlatform != TargetPlatform.android &&
+          defaultTargetPlatform != TargetPlatform.iOS;
+    }
+
+    return switch (defaultTargetPlatform) {
+      TargetPlatform.macOS ||
+      TargetPlatform.windows ||
+      TargetPlatform.linux => true,
+      _ => false,
+    };
   }
 
   @override
@@ -103,6 +119,9 @@ class _HomeMainPageState extends State<HomeMainPage> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        scrollController.smoothWheelEnabled =
+            _isDesktopWheelSmoothingEnabled(constraints);
+
         return Scaffold(
           key: scaffoldKey,
           endDrawer: constraints.maxWidth >= kMinDesktopWidth
@@ -111,7 +130,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
                   navigationItems: HomeController.navigationItems,
                   onNavItemTap: (item) {
                     scaffoldKey.currentState?.closeEndDrawer();
-                    _handleNavigationItem(item);
+                    _handleNavigation(item.target);
                   },
                 ),
           body: Container(
@@ -138,7 +157,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
                   child: constraints.maxWidth >= kMinDesktopWidth
                       ? HeaderDesktop(
                           navigationItems: HomeController.navigationItems,
-                          onNavMenuTap: _handleNavigationItem,
+                          onNavMenuTap: (item) => _handleNavigation(item.target),
                         )
                       : HeaderMobile(
                           onLogoTap: () {},

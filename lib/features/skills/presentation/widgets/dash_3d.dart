@@ -4,33 +4,44 @@ import 'package:my_portfolio/core/resources/size_config.dart';
 import 'package:my_portfolio/features/skills/presentation/services/dash_3d_animation_service.dart';
 
 class FlutterDash3D extends StatefulWidget {
-  const FlutterDash3D({super.key});
+  const FlutterDash3D({
+    required this.animationService,
+    super.key,
+  });
+
+  final Dash3DAnimationService animationService;
 
   @override
   State<FlutterDash3D> createState() => _FlutterDash3DState();
 }
 
 class _FlutterDash3DState extends State<FlutterDash3D> {
-  final Dash3DAnimationService _dash3DAnimationService =
-      Dash3DAnimationService();
   bool _isModelLoaded = false;
+
+  void _handleModelLoaded() {
+    if (!mounted) return;
+    if (widget.animationService.controller.onModelLoaded.value) {
+      setState(() {
+        _isModelLoaded = true;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _dash3DAnimationService.initialize();
-    _dash3DAnimationService.controller?.onModelLoaded.addListener(() {
-      if (_dash3DAnimationService.controller?.onModelLoaded.value ?? false) {
-        setState(() {
-          _isModelLoaded = true;
-        });
-      }
-    });
+    widget.animationService.initialize();
+    widget.animationService.controller.onModelLoaded.addListener(
+      _handleModelLoaded,
+    );
+    _handleModelLoaded();
   }
 
   @override
   void dispose() {
-    _dash3DAnimationService.dispose();
+    widget.animationService.controller.onModelLoaded.removeListener(
+      _handleModelLoaded,
+    );
     super.dispose();
   }
 
@@ -45,7 +56,7 @@ class _FlutterDash3DState extends State<FlutterDash3D> {
             activeGestureInterceptor: false,
             progressBarColor: Colors.transparent,
             enableTouch: false,
-            controller: _dash3DAnimationService.controller,
+            controller: widget.animationService.controller,
             src: 'assets/3d_models/flutter_dash.glb',
           ),
         ),

@@ -75,7 +75,7 @@ class Description extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'I am Aabhash Rai',
+                  '''I build mobile products that feel polished, perform fast, and are ready for real users.''',
                   style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -83,23 +83,7 @@ class Description extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '• Based in Sydney',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: CustomColor.textSecondary, // light brown
-                  ),
-                ),
-                Text(
-                  '• Flutter Developer',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: CustomColor.textSecondary, // light brown
-                  ),
-                ),
-                Text(
-                  '• 5+ years a ',
+                  '''For founders, teams, and businesses that want more than just another app.''',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

@@ -6,6 +6,7 @@ import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/animated_icons.dart';
 import 'package:my_portfolio/features/skills/data/static_skill_catalog.dart';
 import 'package:my_portfolio/features/skills/domain/models/orbiting_icon.dart';
+import 'package:my_portfolio/features/skills/presentation/services/dash_3d_animation_service.dart';
 import 'package:my_portfolio/features/skills/presentation/widgets/dash_3d.dart';
 
 class OrbitLinesPainter extends CustomPainter {
@@ -56,7 +57,12 @@ class OrbitLinesPainter extends CustomPainter {
 }
 
 class SkillOrbitDemo extends StatefulWidget {
-  const SkillOrbitDemo({super.key});
+  const SkillOrbitDemo({
+    required this.animationService,
+    super.key,
+  });
+
+  final Dash3DAnimationService animationService;
 
   @override
   SkillOrbitDemoState createState() => SkillOrbitDemoState();
@@ -158,8 +164,10 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
               ),
             ),
             // Center image (you)
-            const Align(
-              child: FlutterDash3D(),
+            Align(
+              child: FlutterDash3D(
+                animationService: widget.animationService,
+              ),
             ),
             // Orbiting icons
             ..._icons.map((icon) {
