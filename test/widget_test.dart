@@ -1,30 +1,49 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:my_portfolio/main.dart';
+import 'package:my_portfolio/core/services/app_launch_service.dart';
+import 'package:my_portfolio/features/contact/domain/models/contact_message.dart';
+import 'package:my_portfolio/features/contact/domain/repositories/contact_repository.dart';
+import 'package:my_portfolio/features/contact/domain/usecases/submit_contact_message_use_case.dart';
+import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
+import 'package:my_portfolio/features/contact/presentation/views/contact_section_view.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('renders contact section smoke test', (
+    WidgetTester tester,
+  ) async {
+    final controller = ContactController(
+      submitContactMessage: SubmitContactMessageUseCase(
+        _WidgetFakeContactRepository(),
+      ),
+      launchService: const _WidgetFakeLaunchService(),
+    );
+    addTearDown(controller.dispose);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    tester.view.physicalSize = const Size(1600, 2000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ContactSection(controller: controller),
+        ),
+      ),
+    );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Send Message'), findsOneWidget);
+    expect(find.text('Get In Touch'), findsOneWidget);
   });
+}
+
+class _WidgetFakeContactRepository implements ContactRepository {
+  @override
+  Future<void> submitContactMessage(ContactMessage message) async {}
+}
+
+class _WidgetFakeLaunchService implements AppLaunchService {
+  const _WidgetFakeLaunchService();
+
+  @override
+  Future<void> openExternalUrl(String url) async {}
 }

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class CustomColor {
   // Primary Colors
-  static const Color primary =
-      Color(0xFFBFA181); // Light Brown (for highlights)
-  static const Color secondary =
-      Color(0xFFE6A4A4); // Muted Coral (optional accent)
+  static const Color primary = Color(
+    0xFFBFA181,
+  ); // Light Brown (for highlights)
+  static const Color secondary = Color(
+    0xFFE6A4A4,
+  ); // Muted Coral (optional accent)
 
   // Background Colors
   static const Color scaffoldBg = Color(0xFFFFF1E6); // Crea

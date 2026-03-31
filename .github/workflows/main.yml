@@ -1,126 +1,132 @@
 name: Flutter Web CI/CD Deploy to Hostinger
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
-      - main  # Change if your main branch is different
+      - main
 
 jobs:
   build-and-deploy:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-    # 📥 Checkout the repo
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # 🛠️ Set up Flutter SDK
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: 3.35.4
-        channel: stable
-        cache: true
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.35.4
+          channel: stable
+          cache: true
 
-           # Step to create keys.dart
-    - name: Create keys.dart
-      run: |
+      - name: Create keys.dart
+        run: |
           mkdir -p lib
           echo "const String emailJsServiceId = '${{ secrets.EMAILJS_SERVICE_ID }}';" > lib/keys.dart
           echo "const String emailJsTemplateId = '${{ secrets.EMAILJS_TEMPLATE_ID }}';" >> lib/keys.dart
           echo "const String emailJsPublicKey = '${{ secrets.EMAILJS_PUBLIC_KEY }}';" >> lib/keys.dart
           echo "const String emailJsPrivateKey = '${{ secrets.EMAILJS_PRIVATE_KEY }}';" >> lib/keys.dart
+          echo "const String firebaseAppCheckWebSiteKey = '${{ secrets.FIREBASE_APP_CHECK_WEB_SITE_KEY }}';" >> lib/keys.dart
 
-    # 📦 Install Dart/Flutter dependencies
-    - name: Get dependencies
-      run: flutter pub get
+      - name: Get dependencies
+        run: flutter pub get
 
-    # 🧼 Clean previous builds (optional but recommended)
-    - name: Clean build
-      run: flutter clean
+      - name: Clean build
+        run: flutter clean
 
-    # 🛠️ Build Flutter Web
-    - name: Build Flutter Web
-      run: flutter build web --release
+      - name: Build Flutter Web
+        run: flutter build web --release
 
+      - name: Copy hosting config into build output
+        run: |
+          cp web/.htaccess build/web/.htaccess
     # 🏷️ Add deploy marker for live verification & Cache-Buster
-    - name: Create deploy marker and Cache-Buster
-      run: |
-        cat > build/web/deploy-info.txt <<EOF
-        repo=${GITHUB_REPOSITORY}
-        branch=${GITHUB_REF_NAME}
-        commit=${GITHUB_SHA}
-        run_id=${GITHUB_RUN_ID}
-        run_number=${GITHUB_RUN_NUMBER}
-        deployed_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-        EOF
-        
-        # Force cache revalidation on Hostinger (LiteSpeed/Apache)
-        cat > build/web/.htaccess <<EOF
-        <IfModule mod_headers.c>
-            <FilesMatch "\.(html|json)$">
-                Header set Cache-Control "no-cache, no-store, must-revalidate"
-                Header set Pragma "no-cache"
-                Header set Expires 0
-            </FilesMatch>
-        </IfModule>
-        EOF
+      - name: Create deploy marker and Cache-Buster
+        run: |
+          cat > build/web/deploy-info.txt <<EOF
+          repo=${GITHUB_REPOSITORY}
+          branch=${GITHUB_REF_NAME}
+          commit=${GITHUB_SHA}
+          run_id=${GITHUB_RUN_ID}
+          run_number=${GITHUB_RUN_NUMBER}
+          deployed_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          EOF
+          
+          # Force cache revalidation on Hostinger (LiteSpeed/Apache)
+          cat > build/web/.htaccess <<EOF
+          <IfModule mod_headers.c>
+              <FilesMatch "\.(html|json)$">
+                  Header set Cache-Control "no-cache, no-store, must-revalidate"
+                  Header set Pragma "no-cache"
+                  Header set Expires 0
+              </FilesMatch>
+          </IfModule>
+          EOF
 
-    # 🚫 Remove service worker to avoid aggressive caching
-    - name: Remove flutter_service_worker.js
-      run: rm -f build/web/flutter_service_worker.js
+      - name: Create deploy marker
+        run: |
+          cat > build/web/deploy-info.txt <<EOF
+          repo=${GITHUB_REPOSITORY}
+          branch=${GITHUB_REF_NAME}
+          commit=${GITHUB_SHA}
+          run_id=${GITHUB_RUN_ID}
+          run_number=${GITHUB_RUN_NUMBER}
+          deployed_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          EOF
 
-    # 🌐 Install lftp (FTP CLI client)
-    - name: Install FTP client (lftp)
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y lftp
+      - name: Remove flutter_service_worker.js
+        run: rm -f build/web/flutter_service_worker.js
 
-    # 🚀 Deploy to Hostinger via FTP
-    - name: Deploy to Hostinger
-      env:
-        FTP_SERVER: ${{ secrets.FTP_SERVER }}
-        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-      run: |
-        set -eu
-        
-        # Test common paths just in case, but rely heavily on . for Hostinger jailed FTP accounts.
-        TARGET_DIR=""
-        for DIR in "domains/aabhashrai.com/public_html" "public_html" "."; do
-          echo "Testing if '$DIR' is accessible..."
-          if lftp -c "
+      # 🚀 Deploy to Hostinger via FTP
+      - name: Deploy to Hostinger
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          set -eu
+          
+          # Test common paths just in case, but rely heavily on . for Hostinger jailed FTP accounts.
+          TARGET_DIR=""
+          for DIR in "domains/aabhashrai.com/public_html" "public_html" "."; do
+            echo "Testing if '$DIR' is accessible..."
+            if lftp -c "
+              set ssl:verify-certificate no;
+              set cmd:fail-exit yes;
+              open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
+              cd $DIR;
+              bye
+            " >/dev/null 2>&1; then
+              TARGET_DIR="$DIR"
+              echo "✅ Successfully connected to: $DIR"
+              break
+            else
+              echo "❌ Directory '$DIR' not found or not accessible."
+            fi
+          done
+
+          if [ -z "$TARGET_DIR" ]; then
+            echo "CRITICAL: Could not find any valid deployment directory!"
+            exit 1
+          fi
+
+          echo "Deploying files to resolved remote dir: ${TARGET_DIR}"
+          lftp -c "
             set ssl:verify-certificate no;
+            set ftp:list-options -a;
+            set xfer:clobber on;
             set cmd:fail-exit yes;
             open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
-            cd $DIR;
+            lcd ./build/web;
+            cd $TARGET_DIR;
+            pwd;
+            cls;
+            mirror -R --delete --verbose ./ ./;
+            cls;
             bye
-          " >/dev/null 2>&1; then
-            TARGET_DIR="$DIR"
-            echo "✅ Successfully connected to: $DIR"
-            break
-          else
-            echo "❌ Directory '$DIR' not found or not accessible."
-          fi
-        done
-
-        if [ -z "$TARGET_DIR" ]; then
-          echo "CRITICAL: Could not find any valid deployment directory!"
-          exit 1
-        fi
-
-        echo "Deploying files to resolved remote dir: ${TARGET_DIR}"
-        lftp -c "
-          set ssl:verify-certificate no;
-          set ftp:list-options -a;
-          set xfer:clobber on;
-          set cmd:fail-exit yes;
-          open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
-          lcd ./build/web;
-          cd $TARGET_DIR;
-          pwd;
-          cls;
-          mirror -R --delete --verbose ./ ./;
-          cls;
-          bye
-        "
+          "
