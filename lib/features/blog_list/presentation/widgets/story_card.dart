@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/resources/utils/blog_formatters.dart';
 import 'package:my_portfolio/features/blog_list/domain/entities/blog_post_summary_entity.dart';
-import 'package:my_portfolio/features/blog_list/presentation/service/blog_list_utils.dart';
 import 'package:my_portfolio/features/blog_list/presentation/widgets/blog_tag_chip.dart';
 import 'package:my_portfolio/features/blog_list/presentation/widgets/meta_text.dart';
 import 'package:my_portfolio/features/blog_list/presentation/widgets/story_visual.dart';

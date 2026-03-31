@@ -32,28 +32,17 @@ class FirestoreBlogDetailRepositoryImpl implements BlogDetailRepository {
       operation: 'blog_detail.getBlogPostBySlug',
       fallbackMessage: 'Unable to load this blog post right now.',
       request: () async {
-        final directSnapshot = await _remoteDataSource.fetchPostById(slug);
-        late final BlogPostDocument postDocument;
+        final querySnapshot = await _remoteDataSource.fetchPublishedPostBySlug(
+          slug,
+        );
 
-        if (directSnapshot.exists) {
-          postDocument = BlogPostDocument.fromDocumentSnapshot(directSnapshot);
-        } else {
-          final querySnapshot = await _remoteDataSource.fetchPostBySlug(slug);
-
-          if (querySnapshot.docs.isEmpty) {
-            throw const NotFoundException('Blog post not found');
-          }
-
-          postDocument = BlogPostDocument.fromFirestore(
-            querySnapshot.docs.first,
-          );
-        }
-
-        final data = await _remoteDataSource.fetchPostData(postDocument.id);
-        final isPublished = data?['isPublished'] == true;
-        if (!isPublished) {
+        if (querySnapshot.docs.isEmpty) {
           throw const NotFoundException('Blog post not found');
         }
+
+        final postDocument = BlogPostDocument.fromFirestore(
+          querySnapshot.docs.first,
+        );
 
         final counts = await Future.wait<int>([
           _remoteDataSource.fetchLikeCount(postDocument.id),

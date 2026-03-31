@@ -140,17 +140,9 @@ class BlogPostDetailController {
       (_) async {
         authorNameController.clear();
         messageController.clear();
-
-        await loadComments(post.id);
-        final latestPost = currentPost ?? post;
-        final updatedCommentCount = loadCommentsCommand.error == null
-            ? loadCommentsCommand.data.length
-            : latestPost.commentCount + 1;
-
-        loadPostCommand.setData(
-          latestPost.copyWith(commentCount: updatedCommentCount),
+        submitCommentCommand.setData(
+          'Comment submitted for review. It will appear once approved.',
         );
-        submitCommentCommand.setData('Comment posted successfully.');
       },
     );
   }
@@ -164,8 +156,8 @@ class BlogPostDetailController {
     if (name.isEmpty) {
       return 'Please add your name.';
     }
-    if (name.length < 2) {
-      return 'Name must be at least 2 characters.';
+    if (name.length < 3) {
+      return 'Name must be at least 3 characters.';
     }
     if (name.length > 50) {
       return 'Name must be 50 characters or fewer.';

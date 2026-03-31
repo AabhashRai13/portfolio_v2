@@ -6,6 +6,10 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/posts/$(postId)).data.isPublished == true;
     }
 
+    function isApprovedComment() {
+      return resource.data.status == 'approved';
+    }
+
     function validShortString(field, min, max) {
       return field is string && field.size() >= min && field.size() <= max;
     }
@@ -15,15 +19,17 @@ service cloud.firestore {
       allow create, update, delete: if false;
 
       match /comments/{commentId} {
-        allow read: if isPublishedPost(postId);
+        allow read: if isPublishedPost(postId) && isApprovedComment();
         allow create: if isPublishedPost(postId)
           && request.resource.data.keys().hasOnly([
             'authorName',
             'message',
             'createdAt',
+            'status',
           ])
           && validShortString(request.resource.data.authorName, 2, 50)
           && validShortString(request.resource.data.message, 4, 2000)
+          && request.resource.data.status == 'pending'
           && request.resource.data.createdAt == request.time;
         allow update, delete: if false;
       }

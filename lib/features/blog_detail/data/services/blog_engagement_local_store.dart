@@ -51,7 +51,13 @@ class BlogEngagementLocalStore {
 
   String _generateId() {
     final timestamp = DateTime.now().microsecondsSinceEpoch.toRadixString(16);
-    final random = Random().nextInt(1 << 32).toRadixString(16);
-    return '$timestamp$random';
+    final random = Random();
+    final suffix = List<String>.generate(
+      4,
+      (_) => random.nextInt(0x10000).toRadixString(16).padLeft(4, '0'),
+      growable: false,
+    ).join();
+
+    return '$timestamp$suffix';
   }
 }

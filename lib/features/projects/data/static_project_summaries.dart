@@ -6,6 +6,7 @@ const staticProjectSummaries = <ProjectSummary>[
     summary: 'A giving app for fast, secure charity donations and causes.',
     icon: 'assets/projects/sadaqa_icon.png',
     link: 'https://apps.apple.com/us/app/sadaqa/id6474403245',
+    banner: 'assets/projects/sadaqa_poster.png',
   ),
   ProjectSummary(
     title: 'Our Rights',

@@ -38,12 +38,6 @@ class _BlogListPageState extends State<BlogListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Blog'),
-        backgroundColor: Colors.white,
-        foregroundColor: CustomColor.textPrimary,
-        elevation: 0,
-      ),
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
@@ -72,7 +66,9 @@ class _BlogListPageState extends State<BlogListPage> {
                     final command = blogListController.loadBlogsCommand;
 
                     if (command.isLoading && command.data.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
+                      return  const Center(child: CircularProgressIndicator(
+                        color: CustomColor.secondary ,
+                      ));
                     }
 
                     if (command.error != null) {

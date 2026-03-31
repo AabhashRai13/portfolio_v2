@@ -6,6 +6,9 @@ class BlogDetailRemoteDataSource {
     required FirebaseFirestore firestore,
   }) : _firestore = firestore;
 
+  static const String approvedCommentStatus = 'approved';
+  static const String pendingCommentStatus = 'pending';
+
   final FirebaseFirestore _firestore;
 
   CollectionReference<Map<String, dynamic>> get _posts =>
@@ -20,12 +23,14 @@ class BlogDetailRemoteDataSource {
   CollectionReference<Map<String, dynamic>> views(String postId) =>
       _posts.doc(postId).collection('views');
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> fetchPostById(String id) {
-    return _posts.doc(id).get();
-  }
-
-  Future<QuerySnapshot<Map<String, dynamic>>> fetchPostBySlug(String slug) {
-    return _posts.where('slug', isEqualTo: slug).limit(1).get();
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchPublishedPostBySlug(
+    String slug,
+  ) {
+    return _posts
+        .where('slug', isEqualTo: slug)
+        .where('isPublished', isEqualTo: true)
+        .limit(1)
+        .get();
   }
 
   Future<int> fetchLikeCount(String postId) async {
@@ -34,7 +39,9 @@ class BlogDetailRemoteDataSource {
   }
 
   Future<int> fetchCommentCount(String postId) async {
-    final snapshot = await comments(postId).count().get();
+    final snapshot = await comments(
+      postId,
+    ).where('status', isEqualTo: approvedCommentStatus).count().get();
     return snapshot.count ?? 0;
   }
 
@@ -44,7 +51,10 @@ class BlogDetailRemoteDataSource {
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> fetchComments(String postId) {
-    return comments(postId).orderBy('createdAt', descending: true).get();
+    return comments(postId)
+        .where('status', isEqualTo: approvedCommentStatus)
+        .orderBy('createdAt', descending: true)
+        .get();
   }
 
   Future<void> createView(String postId, String sessionId) {
@@ -70,6 +80,7 @@ class BlogDetailRemoteDataSource {
       'authorName': authorName.trim(),
       'message': message.trim(),
       'createdAt': FieldValue.serverTimestamp(),
+      'status': pendingCommentStatus,
     });
   }
 

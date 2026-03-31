@@ -12,7 +12,7 @@ class BlogListController {
   List<BlogPostSummaryEntity> _loadedPosts = const <BlogPostSummaryEntity>[];
 
   final Command<List<BlogPostSummaryEntity>> loadBlogsCommand =
-      Command<List<BlogPostSummaryEntity>>(
+      Command(
         data: const <BlogPostSummaryEntity>[],
       );
 
