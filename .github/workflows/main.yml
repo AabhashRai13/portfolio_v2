@@ -45,6 +45,28 @@ jobs:
       - name: Copy hosting config into build output
         run: |
           cp web/.htaccess build/web/.htaccess
+    # 🏷️ Add deploy marker for live verification & Cache-Buster
+      - name: Create deploy marker and Cache-Buster
+        run: |
+          cat > build/web/deploy-info.txt <<EOF
+          repo=${GITHUB_REPOSITORY}
+          branch=${GITHUB_REF_NAME}
+          commit=${GITHUB_SHA}
+          run_id=${GITHUB_RUN_ID}
+          run_number=${GITHUB_RUN_NUMBER}
+          deployed_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          EOF
+          
+          # Force cache revalidation on Hostinger (LiteSpeed/Apache)
+          cat > build/web/.htaccess <<EOF
+          <IfModule mod_headers.c>
+              <FilesMatch "\.(html|json)$">
+                  Header set Cache-Control "no-cache, no-store, must-revalidate"
+                  Header set Pragma "no-cache"
+                  Header set Expires 0
+              </FilesMatch>
+          </IfModule>
+          EOF
 
       - name: Create deploy marker
         run: |
@@ -60,37 +82,51 @@ jobs:
       - name: Remove flutter_service_worker.js
         run: rm -f build/web/flutter_service_worker.js
 
-      - name: Install FTP client (lftp)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y lftp
-
+      # 🚀 Deploy to Hostinger via FTP
       - name: Deploy to Hostinger
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
         run: |
-          set -euo pipefail
+          set -eu
+          
+          # Test common paths just in case, but rely heavily on . for Hostinger jailed FTP accounts.
+          TARGET_DIR=""
+          for DIR in "domains/aabhashrai.com/public_html" "public_html" "."; do
+            echo "Testing if '$DIR' is accessible..."
+            if lftp -c "
+              set ssl:verify-certificate no;
+              set cmd:fail-exit yes;
+              open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
+              cd $DIR;
+              bye
+            " >/dev/null 2>&1; then
+              TARGET_DIR="$DIR"
+              echo "✅ Successfully connected to: $DIR"
+              break
+            else
+              echo "❌ Directory '$DIR' not found or not accessible."
+            fi
+          done
 
-          REMOTE_DIR="${FTP_REMOTE_DIR:-.}"
-          echo "Deploying to remote dir: ${REMOTE_DIR}"
+          if [ -z "$TARGET_DIR" ]; then
+            echo "CRITICAL: Could not find any valid deployment directory!"
+            exit 1
+          fi
 
-          lftp -e "
-            set net:timeout 20;
-            set net:max-retries 2;
-            set net:reconnect-interval-base 5;
-            set net:reconnect-interval-max 10;
-            set ftp:passive-mode true;
-            set ftp:ssl-allow true;
+          echo "Deploying files to resolved remote dir: ${TARGET_DIR}"
+          lftp -c "
             set ssl:verify-certificate no;
+            set ftp:list-options -a;
             set xfer:clobber on;
             set cmd:fail-exit yes;
-
             open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
-            lcd build/web;
-            cd $REMOTE_DIR;
-            mirror -R --delete --verbose --exclude-glob blog-media --exclude-glob blog-media/** ./ ./;
+            lcd ./build/web;
+            cd $TARGET_DIR;
+            pwd;
+            cls;
+            mirror -R --delete --verbose ./ ./;
+            cls;
             bye
           "
