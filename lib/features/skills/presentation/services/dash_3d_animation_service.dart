@@ -7,7 +7,7 @@ import 'package:flutter_3d_controller/flutter_3d_controller.dart';
 class Dash3DAnimationService {
   Dash3DAnimationService();
 
-  final Flutter3DController controller = Flutter3DController();
+  Flutter3DController _controller = Flutter3DController();
   bool _isModelLoaded = false;
 
   static const double _initialCameraTheta = 0;
@@ -19,47 +19,46 @@ class Dash3DAnimationService {
   static const double _pitchSensitivity = 80;
   static const double _maxPitchDeviationFromHorizontal = 80;
 
-  /// Initializes the animation service with the 3D controller.
-  /// Sets up listeners for model loading and initial camera/animation.
-  void initialize() {
-    if (controller.onModelLoaded.value) {
-      _onModelLoadedCallback();
-    } else {
-      controller.onModelLoaded.addListener(_onModelLoadedCallback);
-    }
+  Flutter3DController get controller => _controller;
+
+  /// The package disposes `onModelLoaded` inside the viewer's own dispose,
+  /// so each mount must start with a fresh controller instance.
+  void resetController() {
+    _controller = Flutter3DController();
+    _isModelLoaded = false;
   }
 
-  void _onModelLoadedCallback() {
-    // Ensure controller is not null and model is truly loaded
-    if (controller.onModelLoaded.value) {
-      if (_isModelLoaded) return; // Already processed this load event
-
-      _isModelLoaded = true;
-
-      // Set initial camera orbit
-      controller.setCameraOrbit(
-        _initialCameraTheta,
-        _initialCameraPhi,
-        _initialCameraRadius,
-      );
-
-      // Play animation
-      controller
-          .getAvailableAnimations()
-          .then((animations) {
-            if (animations.isNotEmpty) {
-              final animationToPlay = animations.firstWhere(
-                (name) => name.toLowerCase().contains('idle'),
-                orElse: () => animations.first,
-              );
-              controller.playAnimation(animationName: animationToPlay);
-            } else {}
-          })
-          .catchError((Object e) {
-            log('Dash3DAnimationService: Error getting animations: $e');
-          });
+  void handleModelLoaded() {
+    if (_isModelLoaded) {
+      return;
     }
-    controller.onModelLoaded.removeListener(_onModelLoadedCallback);
+
+    _isModelLoaded = true;
+
+    controller.setCameraOrbit(
+      _initialCameraTheta,
+      _initialCameraPhi,
+      _initialCameraRadius,
+    );
+
+    controller
+        .getAvailableAnimations()
+        .then((animations) {
+          if (animations.isNotEmpty) {
+            final animationToPlay = animations.firstWhere(
+              (name) => name.toLowerCase().contains('idle'),
+              orElse: () => animations.first,
+            );
+            controller.playAnimation(animationName: animationToPlay);
+          }
+        })
+        .catchError((Object e) {
+          log('Dash3DAnimationService: Error getting animations: $e');
+        });
+  }
+
+  void handleViewerDisposed() {
+    _isModelLoaded = false;
   }
 
   /// Handles mouse movement to orbit the camera.
@@ -105,6 +104,6 @@ class Dash3DAnimationService {
   }
 
   void dispose() {
-    controller.onModelLoaded.removeListener(_onModelLoadedCallback);
+    _isModelLoaded = false;
   }
 }

@@ -31,7 +31,6 @@ class MainDesktop extends StatelessWidget {
             ),
             child: Description(
               scrollToSection: scrollToSection,
-              openResume: openResume,
               openBlog: openBlog,
             ),
           )
@@ -41,7 +40,6 @@ class MainDesktop extends StatelessWidget {
             child: screenSize.width < 1000
                 ? Description(
                     scrollToSection: scrollToSection,
-                    openResume: openResume,
                     openBlog: openBlog,
                   )
                 : Row(
@@ -50,7 +48,7 @@ class MainDesktop extends StatelessWidget {
                         flex: 3,
                         child: Description(
                           scrollToSection: scrollToSection,
-                          openResume: openResume,
+                      
                           openBlog: openBlog,
                         ),
                       ),

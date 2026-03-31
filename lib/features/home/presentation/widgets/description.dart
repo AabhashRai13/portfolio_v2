@@ -10,13 +10,11 @@ import 'package:my_portfolio/features/home/presentation/widgets/get_in_touch_but
 class Description extends StatelessWidget {
   const Description({
     required this.scrollToSection,
-    required this.openResume,
     required this.openBlog,
     super.key,
   });
 
   final VoidCallback scrollToSection;
-  final Future<void> Function() openResume;
   final VoidCallback openBlog;
 
   @override
@@ -99,10 +97,6 @@ class Description extends StatelessWidget {
               runSpacing: 14,
               children: [
                 GetInTouchButton(scrollToSection: scrollToSection),
-                _SecondaryActionButton(
-                  label: 'Resume',
-                  onTap: openResume,
-                ),
                 _SecondaryActionButton(
                   label: 'Blog',
                   onTap: openBlog,

@@ -18,30 +18,23 @@ class FlutterDash3D extends StatefulWidget {
 class _FlutterDash3DState extends State<FlutterDash3D> {
   bool _isModelLoaded = false;
 
-  void _handleModelLoaded() {
+  void _handleModelLoaded(String _) {
     if (!mounted) return;
-    if (widget.animationService.controller.onModelLoaded.value) {
-      setState(() {
-        _isModelLoaded = true;
-      });
-    }
+    widget.animationService.handleModelLoaded();
+    setState(() {
+      _isModelLoaded = true;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    widget.animationService.initialize();
-    widget.animationService.controller.onModelLoaded.addListener(
-      _handleModelLoaded,
-    );
-    _handleModelLoaded();
+    widget.animationService.resetController();
   }
 
   @override
   void dispose() {
-    widget.animationService.controller.onModelLoaded.removeListener(
-      _handleModelLoaded,
-    );
+    widget.animationService.handleViewerDisposed();
     super.dispose();
   }
 
@@ -58,6 +51,7 @@ class _FlutterDash3DState extends State<FlutterDash3D> {
             enableTouch: false,
             controller: widget.animationService.controller,
             src: 'assets/3d_models/flutter_dash.glb',
+            onLoad: _handleModelLoaded,
           ),
         ),
         if (!_isModelLoaded)

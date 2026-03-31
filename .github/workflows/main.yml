@@ -1,12 +1,15 @@
 name: Flutter Web CI/CD Deploy to Hostinger
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
-      - flutter_recommend_architecture
+      - main
 
 jobs:
   build-and-deploy:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -38,6 +41,10 @@ jobs:
 
       - name: Build Flutter Web
         run: flutter build web --release
+
+      - name: Copy hosting config into build output
+        run: |
+          cp web/.htaccess build/web/.htaccess
 
       - name: Create deploy marker
         run: |
@@ -84,6 +91,6 @@ jobs:
             open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
             lcd build/web;
             cd $REMOTE_DIR;
-            mirror -R --delete --verbose ./ ./;
+            mirror -R --delete --verbose --exclude-glob blog-media --exclude-glob blog-media/** ./ ./;
             bye
           "
