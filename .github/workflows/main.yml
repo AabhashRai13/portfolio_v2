@@ -32,7 +32,8 @@ jobs:
           echo "const String emailJsTemplateId = '${{ secrets.EMAILJS_TEMPLATE_ID }}';" >> lib/keys.dart
           echo "const String emailJsPublicKey = '${{ secrets.EMAILJS_PUBLIC_KEY }}';" >> lib/keys.dart
           echo "const String emailJsPrivateKey = '${{ secrets.EMAILJS_PRIVATE_KEY }}';" >> lib/keys.dart
-
+          echo "const String firebaseAppCheckWebSiteKey = '${{ secrets.FIREBASE_APP_CHECK_WEB_SITE_KEY }}';" >> lib/keys.dart
+          
     # 📦 Install Dart/Flutter dependencies
     - name: Get dependencies
       run: flutter pub get
