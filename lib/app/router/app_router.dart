@@ -20,17 +20,19 @@ class AppRouter {
         ),
       ),
       GoRoute(
-        path: AppRoutes.blogDetail,
-        builder: (context, state) => BlogPostDetailPage(
-          slug: state.pathParameters['slug']!,
-          blogPostDetailController: getIt.get<BlogPostDetailController>(),
-        ),
-      ),
-      GoRoute(
         path: AppRoutes.blog,
         builder: (context, state) => BlogListPage(
           blogListController: getIt.get<BlogListController>(),
         ),
+        routes: [
+          GoRoute(
+            path: AppRoutes.blogDetailSegment,
+            builder: (context, state) => BlogPostDetailPage(
+              slug: state.pathParameters['slug']!,
+              blogPostDetailController: getIt.get<BlogPostDetailController>(),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutes.content,

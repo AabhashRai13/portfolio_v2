@@ -1,9 +1,11 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/constants/size.dart';
 
-class HomeWheelScrollCoordinator {
-  HomeWheelScrollCoordinator({
+class SmoothWheelScrollCoordinator {
+  SmoothWheelScrollCoordinator({
     this.wheelDeltaMultiplier = 1.15,
     this.minimumDeltaThreshold = 4,
     this.burstWindow = const Duration(milliseconds: 140),
@@ -77,14 +79,14 @@ class HomeWheelScrollCoordinator {
   }
 }
 
-class HomeSmoothScrollController extends ScrollController {
-  HomeSmoothScrollController({
-    HomeWheelScrollCoordinator? coordinator,
+class SmoothWheelScrollController extends ScrollController {
+  SmoothWheelScrollController({
+    SmoothWheelScrollCoordinator? coordinator,
     bool smoothWheelEnabled = false,
-  }) : _coordinator = coordinator ?? HomeWheelScrollCoordinator(),
+  }) : _coordinator = coordinator ?? SmoothWheelScrollCoordinator(),
        _smoothWheelEnabled = smoothWheelEnabled;
 
-  final HomeWheelScrollCoordinator _coordinator;
+  final SmoothWheelScrollCoordinator _coordinator;
   bool _smoothWheelEnabled;
 
   bool get smoothWheelEnabled => _smoothWheelEnabled;
@@ -108,7 +110,7 @@ class HomeSmoothScrollController extends ScrollController {
     ScrollContext context,
     ScrollPosition? oldPosition,
   ) {
-    return _HomeSmoothScrollPosition(
+    return _SmoothWheelScrollPosition(
       physics: physics,
       context: context,
       oldPosition: oldPosition,
@@ -121,11 +123,11 @@ class HomeSmoothScrollController extends ScrollController {
   }
 }
 
-class _HomeSmoothScrollPosition extends ScrollPositionWithSingleContext {
-  _HomeSmoothScrollPosition({
+class _SmoothWheelScrollPosition extends ScrollPositionWithSingleContext {
+  _SmoothWheelScrollPosition({
     required super.physics,
     required super.context,
-    required HomeWheelScrollCoordinator coordinator,
+    required SmoothWheelScrollCoordinator coordinator,
     required bool Function() isSmoothWheelEnabled,
     super.initialPixels,
     super.keepScrollOffset,
@@ -134,7 +136,7 @@ class _HomeSmoothScrollPosition extends ScrollPositionWithSingleContext {
   }) : _coordinator = coordinator,
        _isSmoothWheelEnabled = isSmoothWheelEnabled;
 
-  final HomeWheelScrollCoordinator _coordinator;
+  final SmoothWheelScrollCoordinator _coordinator;
   final bool Function() _isSmoothWheelEnabled;
 
   @override
@@ -166,4 +168,22 @@ class _HomeSmoothScrollPosition extends ScrollPositionWithSingleContext {
       curve: _coordinator.curve,
     );
   }
+}
+
+bool shouldEnableSmoothWheelScroll(double width) {
+  if (width < kMinDesktopWidth) {
+    return false;
+  }
+
+  if (kIsWeb) {
+    return defaultTargetPlatform != TargetPlatform.android &&
+        defaultTargetPlatform != TargetPlatform.iOS;
+  }
+
+  return switch (defaultTargetPlatform) {
+    TargetPlatform.macOS ||
+    TargetPlatform.windows ||
+    TargetPlatform.linux => true,
+    _ => false,
+  };
 }
