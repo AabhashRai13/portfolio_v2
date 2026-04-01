@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_3d_controller/flutter_3d_controller.dart';
 import 'package:my_portfolio/core/resources/size_config.dart';
@@ -18,12 +19,24 @@ class FlutterDash3D extends StatefulWidget {
 class _FlutterDash3DState extends State<FlutterDash3D> {
   bool _isModelLoaded = false;
 
+  String get _modelSource {
+    const assetPath = 'assets/3d_models/flutter_dash.glb';
+    if (!kIsWeb) {
+      return assetPath;
+    }
+    return Uri.base.resolve('/assets/$assetPath').toString();
+  }
+
   void _handleModelLoaded(String _) {
     if (!mounted) return;
     widget.animationService.handleModelLoaded();
     setState(() {
       _isModelLoaded = true;
     });
+  }
+
+  void _handleModelError(String error) {
+    debugPrint('FlutterDash3D failed to load model: $error');
   }
 
   @override
@@ -46,12 +59,14 @@ class _FlutterDash3DState extends State<FlutterDash3D> {
           height: getProportionateScreenHeight(200),
           width: getProportionateScreenWidth(200),
           child: Flutter3DViewer(
+            key: ValueKey<String>(_modelSource),
             activeGestureInterceptor: false,
             progressBarColor: Colors.transparent,
             enableTouch: false,
             controller: widget.animationService.controller,
-            src: 'assets/3d_models/flutter_dash.glb',
+            src: _modelSource,
             onLoad: _handleModelLoaded,
+            onError: _handleModelError,
           ),
         ),
         if (!_isModelLoaded)

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/services/smooth_wheel_scroll_controller.dart';
 import 'package:my_portfolio/features/blog_list/domain/usecases/get_blog_posts_use_case.dart';
 import 'package:my_portfolio/features/blog_list/presentation/controllers/blog_list_controller.dart';
 import 'package:my_portfolio/features/blog_list/presentation/widgets/blog_feed_back_state.dart';
@@ -20,6 +21,7 @@ class BlogListPage extends StatefulWidget {
 
 class _BlogListPageState extends State<BlogListPage> {
   late final BlogListController blogListController;
+  final scrollController = SmoothWheelScrollController();
   BlogPostSortOrder _sortOrder = BlogPostSortOrder.recentFirst;
 
   @override
@@ -31,12 +33,17 @@ class _BlogListPageState extends State<BlogListPage> {
 
   @override
   void dispose() {
+    scrollController.dispose();
     blogListController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    scrollController.smoothWheelEnabled = shouldEnableSmoothWheelScroll(
+      MediaQuery.of(context).size.width,
+    );
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -66,9 +73,11 @@ class _BlogListPageState extends State<BlogListPage> {
                     final command = blogListController.loadBlogsCommand;
 
                     if (command.isLoading && command.data.isEmpty) {
-                      return  const Center(child: CircularProgressIndicator(
-                        color: CustomColor.secondary ,
-                      ));
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: CustomColor.secondary,
+                        ),
+                      );
                     }
 
                     if (command.error != null) {
@@ -98,6 +107,7 @@ class _BlogListPageState extends State<BlogListPage> {
                         .toList(growable: false);
 
                     return SingleChildScrollView(
+                      controller: scrollController,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
@@ -116,7 +126,7 @@ class _BlogListPageState extends State<BlogListPage> {
                           const SizedBox(height: 34),
                           FeaturedStoryCard(
                             post: featuredPost,
-                            onTap: () => context.push(
+                            onTap: () => context.go(
                               AppRoutes.blogPost(featuredPost.slug),
                             ),
                           ),
@@ -139,7 +149,7 @@ class _BlogListPageState extends State<BlogListPage> {
                                           width: cardWidth,
                                           child: StoryCard(
                                             post: post,
-                                            onTap: () => context.push(
+                                            onTap: () => context.go(
                                               AppRoutes.blogPost(post.slug),
                                             ),
                                           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/services/smooth_wheel_scroll_controller.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/controllers/blog_post_detail_controller.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/widgets/blog_comment_form_card.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/widgets/blog_comments_list.dart';
@@ -23,6 +24,7 @@ class BlogPostDetailPage extends StatefulWidget {
 
 class _BlogPostDetailPageState extends State<BlogPostDetailPage> {
   late final BlogPostDetailController controller;
+  final scrollController = SmoothWheelScrollController();
 
   @override
   void initState() {
@@ -33,12 +35,17 @@ class _BlogPostDetailPageState extends State<BlogPostDetailPage> {
 
   @override
   void dispose() {
+    scrollController.dispose();
     controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    scrollController.smoothWheelEnabled = shouldEnableSmoothWheelScroll(
+      MediaQuery.of(context).size.width,
+    );
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -114,6 +121,7 @@ class _BlogPostDetailPageState extends State<BlogPostDetailPage> {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 980),
                 child: SingleChildScrollView(
+                  controller: scrollController,
                   padding: const EdgeInsets.fromLTRB(24, 24, 24, 64),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

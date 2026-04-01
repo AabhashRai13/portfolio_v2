@@ -21,7 +21,7 @@ class BlogHero extends StatelessWidget {
         Text(
           'This is where I will write',
           textAlign: TextAlign.center,
-          style: theme.textTheme.displaySmall?.copyWith(
+          style: theme.textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.w800,
             color: const Color(0xFF2E241E),
             height: 1.05,
