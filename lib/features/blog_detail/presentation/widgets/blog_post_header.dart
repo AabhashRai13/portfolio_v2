@@ -21,7 +21,6 @@ class BlogPostHeader extends StatelessWidget {
             : constraints.maxWidth >= 700
             ? 46.0
             : 36.0;
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -129,6 +128,7 @@ class BlogPostHeader extends StatelessWidget {
                 ],
               ),
             ),
+            
             if (post.coverImageUrl != null &&
                 post.coverImageUrl!.isNotEmpty) ...<Widget>[
               const SizedBox(height: 30),
