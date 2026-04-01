@@ -35,7 +35,7 @@ class StoryVisual extends StatelessWidget {
                   post.coverImageUrl != null && post.coverImageUrl!.isNotEmpty
                   ? Image.network(
                       post.coverImageUrl!,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) =>
                           FallbackVisualContent(
                             label: label,
