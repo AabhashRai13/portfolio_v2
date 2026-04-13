@@ -38,7 +38,8 @@ class _BounceManAnimationState extends State<BounceManAnimation>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return RepaintBoundary(
+      child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AnimatedBuilder(
@@ -90,6 +91,7 @@ class _BounceManAnimationState extends State<BounceManAnimation>
           },
         ),
       ],
+      ),
     );
   }
 }

@@ -153,7 +153,8 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
         // Get unique radii for orbit lines
         final radii = _icons.map((icon) => icon.baseRadius).toSet().toList();
 
-        return Stack(
+        return RepaintBoundary(
+          child: Stack(
           children: [
             // Orbit lines
             CustomPaint(
@@ -186,6 +187,7 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
               );
             }),
           ],
+          ),
         );
       },
     );
