@@ -53,7 +53,8 @@ class _FlutterDash3DState extends State<FlutterDash3D> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return RepaintBoundary(
+      child: Stack(
       children: [
         SizedBox(
           height: getProportionateScreenHeight(200),
@@ -72,6 +73,7 @@ class _FlutterDash3DState extends State<FlutterDash3D> {
         if (!_isModelLoaded)
           const SizedBox.shrink(), // Or use Container() for nothing at all
       ],
+      ),
     );
   }
 }

@@ -45,7 +45,8 @@ class _BounceManAnimationStateMobile extends State<BounceManAnimationMobile>
     final shadowBaseWidth = screenWidth < 400 ? 60.0 : 90.0;
     final shadowBaseHeight = screenWidth < 400 ? 12.0 : 18.0;
 
-    return Column(
+    return RepaintBoundary(
+      child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AnimatedBuilder(
@@ -94,6 +95,7 @@ class _BounceManAnimationStateMobile extends State<BounceManAnimationMobile>
           },
         ),
       ],
+      ),
     );
   }
 }

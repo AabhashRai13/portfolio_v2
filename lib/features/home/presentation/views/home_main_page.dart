@@ -150,67 +150,77 @@ class _HomeMainPageState extends State<HomeMainPage> {
                         ),
                 ),
                 SliverToBoxAdapter(
-                  child: constraints.maxWidth >= kMinDesktopWidth
-                      ? MainDesktop(
-                          scrollToSection: () {
-                            _handleNavigation(
-                              _homeController.scrollToContact(),
-                            );
-                          },
-                          openResume: _homeController.openResume,
-                          openBlog: () => _handleNavigation(
-                            const HomeNavigationTarget.route(AppRoutes.blog),
+                  child: RepaintBoundary(
+                    child: constraints.maxWidth >= kMinDesktopWidth
+                        ? MainDesktop(
+                            scrollToSection: () {
+                              _handleNavigation(
+                                _homeController.scrollToContact(),
+                              );
+                            },
+                            openResume: _homeController.openResume,
+                            openBlog: () => _handleNavigation(
+                              const HomeNavigationTarget.route(AppRoutes.blog),
+                            ),
+                            gameChild: const RepaintBoundary(
+                              child: GamePreview(),
+                            ),
+                          )
+                        : MainMobile(
+                            scrollToSection: () {
+                              _handleNavigation(
+                                _homeController.scrollToContact(),
+                              );
+                            },
+                            openResume: _homeController.openResume,
+                            openBlog: () => _handleNavigation(
+                              const HomeNavigationTarget.route(AppRoutes.blog),
+                            ),
                           ),
-                          gameChild: const GamePreview(),
-                        )
-                      : MainMobile(
-                          scrollToSection: () {
-                            _handleNavigation(
-                              _homeController.scrollToContact(),
-                            );
-                          },
-                          openResume: _homeController.openResume,
-                          openBlog: () => _handleNavigation(
-                            const HomeNavigationTarget.route(AppRoutes.blog),
-                          ),
-                        ),
+                  ),
                 ),
                 SliverToBoxAdapter(
-                  child: SizedBox(
-                    key: _sectionKeys[HomeSection.skills],
-                    child: SkillsSection(
-                      isDesktop: constraints.maxWidth >= kMedDesktopWidth,
-                      width: screenWidth,
+                  child: RepaintBoundary(
+                    child: SizedBox(
+                      key: _sectionKeys[HomeSection.skills],
+                      child: SkillsSection(
+                        isDesktop: constraints.maxWidth >= kMedDesktopWidth,
+                        width: screenWidth,
+                      ),
                     ),
                   ),
                 ),
                 SliverToBoxAdapter(
-                  child: SizedBox(
-                    key: _sectionKeys[HomeSection.introVideo],
-                    height: constraints.maxWidth >= kMinDesktopWidth
-                        ? 700
-                        : 500,
-                    width: double.infinity,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.asset(
-                          ImageAssets.creamCurtain,
-                          fit: BoxFit.fill,
-                        ),
-                        YoutubePlayerScreen(
-                          isMobile: constraints.maxWidth < kMinDesktopWidth,
-                        ),
-                      ],
+                  child: RepaintBoundary(
+                    child: SizedBox(
+                      key: _sectionKeys[HomeSection.introVideo],
+                      height: constraints.maxWidth >= kMinDesktopWidth
+                          ? 700
+                          : 500,
+                      width: double.infinity,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.asset(
+                            ImageAssets.creamCurtain,
+                            fit: BoxFit.fill,
+                          ),
+                          YoutubePlayerScreen(
+                            isMobile: constraints.maxWidth < kMinDesktopWidth,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 SliverToBoxAdapter(
-                  child: Portfolio(
-                    key: _sectionKeys[HomeSection.portfolio],
-                    projects: _homeController.featuredProjects,
-                    onOpenMore: _homeController.openPortfolioSource,
-                    onOpenProject: _homeController.openProject,
+                  child: RepaintBoundary(
+                    child: Portfolio(
+                      key: _sectionKeys[HomeSection.portfolio],
+                      projects: _homeController.featuredProjects,
+                      onOpenMore: _homeController.openPortfolioSource,
+                      onOpenProject: _homeController.openProject,
+                    ),
                   ),
                 ),
                 const SliverToBoxAdapter(
