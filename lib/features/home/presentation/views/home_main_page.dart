@@ -100,10 +100,6 @@ class _HomeMainPageState extends State<HomeMainPage> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        scrollController.smoothWheelEnabled = shouldEnableSmoothWheelScroll(
-          constraints.maxWidth,
-        );
-
         return Scaffold(
           key: scaffoldKey,
           endDrawer: constraints.maxWidth >= kMinDesktopWidth
@@ -115,23 +111,26 @@ class _HomeMainPageState extends State<HomeMainPage> {
                     _handleNavigation(item.target);
                   },
                 ),
-          body: Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.topLeft,
-                radius: 2,
-                colors: [
-                  Color(0xFFFFF1E6),
-                  Color(0xFFF5DCC6),
-                  Color(0xFFD7B49E),
-                  Color(0xFFB08968),
-                ],
-                stops: [0.1, 0.4, 0.7, 1.0],
+          body: SmoothScrollWrapper(
+            controller: scrollController,
+            enabled: shouldEnableSmoothWheelScroll(constraints.maxWidth),
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.topLeft,
+                  radius: 2,
+                  colors: [
+                    Color(0xFFFFF1E6),
+                    Color(0xFFF5DCC6),
+                    Color(0xFFD7B49E),
+                    Color(0xFFB08968),
+                  ],
+                  stops: [0.1, 0.4, 0.7, 1.0],
+                ),
               ),
-            ),
-            child: CustomScrollView(
-              controller: scrollController,
-              slivers: [
+              child: CustomScrollView(
+                controller: scrollController,
+                slivers: [
                 SliverToBoxAdapter(
                   child: SizedBox(key: _sectionKeys[HomeSection.hero]),
                 ),
@@ -236,6 +235,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
                   child: Footer(),
                 ),
               ],
+            ),
             ),
           ),
         );
