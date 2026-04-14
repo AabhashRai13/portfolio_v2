@@ -1,12 +1,17 @@
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:my_portfolio/constants/size.dart';
 
 /// A [ScrollBehavior] that enables mouse-drag scrolling on web and uses
-/// smooth clamping physics across all platforms.
+/// clamping physics (no overscroll bounce) across all platforms.
+///
+/// Trackpad is intentionally excluded from [dragDevices] — trackpad scroll
+/// events are handled via [PointerScrollEvent] only. Including trackpad in
+/// both drag and pointer-scroll paths causes double-processing and bounce.
 class PortfolioScrollBehavior extends MaterialScrollBehavior {
   const PortfolioScrollBehavior();
 
@@ -14,180 +19,160 @@ class PortfolioScrollBehavior extends MaterialScrollBehavior {
   Set<PointerDeviceKind> get dragDevices => <PointerDeviceKind>{
         PointerDeviceKind.touch,
         PointerDeviceKind.mouse,
-        PointerDeviceKind.trackpad,
         PointerDeviceKind.stylus,
         PointerDeviceKind.unknown,
       };
-}
-
-class SmoothWheelScrollController extends ScrollController {
-  SmoothWheelScrollController({
-    this.wheelDeltaMultiplier = 2.0,
-    this.trackpadDeltaMultiplier = 1.0,
-    this.smallDeltaThreshold = 20.0,
-    this.lerpFactor = 0.18,
-    this.snapThreshold = 0.5,
-    bool smoothWheelEnabled = false,
-  }) : _smoothWheelEnabled = smoothWheelEnabled;
-
-  /// Multiplier for discrete mouse-wheel deltas.
-  final double wheelDeltaMultiplier;
-
-  /// Multiplier for trackpad / high-frequency small deltas.
-  final double trackpadDeltaMultiplier;
-
-  /// Deltas below this absolute value are treated as trackpad events.
-  final double smallDeltaThreshold;
-
-  /// Per-frame interpolation factor (0–1). Higher = snappier.
-  final double lerpFactor;
-
-  /// When within this many pixels of target, snap and stop the ticker.
-  final double snapThreshold;
-
-  bool _smoothWheelEnabled;
-
-  bool get smoothWheelEnabled => _smoothWheelEnabled;
-
-  set smoothWheelEnabled(bool value) {
-    if (_smoothWheelEnabled == value) return;
-    _smoothWheelEnabled = value;
-    resetWheelTarget();
-  }
-
-  void resetWheelTarget() {
-    if (!hasClients) return;
-    final pos = position;
-    if (pos is _SmoothWheelScrollPosition) {
-      pos.cancelChase();
-    }
-  }
 
   @override
-  ScrollPosition createScrollPosition(
-    ScrollPhysics physics,
-    ScrollContext context,
-    ScrollPosition? oldPosition,
-  ) {
-    return _SmoothWheelScrollPosition(
-      physics: physics,
-      context: context,
-      oldPosition: oldPosition,
-      keepScrollOffset: keepScrollOffset,
-      initialPixels: initialScrollOffset,
-      debugLabel: debugLabel,
-      controller: this,
-    );
-  }
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const ClampingScrollPhysics();
 }
 
-class _SmoothWheelScrollPosition extends ScrollPositionWithSingleContext {
-  _SmoothWheelScrollPosition({
-    required super.physics,
-    required super.context,
-    required SmoothWheelScrollController controller,
-    super.initialPixels,
-    super.keepScrollOffset,
-    super.oldPosition,
-    super.debugLabel,
-  }) : _controller = controller;
+/// Wraps a scrollable child and intercepts pointer-scroll signals to provide
+/// smooth wheel scrolling on desktop. Trackpad events are passed through
+/// to the default scroll behavior (the OS handles trackpad momentum).
+///
+/// This widget detects device kind from the raw [PointerSignalEvent], avoiding
+/// the unreliable delta-magnitude heuristic.
+class SmoothScrollWrapper extends StatefulWidget {
+  const SmoothScrollWrapper({
+    required this.controller,
+    required this.enabled,
+    required this.child,
+    super.key,
+  });
 
-  final SmoothWheelScrollController _controller;
+  final SmoothWheelScrollController controller;
+  final bool enabled;
+  final Widget child;
 
-  Ticker? _ticker;
+  @override
+  State<SmoothScrollWrapper> createState() => _SmoothScrollWrapperState();
+}
+
+class _SmoothScrollWrapperState extends State<SmoothScrollWrapper>
+    with SingleTickerProviderStateMixin {
+  late final Ticker _ticker;
   double _targetOffset = 0;
   bool _chasing = false;
 
+  static const _wheelDeltaMultiplier = 2;
+  static const _lerpFactor = 0.18;
+  static const _snapThreshold = 0.5;
+
   @override
-  void pointerScroll(double delta) {
-    if (!_controller.smoothWheelEnabled || delta == 0) {
-      super.pointerScroll(delta);
-      return;
-    }
+  void initState() {
+    super.initState();
+    _ticker = createTicker(_onTick);
+    widget.controller._wrapper = this;
+  }
 
-    final isTrackpad = delta.abs() < _controller.smallDeltaThreshold;
-
-    // Trackpad: OS already does momentum smoothing, apply directly.
-    if (isTrackpad) {
-      final adjusted = delta * _controller.trackpadDeltaMultiplier;
-      final target = clampDouble(
-        pixels + adjusted,
-        minScrollExtent,
-        maxScrollExtent,
-      );
-      if (target != pixels) {
-        jumpTo(target);
-      }
-      return;
-    }
-
-    // Mouse wheel: accumulate target and let the ticker chase it smoothly.
-    if (!_chasing) {
-      _targetOffset = pixels;
-    }
-
-    final adjusted = delta * _controller.wheelDeltaMultiplier;
-    _targetOffset = clampDouble(
-      _targetOffset + adjusted,
-      minScrollExtent,
-      maxScrollExtent,
-    );
-
-    if (!_chasing) {
-      _startChasing();
+  @override
+  void didUpdateWidget(SmoothScrollWrapper oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller._wrapper = null;
+      widget.controller._wrapper = this;
     }
   }
 
-  void _startChasing() {
-    _chasing = true;
-    _ticker ??= context.vsync.createTicker(_onTick);
-    if (!_ticker!.isActive) {
-      _ticker!.start();
+  @override
+  void dispose() {
+    widget.controller._wrapper = null;
+    _ticker.dispose();
+    super.dispose();
+  }
+
+  void _handlePointerSignal(PointerSignalEvent event) {
+    if (!widget.enabled) return;
+    if (event is! PointerScrollEvent) return;
+    if (event.scrollDelta.dy == 0) return;
+
+    final isTrackpad = event.kind == PointerDeviceKind.trackpad;
+
+    if (isTrackpad) {
+      // Let the default scroll behavior handle trackpad events.
+      // The OS provides its own momentum smoothing.
+      return;
+    }
+
+    // Mouse wheel: intercept and handle with smooth chase animation.
+    // We must stop the event from reaching the default handler.
+    GestureBinding.instance.pointerSignalResolver
+        .register(event, _handleMouseWheel);
+  }
+
+  void _handleMouseWheel(PointerSignalEvent event) {
+    if (event is! PointerScrollEvent) return;
+
+    final controller = widget.controller;
+    if (!controller.hasClients) return;
+
+    final position = controller.position;
+    final delta = event.scrollDelta.dy;
+
+    if (!_chasing) {
+      _targetOffset = position.pixels;
+    }
+
+    final adjusted = delta * _wheelDeltaMultiplier;
+    _targetOffset = clampDouble(
+      _targetOffset + adjusted,
+      position.minScrollExtent,
+      position.maxScrollExtent,
+    );
+
+    if (!_chasing) {
+      _chasing = true;
+      _ticker.start();
     }
   }
 
   void _onTick(Duration elapsed) {
-    if (!hasPixels) {
+    final controller = widget.controller;
+    if (!controller.hasClients || !controller.position.hasPixels) {
       _stopChasing();
       return;
     }
 
-    final diff = _targetOffset - pixels;
-    if (diff.abs() < _controller.snapThreshold) {
-      jumpTo(_targetOffset);
+    final position = controller.position;
+    final diff = _targetOffset - position.pixels;
+    if (diff.abs() < _snapThreshold) {
+      position.jumpTo(_targetOffset);
       _stopChasing();
       return;
     }
 
-    // Exponential interpolation: move a fixed fraction toward
-    // target each frame for smooth deceleration.
-    jumpTo(pixels + diff * _controller.lerpFactor);
+    position.jumpTo(position.pixels + diff * _lerpFactor);
   }
 
   void _stopChasing() {
-    _ticker?.stop();
+    if (_ticker.isActive) _ticker.stop();
     _chasing = false;
   }
 
   void cancelChase() {
     _stopChasing();
-    _targetOffset = hasPixels ? pixels : 0;
-  }
-
-  @override
-  void beginActivity(ScrollActivity? newActivity) {
-    // If the user starts dragging, cancel any active chase so we don't fight.
-    if (_chasing && newActivity is DragScrollActivity) {
-      cancelChase();
+    final controller = widget.controller;
+    if (controller.hasClients && controller.position.hasPixels) {
+      _targetOffset = controller.position.pixels;
     }
-    super.beginActivity(newActivity);
   }
 
   @override
-  void dispose() {
-    _ticker?.dispose();
-    _ticker = null;
-    super.dispose();
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerSignal: _handlePointerSignal,
+      child: widget.child,
+    );
+  }
+}
+
+class SmoothWheelScrollController extends ScrollController {
+  _SmoothScrollWrapperState? _wrapper;
+
+  void resetWheelTarget() {
+    _wrapper?.cancelChase();
   }
 }
 
@@ -204,7 +189,8 @@ bool shouldEnableSmoothWheelScroll(double width) {
   return switch (defaultTargetPlatform) {
     TargetPlatform.macOS ||
     TargetPlatform.windows ||
-    TargetPlatform.linux => true,
+    TargetPlatform.linux =>
+      true,
     _ => false,
   };
 }

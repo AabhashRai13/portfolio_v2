@@ -42,12 +42,13 @@ class _BlogPostDetailPageState extends State<BlogPostDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    scrollController.smoothWheelEnabled = shouldEnableSmoothWheelScroll(
-      MediaQuery.of(context).size.width,
-    );
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: Container(
+      body: SmoothScrollWrapper(
+        controller: scrollController,
+        enabled: shouldEnableSmoothWheelScroll(screenWidth),
+        child: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -163,6 +164,7 @@ class _BlogPostDetailPageState extends State<BlogPostDetailPage> {
             );
           },
         ),
+      ),
       ),
     );
   }
