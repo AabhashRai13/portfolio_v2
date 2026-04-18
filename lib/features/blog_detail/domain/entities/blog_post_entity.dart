@@ -1,3 +1,5 @@
+import 'package:my_portfolio/features/blog_detail/domain/entities/toc_heading.dart';
+
 class BlogPostEntity {
   const BlogPostEntity({
     required this.id,
@@ -14,6 +16,7 @@ class BlogPostEntity {
     required this.viewCount,
     required this.isLikedByCurrentBrowser,
     this.coverImageUrl,
+    this.headings = const <TocHeading>[],
   });
 
   final String id;
@@ -30,6 +33,7 @@ class BlogPostEntity {
   final int viewCount;
   final bool isLikedByCurrentBrowser;
   final String? coverImageUrl;
+  final List<TocHeading> headings;
 
   BlogPostEntity copyWith({
     String? id,
@@ -46,6 +50,7 @@ class BlogPostEntity {
     int? viewCount,
     bool? isLikedByCurrentBrowser,
     String? coverImageUrl,
+    List<TocHeading>? headings,
   }) {
     return BlogPostEntity(
       id: id ?? this.id,
@@ -63,6 +68,7 @@ class BlogPostEntity {
       isLikedByCurrentBrowser:
           isLikedByCurrentBrowser ?? this.isLikedByCurrentBrowser,
       coverImageUrl: coverImageUrl ?? this.coverImageUrl,
+      headings: headings ?? this.headings,
     );
   }
 }

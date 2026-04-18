@@ -49,3 +49,6 @@ lib/keys.dart
 
 # FVM Version Cache
 .fvm/
+
+# Claude Code
+CLAUDE.md

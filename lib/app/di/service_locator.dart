@@ -9,6 +9,7 @@ import 'package:my_portfolio/features/blog_detail/data/repositories/firestore_bl
 import 'package:my_portfolio/features/blog_detail/data/services/blog_analytics_service.dart';
 import 'package:my_portfolio/features/blog_detail/data/services/blog_engagement_local_store.dart';
 import 'package:my_portfolio/features/blog_detail/domain/repositories/blog_detail_repository.dart';
+import 'package:my_portfolio/features/blog_detail/domain/usecases/get_blog_post_use_case.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/controllers/blog_post_detail_controller.dart';
 import 'package:my_portfolio/features/blog_list/data/datasources/blog_list_remote_data_source.dart';
 import 'package:my_portfolio/features/blog_list/data/repositories/firestore_blog_list_repository.dart';
@@ -111,8 +112,14 @@ void setupDependencies() {
         getBlogPosts: getIt.get<GetBlogPostsUseCase>(),
       ),
     )
+    ..registerLazySingleton<GetBlogPostUseCase>(
+      () => GetBlogPostUseCase(
+        repository: getIt.get<BlogDetailRepository>(),
+      ),
+    )
     ..registerFactory(
       () => BlogPostDetailController(
+        getBlogPost: getIt.get<GetBlogPostUseCase>(),
         blogDetailRepository: getIt.get<BlogDetailRepository>(),
         launchService: getIt.get<AppLaunchService>(),
       ),
