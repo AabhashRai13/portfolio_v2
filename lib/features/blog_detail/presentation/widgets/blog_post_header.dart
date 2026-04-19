@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/resources/utils/blog_formatters.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/blog_post_entity.dart';
 
@@ -13,6 +14,8 @@ class BlogPostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= 760;
@@ -24,32 +27,29 @@ class BlogPostHeader extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconTheme(
+                data: IconThemeData(color: palette.textMuted),
+                child: const ThemeToggleButton(),
+              ),
+            ),
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(isWide ? 34 : 24),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: <Color>[
-                    Color(0xFFFFFCF8),
-                    Color(0xFFFFF5EB),
-                  ],
+                  colors: palette.headerGradient,
                 ),
                 borderRadius: BorderRadius.circular(34),
-                border: Border.all(
-                  color: const Color(0xFFF1E2D3),
-                ),
+                border: Border.all(color: palette.borderSoft),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: palette.shadowColor,
                     blurRadius: 24,
                     offset: const Offset(0, 14),
-                  ),
-                  BoxShadow(
-                    color: Colors.white.withValues(alpha: 0.72),
-                    blurRadius: 12,
-                    offset: const Offset(-5, -5),
                   ),
                 ],
               ),
@@ -71,7 +71,7 @@ class BlogPostHeader extends StatelessWidget {
                     style: TextStyle(
                       fontSize: titleFontSize,
                       fontWeight: FontWeight.w900,
-                      color: CustomColor.textPrimary,
+                      color: palette.textStrong,
                       height: 1.03,
                       letterSpacing: -1.2,
                     ),
@@ -80,9 +80,9 @@ class BlogPostHeader extends StatelessWidget {
                     constraints: const BoxConstraints(maxWidth: 760),
                     child: Text(
                       post.summary,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 19,
-                        color: Color(0xFF7A6757),
+                        color: palette.textSecondary,
                         height: 1.75,
                         letterSpacing: -0.1,
                       ),
@@ -96,11 +96,9 @@ class BlogPostHeader extends StatelessWidget {
                       vertical: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: palette.surfaceSubtle,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: const Color(0xFFEADCCD),
-                      ),
+                      border: Border.all(color: palette.borderSoft),
                     ),
                     child: Wrap(
                       spacing: 18,
@@ -128,7 +126,6 @@ class BlogPostHeader extends StatelessWidget {
                 ],
               ),
             ),
-            
             if (post.coverImageUrl != null &&
                 post.coverImageUrl!.isNotEmpty) ...<Widget>[
               const SizedBox(height: 30),
@@ -137,7 +134,7 @@ class BlogPostHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(32),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
+                      color: palette.shadowColor,
                       blurRadius: 24,
                       offset: const Offset(0, 16),
                     ),
@@ -176,6 +173,9 @@ class _EditorialTagBadgeState extends State<_EditorialTagBadge> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final palette = theme.blogPalette;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -188,17 +188,17 @@ class _EditorialTagBadgeState extends State<_EditorialTagBadge> {
         ),
         decoration: BoxDecoration(
           color: _isHovered
-              ? const Color(0xFFF7EBE5)
-              : Colors.white.withValues(alpha: 0.78),
+              ? palette.tagChipBackground
+              : palette.surfaceSubtle,
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
             color: _isHovered
-                ? CustomColor.secondary.withValues(alpha: 0.36)
-                : CustomColor.primary.withValues(alpha: 0.16),
+                ? theme.colorScheme.secondary.withValues(alpha: 0.36)
+                : palette.tagChipBorder,
           ),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: Colors.black.withValues(alpha: _isHovered ? 0.05 : 0.02),
+              color: palette.shadowColor,
               blurRadius: _isHovered ? 14 : 8,
               offset: Offset(0, _isHovered ? 7 : 4),
             ),
@@ -207,7 +207,9 @@ class _EditorialTagBadgeState extends State<_EditorialTagBadge> {
         child: Text(
           widget.tag.toUpperCase(),
           style: TextStyle(
-            color: _isHovered ? CustomColor.secondary : CustomColor.textPrimary,
+            color: _isHovered
+                ? theme.colorScheme.secondary
+                : palette.tagChipForeground,
             fontSize: 11.5,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.9,
@@ -229,6 +231,8 @@ class _MetaItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -236,21 +240,21 @@ class _MetaItem extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFFFFF4EA),
+            color: palette.tagChipBackground,
             borderRadius: BorderRadius.circular(12),
           ),
           alignment: Alignment.center,
           child: Icon(
             icon,
             size: 16,
-            color: CustomColor.textPrimary,
+            color: palette.textStrong,
           ),
         ),
         const SizedBox(width: 10),
         Text(
           label,
-          style: const TextStyle(
-            color: CustomColor.textSecondary,
+          style: TextStyle(
+            color: palette.textSecondary,
             fontSize: 14.5,
             fontWeight: FontWeight.w600,
           ),

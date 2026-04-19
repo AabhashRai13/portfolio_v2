@@ -12,10 +12,12 @@ class GetBlogPostUseCase {
 
   ResultFuture<BlogPostEntity> call(String slug) async {
     final result = await _repository.getBlogPostBySlug(slug);
-    return result.map(
-      (post) => post.copyWith(
-        headings: parseMarkdownHeadings(post.contentMarkdown),
-      ),
-    );
+    return result.map((post) {
+      final parsed = parseMarkdownDocument(post.contentMarkdown);
+      return post.copyWith(
+        headings: parsed.headings,
+        sections: parsed.sections,
+      );
+    });
   }
 }

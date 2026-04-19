@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/services/smooth_wheel_scroll_controller.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/blog_post_entity.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/toc_heading.dart';
@@ -55,18 +55,16 @@ class _BlogPostDetailPageState extends State<BlogPostDetailPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final palette = Theme.of(context).blogPalette;
 
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: <Color>[
-              Color(0xFFFFF7F0),
-              Color(0xFFFFFFFF),
-            ],
+            colors: palette.pageGradient,
           ),
         ),
         child: ListenableBuilder(
@@ -74,9 +72,9 @@ class _BlogPostDetailPageState extends State<BlogPostDetailPage> {
           builder: (context, _) {
             if (controller.loadPostCommand.isLoading &&
                 controller.loadPostCommand.data == null) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
-                  color: CustomColor.secondary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               );
             }
@@ -178,10 +176,9 @@ class _BlogPostContentState extends State<_BlogPostContent> {
           const SizedBox(height: 24),
         ],
         BlogPostMarkdownCard(
-          contentMarkdown: _post.contentMarkdown,
+          sections: _post.sections,
           onOpenLink: widget.controller.openLink,
-          headings: headings,
-          headingKeys: _headingKeys,
+          sectionKeys: _headingKeys,
         ),
         const SizedBox(height: 28),
         ListenableBuilder(
@@ -204,7 +201,7 @@ class _BlogPostContentState extends State<_BlogPostContent> {
           'Comments',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
-                color: CustomColor.textPrimary,
+                color: Theme.of(context).blogPalette.textStrong,
               ),
         ),
         const SizedBox(height: 16),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/controllers/blog_post_detail_controller.dart';
 
 class BlogCommentFormCard extends StatelessWidget {
@@ -12,14 +12,20 @@ class BlogCommentFormCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final palette = theme.blogPalette;
+    final primary = theme.colorScheme.primary;
+    final secondary = theme.colorScheme.secondary;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 32),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: palette.surfaceElevated,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: palette.borderSoft),
         boxShadow: [
           BoxShadow(
-            color: CustomColor.primary.withValues(alpha: 0.08),
+            color: palette.shadowColor,
             blurRadius: 32,
             offset: const Offset(0, 8),
           ),
@@ -31,34 +37,34 @@ class BlogCommentFormCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.mode_comment_rounded,
-                  color: CustomColor.primary,
+                  color: primary,
                   size: 28,
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Text(
                   'Leave a Comment',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 26,
-                    color: CustomColor.primary,
+                    color: primary,
                     letterSpacing: 1.1,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 14),
-            const Center(
+            Center(
               child: Text(
                 'Say what landed, what you disagree with, or what made you '
                 'smile a little.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: CustomColor.textSecondary,
+                  color: palette.textSecondary,
                   fontSize: 15,
                   height: 1.6,
                 ),
@@ -85,24 +91,24 @@ class BlogCommentFormCard extends StatelessWidget {
                 vertical: 14,
               ),
               decoration: BoxDecoration(
-                color: CustomColor.bgLight2.withValues(alpha: 0.5),
+                color: palette.surfaceSubtle,
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.mark_chat_read_rounded,
-                    color: CustomColor.primary,
+                    color: primary,
                     size: 18,
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Comments are reviewed before they appear. Warm, honest, '
                       'and human wins every time.',
                       style: TextStyle(
-                        color: CustomColor.textSecondary,
+                        color: palette.textSecondary,
                         height: 1.55,
                       ),
                     ),
@@ -124,12 +130,12 @@ class BlogCommentFormCard extends StatelessWidget {
                         states,
                       ) {
                         if (isLoading || states.contains(WidgetState.pressed)) {
-                          return CustomColor.secondary;
+                          return secondary;
                         }
                         if (states.contains(WidgetState.hovered)) {
-                          return CustomColor.primary.withValues(alpha: 0.92);
+                          return primary.withValues(alpha: 0.92);
                         }
-                        return CustomColor.primary;
+                        return primary;
                       }),
                       foregroundColor: const WidgetStatePropertyAll<Color>(
                         Colors.white,
@@ -209,26 +215,24 @@ class _BlogCommentTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
     return TextFormField(
       controller: controller,
       validator: validator,
       maxLines: maxLines,
-      style: const TextStyle(
-        color: Colors.black,
-      ),
+      style: TextStyle(color: palette.textStrong),
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(16),
         filled: true,
-        fillColor: CustomColor.bgLight2,
+        fillColor: palette.surfaceSubtle,
         focusedBorder: _inputBorder,
         enabledBorder: _inputBorder,
         border: _inputBorder,
         errorBorder: _inputBorder,
         focusedErrorBorder: _inputBorder,
         hintText: hintText,
-        hintStyle: const TextStyle(
-          color: CustomColor.textSecondary,
-        ),
+        hintStyle: TextStyle(color: palette.textMuted),
       ),
     );
   }

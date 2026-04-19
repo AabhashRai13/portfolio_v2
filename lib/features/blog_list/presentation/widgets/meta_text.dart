@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 
 class MetaText extends StatelessWidget {
   const MetaText({
@@ -13,10 +13,12 @@ class MetaText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
     return Text(
       label,
       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-        color: isAccent ? CustomColor.primary : const Color(0xFF9E9084),
+        color: isAccent ? palette.metaAccent : palette.textMuted,
         fontWeight: FontWeight.w800,
         letterSpacing: 0.4,
       ),

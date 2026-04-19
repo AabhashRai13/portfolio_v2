@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/resources/utils/blog_formatters.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/blog_comment_entity.dart';
 
@@ -17,6 +17,9 @@ class BlogCommentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final palette = theme.blogPalette;
+
     if (isLoading && comments.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -36,13 +39,14 @@ class BlogCommentsList extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.9),
+          color: palette.surfaceElevated,
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: palette.borderSoft),
         ),
-        child: const Text(
+        child: Text(
           'Feel free to leave the first comment—your engagement means a lot.',
           style: TextStyle(
-            color: CustomColor.textSecondary,
+            color: palette.textSecondary,
             fontSize: 16,
           ),
         ),
@@ -59,8 +63,8 @@ class BlogCommentsList extends StatelessWidget {
               child: _CommentCard(
                 comment: entry.value,
                 highlightColor: entry.key.isEven
-                    ? CustomColor.primary
-                    : CustomColor.accent,
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.tertiary,
               ),
             ),
           )
@@ -80,18 +84,20 @@ class _CommentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: palette.surfaceElevated,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
           color: highlightColor.withValues(alpha: 0.14),
         ),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.035),
+            color: palette.shadowColor,
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -119,10 +125,10 @@ class _CommentCard extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           comment.authorName,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
-                            color: CustomColor.textPrimary,
+                            color: palette.textStrong,
                           ),
                         ),
                       ],
@@ -130,9 +136,9 @@ class _CommentCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       formatCommentTimestamp(comment.createdAt),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
-                        color: CustomColor.textSecondary,
+                        color: palette.textSecondary,
                       ),
                     ),
                   ],
@@ -145,7 +151,7 @@ class _CommentCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF8F1),
+              color: palette.surfaceSubtle,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -159,10 +165,10 @@ class _CommentCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   comment.message,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     height: 1.7,
-                    color: CustomColor.textPrimary,
+                    color: palette.textStrong,
                   ),
                 ),
               ],
@@ -185,6 +191,8 @@ class _CommentAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
     return Container(
       width: 48,
       height: 48,
@@ -192,7 +200,7 @@ class _CommentAvatar extends StatelessWidget {
         gradient: LinearGradient(
           colors: <Color>[
             highlightColor.withValues(alpha: 0.92),
-            CustomColor.textPrimary.withValues(alpha: 0.88),
+            palette.textStrong.withValues(alpha: 0.88),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
