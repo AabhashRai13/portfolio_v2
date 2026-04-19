@@ -1,3 +1,4 @@
+import 'package:my_portfolio/features/blog_detail/domain/entities/blog_post_section.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/toc_heading.dart';
 
 class BlogPostEntity {
@@ -17,6 +18,7 @@ class BlogPostEntity {
     required this.isLikedByCurrentBrowser,
     this.coverImageUrl,
     this.headings = const <TocHeading>[],
+    this.sections = const <BlogPostSection>[],
   });
 
   final String id;
@@ -34,6 +36,7 @@ class BlogPostEntity {
   final bool isLikedByCurrentBrowser;
   final String? coverImageUrl;
   final List<TocHeading> headings;
+  final List<BlogPostSection> sections;
 
   BlogPostEntity copyWith({
     String? id,
@@ -51,6 +54,7 @@ class BlogPostEntity {
     bool? isLikedByCurrentBrowser,
     String? coverImageUrl,
     List<TocHeading>? headings,
+    List<BlogPostSection>? sections,
   }) {
     return BlogPostEntity(
       id: id ?? this.id,
@@ -69,6 +73,7 @@ class BlogPostEntity {
           isLikedByCurrentBrowser ?? this.isLikedByCurrentBrowser,
       coverImageUrl: coverImageUrl ?? this.coverImageUrl,
       headings: headings ?? this.headings,
+      sections: sections ?? this.sections,
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/services/smooth_wheel_scroll_controller.dart';
 import 'package:my_portfolio/features/blog_list/domain/usecases/get_blog_posts_use_case.dart';
 import 'package:my_portfolio/features/blog_list/presentation/controllers/blog_list_controller.dart';
@@ -41,6 +41,7 @@ class _BlogListPageState extends State<BlogListPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final palette = Theme.of(context).blogPalette;
 
     return Scaffold(
       body: SmoothScrollWrapper(
@@ -48,15 +49,11 @@ class _BlogListPageState extends State<BlogListPage> {
         enabled: shouldEnableSmoothWheelScroll(screenWidth),
         child: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: <Color>[
-              Color(0xFFFFFBF7),
-              Color(0xFFFFF4EA),
-              Color(0xFFFFFFFF),
-            ],
+            colors: palette.pageGradient,
           ),
         ),
         child: SafeArea(
@@ -74,9 +71,9 @@ class _BlogListPageState extends State<BlogListPage> {
                     final command = blogListController.loadBlogsCommand;
 
                     if (command.isLoading && command.data.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: CircularProgressIndicator(
-                          color: CustomColor.secondary,
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       );
                     }

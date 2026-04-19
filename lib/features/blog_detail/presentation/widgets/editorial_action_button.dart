@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
 
 class EditorialActionButton extends StatefulWidget {
   const EditorialActionButton({
@@ -26,26 +25,32 @@ class _EditorialActionButtonState extends State<EditorialActionButton> {
 
   bool get _isInteractive => widget.onPressed != null;
 
-  Color get _backgroundColor {
+  Color _backgroundColor(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final primary = scheme.primary;
+    final secondary = scheme.secondary;
+
     if (!_isInteractive) {
       return widget.isActive
-          ? CustomColor.secondary.withValues(alpha: 0.9)
-          : CustomColor.primary.withValues(alpha: 0.46);
+          ? secondary.withValues(alpha: 0.9)
+          : primary.withValues(alpha: 0.46);
     }
 
     if (_isPressed || widget.isActive) {
-      return CustomColor.pastelRed;
+      return secondary;
     }
 
     if (_isHovered || _isFocused) {
-      return  CustomColor.pastelRed;
+      return secondary;
     }
 
-    return  CustomColor.secondary;
+    return primary;
   }
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = _backgroundColor(context);
+
     return AnimatedScale(
       duration: const Duration(milliseconds: 160),
       curve: Curves.easeOutCubic,
@@ -57,7 +62,7 @@ class _EditorialActionButtonState extends State<EditorialActionButton> {
           borderRadius: BorderRadius.circular(999),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: _backgroundColor.withValues(
+              color: backgroundColor.withValues(
                 alpha: _isPressed ? 0.14 : 0.22,
               ),
               blurRadius: _isHovered ? 24 : 18,
@@ -66,7 +71,7 @@ class _EditorialActionButtonState extends State<EditorialActionButton> {
           ],
         ),
         child: Material(
-          color: _backgroundColor,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(999),
           child: InkWell(
             onTap: widget.onPressed,

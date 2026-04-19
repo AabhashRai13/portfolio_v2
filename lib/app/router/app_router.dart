@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/di/service_locator.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
+import 'package:my_portfolio/core/presentation/widgets/app_theme_scope.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/controllers/blog_post_detail_controller.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/views/blog_post_detail_page.dart';
 import 'package:my_portfolio/features/blog_list/presentation/controllers/blog_list_controller.dart';
@@ -21,15 +22,20 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoutes.blog,
-        builder: (context, state) => BlogListPage(
-          blogListController: getIt.get<BlogListController>(),
+        builder: (context, state) => AppThemeScope(
+          child: BlogListPage(
+            blogListController: getIt.get<BlogListController>(),
+          ),
         ),
         routes: [
           GoRoute(
             path: AppRoutes.blogDetailSegment,
-            builder: (context, state) => BlogPostDetailPage(
-              slug: state.pathParameters['slug']!,
-              blogPostDetailController: getIt.get<BlogPostDetailController>(),
+            builder: (context, state) => AppThemeScope(
+              child: BlogPostDetailPage(
+                slug: state.pathParameters['slug']!,
+                blogPostDetailController:
+                    getIt.get<BlogPostDetailController>(),
+              ),
             ),
           ),
         ],

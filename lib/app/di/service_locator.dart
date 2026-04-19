@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get_it/get_it.dart';
+import 'package:my_portfolio/core/controllers/app_theme_controller.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
 import 'package:my_portfolio/core/services/firebase_app_check_service.dart';
 import 'package:my_portfolio/core/services/firestore_request_handler.dart';
+import 'package:my_portfolio/core/services/theme_preference_store.dart';
 import 'package:my_portfolio/features/blog_detail/data/datasources/blog_detail_remote_data_source.dart';
 import 'package:my_portfolio/features/blog_detail/data/repositories/firestore_blog_detail_repository.dart';
 import 'package:my_portfolio/features/blog_detail/data/services/blog_analytics_service.dart';
@@ -32,6 +34,10 @@ void setupDependencies() {
   }
 
   getIt
+    ..registerLazySingleton<ThemePreferenceStore>(ThemePreferenceStore.new)
+    ..registerLazySingleton<AppThemeController>(
+      () => AppThemeController(store: getIt<ThemePreferenceStore>()),
+    )
     ..registerLazySingleton<FirebaseFirestore>(
       () => FirebaseFirestore.instance,
     )
