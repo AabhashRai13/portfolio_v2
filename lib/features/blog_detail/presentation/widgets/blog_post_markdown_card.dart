@@ -4,6 +4,9 @@ import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/blog_post_section.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/styles/blog_markdown_style.dart';
 
+const double _sectionBottomPadding = 12;
+const double _markdownImageHeight = 600;
+
 // The article is rendered as one MarkdownBody per section instead of a single
 // MarkdownBody for the whole post so TOC GlobalKeys can live on widgets we
 // own (the outer `_Section`). A previous design injected keys into the
@@ -46,14 +49,22 @@ class BlogPostMarkdownCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          for (final section in sections)
-            _Section(
-              key: section.heading == null
-                  ? null
-                  : sectionKeys[section.heading!.id],
-              markdown: section.markdown,
-              styleSheet: styleSheet,
-              onOpenLink: onOpenLink,
+          for (var index = 0; index < sections.length; index++)
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: index == sections.length - 1
+                    ? 0
+                    : _sectionBottomPadding,
+              ),
+              child: _Section(
+                key: sections[index].heading == null
+                    ? null
+                    : sectionKeys[sections[index].heading!.id],
+                markdown: sections[index].markdown,
+                styleSheet: styleSheet,
+                imageHeight: _markdownImageHeight,
+                onOpenLink: onOpenLink,
+              ),
             ),
         ],
       ),
@@ -65,12 +76,14 @@ class _Section extends StatelessWidget {
   const _Section({
     required this.markdown,
     required this.styleSheet,
+    required this.imageHeight,
     required this.onOpenLink,
     super.key,
   });
 
   final String markdown;
   final MarkdownStyleSheet styleSheet;
+  final double imageHeight;
   final Future<void> Function(String url) onOpenLink;
 
   @override
@@ -79,6 +92,8 @@ class _Section extends StatelessWidget {
       data: markdown,
       selectable: true,
       styleSheet: styleSheet,
+      imageBuilder: (uri, title, alt) =>
+          _MarkdownImage(uri: uri, title: title, alt: alt, height: imageHeight),
       onTapLink: (text, href, title) async {
         if (href == null || href.isEmpty) {
           return;
@@ -96,6 +111,82 @@ class _Section extends StatelessWidget {
           );
         }
       },
+    );
+  }
+}
+
+class _MarkdownImage extends StatelessWidget {
+  const _MarkdownImage({
+    required this.uri,
+    required this.height,
+    this.title,
+    this.alt,
+  });
+
+  final Uri uri;
+  final String? title;
+  final String? alt;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: SizedBox(
+        height: height,
+        width: double.infinity,
+        child: ColoredBox(
+          color: palette.surfaceSubtle,
+          child: _buildImage(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    final semanticLabel = alt?.isNotEmpty ?? false ? alt : title;
+
+    if (uri.scheme == 'http' || uri.scheme == 'https') {
+      return Image.network(
+        uri.toString(),
+        fit: BoxFit.cover,
+        semanticLabel: semanticLabel,
+        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+      );
+    }
+
+    if (uri.scheme == 'resource') {
+      return Image.asset(
+        uri.path,
+        fit: BoxFit.cover,
+        semanticLabel: semanticLabel,
+        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+      );
+    }
+
+    if (uri.scheme == 'data') {
+      UriData data;
+      try {
+        data = UriData.parse(uri.toString());
+      } on FormatException {
+        return const SizedBox.shrink();
+      }
+
+      return Image.memory(
+        data.contentAsBytes(),
+        fit: BoxFit.cover,
+        semanticLabel: semanticLabel,
+        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+      );
+    }
+
+    return Image.asset(
+      uri.toString(),
+      fit: BoxFit.cover,
+      semanticLabel: semanticLabel,
+      errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
     );
   }
 }
