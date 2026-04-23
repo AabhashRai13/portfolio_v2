@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
@@ -5,7 +6,7 @@ import 'package:my_portfolio/features/blog_detail/domain/entities/blog_post_sect
 import 'package:my_portfolio/features/blog_detail/presentation/styles/blog_markdown_style.dart';
 
 const double _sectionBottomPadding = 12;
-const double _markdownImageHeight = 600;
+const double _markdownImageMaxHeight = 600;
 
 // The article is rendered as one MarkdownBody per section instead of a single
 // MarkdownBody for the whole post so TOC GlobalKeys can live on widgets we
@@ -31,7 +32,6 @@ class BlogPostMarkdownCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = Theme.of(context).blogPalette;
     final styleSheet = BlogMarkdownStyle.of(Theme.of(context));
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -52,7 +52,7 @@ class BlogPostMarkdownCard extends StatelessWidget {
           for (var index = 0; index < sections.length; index++)
             Padding(
               padding: EdgeInsets.only(
-                bottom: index == sections.length - 1
+                bottom: index == sections.length - 1 && !kDebugMode
                     ? 0
                     : _sectionBottomPadding,
               ),
@@ -62,7 +62,7 @@ class BlogPostMarkdownCard extends StatelessWidget {
                     : sectionKeys[sections[index].heading!.id],
                 markdown: sections[index].markdown,
                 styleSheet: styleSheet,
-                imageHeight: _markdownImageHeight,
+                imageMaxHeight: _markdownImageMaxHeight,
                 onOpenLink: onOpenLink,
               ),
             ),
@@ -76,14 +76,14 @@ class _Section extends StatelessWidget {
   const _Section({
     required this.markdown,
     required this.styleSheet,
-    required this.imageHeight,
+    required this.imageMaxHeight,
     required this.onOpenLink,
     super.key,
   });
 
   final String markdown;
   final MarkdownStyleSheet styleSheet;
-  final double imageHeight;
+  final double imageMaxHeight;
   final Future<void> Function(String url) onOpenLink;
 
   @override
@@ -92,8 +92,12 @@ class _Section extends StatelessWidget {
       data: markdown,
       selectable: true,
       styleSheet: styleSheet,
-      imageBuilder: (uri, title, alt) =>
-          _MarkdownImage(uri: uri, title: title, alt: alt, height: imageHeight),
+      imageBuilder: (uri, title, alt) => _MarkdownImage(
+        uri: uri,
+        title: title,
+        alt: alt,
+        maxHeight: imageMaxHeight,
+      ),
       onTapLink: (text, href, title) async {
         if (href == null || href.isEmpty) {
           return;
@@ -118,7 +122,7 @@ class _Section extends StatelessWidget {
 class _MarkdownImage extends StatelessWidget {
   const _MarkdownImage({
     required this.uri,
-    required this.height,
+    required this.maxHeight,
     this.title,
     this.alt,
   });
@@ -126,7 +130,7 @@ class _MarkdownImage extends StatelessWidget {
   final Uri uri;
   final String? title;
   final String? alt;
-  final double height;
+  final double maxHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -134,12 +138,18 @@ class _MarkdownImage extends StatelessWidget {
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
-      child: SizedBox(
-        height: height,
-        width: double.infinity,
-        child: ColoredBox(
-          color: palette.surfaceSubtle,
-          child: _buildImage(),
+      child: ColoredBox(
+        color: palette.surfaceSubtle,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: constraints.maxWidth,
+                maxHeight: maxHeight,
+              ),
+              child: _buildImage(),
+            );
+          },
         ),
       ),
     );
@@ -151,18 +161,20 @@ class _MarkdownImage extends StatelessWidget {
     if (uri.scheme == 'http' || uri.scheme == 'https') {
       return Image.network(
         uri.toString(),
-        fit: BoxFit.cover,
+        width: double.infinity,
+        fit: BoxFit.contain,
         semanticLabel: semanticLabel,
-        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+        errorBuilder: _buildImageError,
       );
     }
 
     if (uri.scheme == 'resource') {
       return Image.asset(
         uri.path,
-        fit: BoxFit.cover,
+        width: double.infinity,
+        fit: BoxFit.contain,
         semanticLabel: semanticLabel,
-        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+        errorBuilder: _buildImageError,
       );
     }
 
@@ -176,17 +188,52 @@ class _MarkdownImage extends StatelessWidget {
 
       return Image.memory(
         data.contentAsBytes(),
-        fit: BoxFit.cover,
+        width: double.infinity,
+        fit: BoxFit.contain,
         semanticLabel: semanticLabel,
-        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+        errorBuilder: _buildImageError,
       );
     }
 
     return Image.asset(
       uri.toString(),
-      fit: BoxFit.cover,
+      width: double.infinity,
+      fit: BoxFit.contain,
       semanticLabel: semanticLabel,
-      errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+      errorBuilder: _buildImageError,
+    );
+  }
+
+  Widget _buildImageError(
+    BuildContext context,
+    Object error,
+    StackTrace? stackTrace,
+  ) {
+    debugPrint('Markdown image failed to load: $uri');
+    debugPrint('Markdown image error: $error');
+    if (stackTrace != null) {
+      debugPrintStack(
+        stackTrace: stackTrace,
+        label: 'Markdown image stack trace for $uri',
+      );
+    }
+
+    final palette = Theme.of(context).blogPalette;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: palette.surfaceElevated,
+        border: Border.all(color: palette.borderSoft),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: SelectableText(
+        'Image failed to load\n$uri\n$error',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: palette.textSecondary,
+        ),
+      ),
     );
   }
 }

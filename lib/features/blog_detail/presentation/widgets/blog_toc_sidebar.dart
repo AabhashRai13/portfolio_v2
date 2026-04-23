@@ -1,93 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
-import 'package:my_portfolio/core/services/smooth_wheel_scroll_controller.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/toc_heading.dart';
+import 'package:my_portfolio/features/blog_detail/presentation/controllers/toc_view_model.dart';
 
 /// Desktop sidebar variant — always visible alongside content.
-class BlogTocSidebar extends StatefulWidget {
-  const BlogTocSidebar({
-    required this.headings,
-    required this.headingKeys,
-    required this.scrollController,
-    super.key,
-  });
+class BlogTocSidebar extends StatelessWidget {
+  const BlogTocSidebar({required this.viewModel, super.key});
 
-  final List<TocHeading> headings;
-  final Map<String, GlobalKey> headingKeys;
-  final SmoothWheelScrollController scrollController;
-
-  @override
-  State<BlogTocSidebar> createState() => _BlogTocSidebarState();
-}
-
-class _BlogTocSidebarState extends State<BlogTocSidebar> {
-  int _activeIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.scrollController.addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    widget.scrollController.removeListener(_onScroll);
-    super.dispose();
-  }
-
-  // TODO(performance): This fires on every scroll pixel (~60x/sec).
-  // Consider throttling with a Timer (~100ms) to reduce localToGlobal
-  // calls. Not critical with <20 headings — needs profiling first.
-  void _onScroll() {
-    final newIndex = _computeActiveIndex();
-    if (newIndex != _activeIndex) {
-      setState(() => _activeIndex = newIndex);
-    }
-  }
-
-  int _computeActiveIndex() {
-    const topPadding = 100.0;
-    var lastVisible = 0;
-
-    for (var i = 0; i < widget.headings.length; i++) {
-      final key = widget.headingKeys[widget.headings[i].id];
-      if (key == null) continue;
-
-      final ctx = key.currentContext;
-      if (ctx == null) continue;
-
-      final renderObject = ctx.findRenderObject();
-      if (renderObject is! RenderBox || !renderObject.attached) continue;
-
-      final offset = renderObject.localToGlobal(Offset.zero);
-      if (offset.dy <= topPadding) {
-        lastVisible = i;
-      } else {
-        break;
-      }
-    }
-
-    return lastVisible;
-  }
-
-  Future<void> _scrollToHeading(int index) async {
-    final heading = widget.headings[index];
-    final key = widget.headingKeys[heading.id];
-    final ctx = key?.currentContext;
-    if (ctx == null) return;
-
-    await Scrollable.ensureVisible(
-      ctx,
-      alignment: 0.05,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
-    widget.scrollController.resetWheelTarget();
-  }
+  final TocViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
-    if (widget.headings.isEmpty) return const SizedBox.shrink();
+    if (viewModel.headings.isEmpty) return const SizedBox.shrink();
 
     final palette = Theme.of(context).blogPalette;
 
@@ -107,12 +31,22 @@ class _BlogTocSidebarState extends State<BlogTocSidebar> {
               ),
             ),
             const SizedBox(height: 16),
-            for (var i = 0; i < widget.headings.length; i++)
-              _TocEntry(
-                heading: widget.headings[i],
-                isActive: i == _activeIndex,
-                onTap: () => _scrollToHeading(i),
-              ),
+            ListenableBuilder(
+              listenable: viewModel,
+              builder: (context, _) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    for (var i = 0; i < viewModel.headings.length; i++)
+                      _TocEntry(
+                        heading: viewModel.headings[i],
+                        isActive: i == viewModel.activeIndex,
+                        onTap: () => viewModel.scrollToHeading(i),
+                      ),
+                  ],
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -154,7 +88,7 @@ class _TocEntryState extends State<_TocEntry> {
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
           padding: EdgeInsets.fromLTRB(
-            isH3 ? 16.0 : 0,
+            isH3 ? 24.0 : 12.0,
             6,
             8,
             6,
@@ -194,34 +128,13 @@ class _TocEntryState extends State<_TocEntry> {
 
 /// Mobile / tablet collapsible variant — shown above the article.
 class BlogTocCollapsible extends StatelessWidget {
-  const BlogTocCollapsible({
-    required this.headings,
-    required this.headingKeys,
-    required this.scrollController,
-    super.key,
-  });
+  const BlogTocCollapsible({required this.viewModel, super.key});
 
-  final List<TocHeading> headings;
-  final Map<String, GlobalKey> headingKeys;
-  final SmoothWheelScrollController scrollController;
-
-  Future<void> _scrollToHeading(TocHeading heading) async {
-    final key = headingKeys[heading.id];
-    final ctx = key?.currentContext;
-    if (ctx == null) return;
-
-    await Scrollable.ensureVisible(
-      ctx,
-      alignment: 0.05,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
-    scrollController.resetWheelTarget();
-  }
+  final TocViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
-    if (headings.isEmpty) return const SizedBox.shrink();
+    if (viewModel.headings.isEmpty) return const SizedBox.shrink();
 
     final palette = Theme.of(context).blogPalette;
 
@@ -251,13 +164,13 @@ class BlogTocCollapsible extends StatelessWidget {
           color: palette.textSecondary,
         ),
         children: <Widget>[
-          for (final heading in headings)
+          for (var i = 0; i < viewModel.headings.length; i++)
             InkWell(
-              onTap: () => _scrollToHeading(heading),
+              onTap: () => viewModel.scrollToHeading(i),
               borderRadius: BorderRadius.circular(8),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
-                  heading.level == 3 ? 16.0 : 0,
+                  viewModel.headings[i].level == 3 ? 16.0 : 0,
                   6,
                   8,
                   6,
@@ -265,10 +178,10 @@ class BlogTocCollapsible extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    heading.text,
+                    viewModel.headings[i].text,
                     style: TextStyle(
-                      fontSize: heading.level == 3 ? 13.0 : 14.0,
-                      fontWeight: heading.level == 3
+                      fontSize: viewModel.headings[i].level == 3 ? 13.0 : 14.0,
+                      fontWeight: viewModel.headings[i].level == 3
                           ? FontWeight.w500
                           : FontWeight.w600,
                       color: palette.textSecondary,
