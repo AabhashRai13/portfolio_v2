@@ -35,7 +35,7 @@ class ThemeToggleButton extends StatelessWidget {
             ),
             _menuItem(
               ThemeMode.system,
-              Icons.brightness_auto_outlined,
+              Icons.brightness_medium,
               'System',
               mode,
             ),
