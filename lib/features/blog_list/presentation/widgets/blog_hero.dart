@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/features/blog_list/domain/usecases/get_blog_posts_use_case.dart';
 
@@ -20,16 +19,6 @@ class BlogHero extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: IconTheme(
-              data: IconThemeData(color: palette.textMuted),
-              child: const ThemeToggleButton(),
-            ),
-          ),
-        ),
         Text(
           'This is where I will write',
           textAlign: TextAlign.center,
