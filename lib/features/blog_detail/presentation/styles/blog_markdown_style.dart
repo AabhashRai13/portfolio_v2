@@ -56,17 +56,17 @@ class BlogMarkdownStyle {
 
     return MarkdownStyleSheet.fromTheme(theme).copyWith(
       p: serifBody,
-      h1: textTheme.headlineMedium?.copyWith(
+      h1: serifBody.copyWith(
         fontSize: 30,
         fontWeight: FontWeight.w800,
         color: palette.textStrong,
       ),
-      h2: textTheme.headlineSmall?.copyWith(
+      h2: serifBody.copyWith(
         fontSize: 24,
         fontWeight: FontWeight.w700,
         color: palette.textStrong,
       ),
-      h3: textTheme.titleLarge?.copyWith(
+      h3: serifBody.copyWith(
         fontSize: 20,
         fontWeight: FontWeight.w700,
         color: palette.textStrong,

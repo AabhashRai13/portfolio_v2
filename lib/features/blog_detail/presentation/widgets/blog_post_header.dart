@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/resources/utils/blog_formatters.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/blog_post_entity.dart';
@@ -27,13 +26,6 @@ class BlogPostHeader extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconTheme(
-                data: IconThemeData(color: palette.textMuted),
-                child: const ThemeToggleButton(),
-              ),
-            ),
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(isWide ? 34 : 24),
@@ -187,9 +179,7 @@ class _EditorialTagBadgeState extends State<_EditorialTagBadge> {
           vertical: 9,
         ),
         decoration: BoxDecoration(
-          color: _isHovered
-              ? palette.tagChipBackground
-              : palette.surfaceSubtle,
+          color: _isHovered ? palette.tagChipBackground : palette.surfaceSubtle,
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
             color: _isHovered

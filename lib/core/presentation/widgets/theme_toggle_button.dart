@@ -3,7 +3,9 @@ import 'package:my_portfolio/app/di/service_locator.dart';
 import 'package:my_portfolio/core/controllers/app_theme_controller.dart';
 
 class ThemeToggleButton extends StatelessWidget {
-  const ThemeToggleButton({super.key});
+  const ThemeToggleButton({this.iconColor, super.key});
+
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -13,13 +15,14 @@ class ThemeToggleButton extends StatelessWidget {
       listenable: controller,
       builder: (context, _) {
         final mode = controller.mode;
-        final iconColor = Theme.of(context).colorScheme.onSurface;
+        final resolvedIconColor =
+            iconColor ?? Theme.of(context).colorScheme.onSurface;
 
         return PopupMenuButton<ThemeMode>(
           tooltip: 'Theme',
           initialValue: mode,
           onSelected: controller.setMode,
-          icon: Icon(_iconFor(mode), color: iconColor),
+          icon: Icon(_iconFor(mode), color: resolvedIconColor),
           itemBuilder: (context) => <PopupMenuEntry<ThemeMode>>[
             _menuItem(
               ThemeMode.light,

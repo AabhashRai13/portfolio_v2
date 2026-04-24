@@ -72,7 +72,10 @@ jobs:
         </IfModule>
 
         <IfModule mod_headers.c>
-            <FilesMatch "\.(html|json)$">
+            # Entrypoint files: never cache. Everything else (main.dart.js, canvaskit/*,
+            # hashed assets) is safe to cache because flutter_bootstrap.js references
+            # them with a build-specific version query.
+            <FilesMatch "\.(html|json)$|^flutter(_bootstrap)?\.js$">
                 Header set Cache-Control "no-cache, no-store, must-revalidate"
                 Header set Pragma "no-cache"
                 Header set Expires 0

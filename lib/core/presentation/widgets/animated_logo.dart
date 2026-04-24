@@ -28,7 +28,8 @@ class AnimatedLogoState extends State<AnimatedLogo> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
-          children: [
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
             Text(
               'Aabhash Rai',
               style: GoogleFonts.notoSans(
@@ -36,7 +37,7 @@ class AnimatedLogoState extends State<AnimatedLogo> {
                 fontWeight: FontWeight.w900,
                 foreground: Paint()
                   ..shader = const LinearGradient(
-                    colors: [
+                    colors: <Color>[
                       CustomColor.primary,
                       CustomColor.secondary,
                     ],
