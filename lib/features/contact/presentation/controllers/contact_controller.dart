@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/core/commands/command.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
 import 'package:my_portfolio/features/contact/domain/models/contact_message.dart';
-import 'package:my_portfolio/features/contact/domain/usecases/submit_contact_message_use_case.dart';
+import 'package:my_portfolio/features/contact/domain/repositories/contact_repository.dart';
 
 class ContactController {
   ContactController({
-    required SubmitContactMessageUseCase submitContactMessage,
+    required ContactRepository contactRepository,
     required AppLaunchService launchService,
-  }) : _submitContactMessage = submitContactMessage,
+  }) : _contactRepository = contactRepository,
        _launchService = launchService;
 
-  final SubmitContactMessageUseCase _submitContactMessage;
+  final ContactRepository _contactRepository;
   final AppLaunchService _launchService;
 
   final formKey = GlobalKey<FormState>();
@@ -42,7 +42,7 @@ class ContactController {
     submitCommand.toggleLoading();
 
     try {
-      await _submitContactMessage(message);
+      await _contactRepository.submitContactMessage(message);
       clearForm();
       submitCommand.setData('Form submitted successfully');
     } on Exception {

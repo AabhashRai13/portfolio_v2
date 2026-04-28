@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
 import 'package:my_portfolio/features/contact/domain/models/contact_message.dart';
 import 'package:my_portfolio/features/contact/domain/repositories/contact_repository.dart';
-import 'package:my_portfolio/features/contact/domain/usecases/submit_contact_message_use_case.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 import 'package:my_portfolio/features/contact/presentation/views/contact_section_view.dart';
 
@@ -12,9 +11,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final controller = ContactController(
-      submitContactMessage: SubmitContactMessageUseCase(
-        _WidgetFakeContactRepository(),
-      ),
+      contactRepository: _WidgetFakeContactRepository(),
       launchService: const _WidgetFakeLaunchService(),
     );
     addTearDown(controller.dispose);

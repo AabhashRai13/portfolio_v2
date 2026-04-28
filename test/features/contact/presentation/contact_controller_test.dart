@@ -2,16 +2,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
 import 'package:my_portfolio/features/contact/domain/models/contact_message.dart';
 import 'package:my_portfolio/features/contact/domain/repositories/contact_repository.dart';
-import 'package:my_portfolio/features/contact/domain/usecases/submit_contact_message_use_case.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 
 void main() {
   group('ContactController', () {
     test('submitMessage reports success and clears the form', () async {
       final controller = ContactController(
-        submitContactMessage: SubmitContactMessageUseCase(
-          _FakeContactRepository(),
-        ),
+        contactRepository: _FakeContactRepository(),
         launchService: const _FakeLaunchService(),
       );
       addTearDown(controller.dispose);
@@ -33,9 +30,7 @@ void main() {
 
     test('submitMessage reports failure when repository throws', () async {
       final controller = ContactController(
-        submitContactMessage: SubmitContactMessageUseCase(
-          _FakeContactRepository(shouldThrow: true),
-        ),
+        contactRepository: _FakeContactRepository(shouldThrow: true),
         launchService: const _FakeLaunchService(),
       );
       addTearDown(controller.dispose);

@@ -20,9 +20,11 @@ import 'package:my_portfolio/features/blog_list/domain/usecases/get_blog_posts_u
 import 'package:my_portfolio/features/blog_list/presentation/controllers/blog_list_controller.dart';
 import 'package:my_portfolio/features/contact/data/repositories/email_js_contact_repository.dart';
 import 'package:my_portfolio/features/contact/domain/repositories/contact_repository.dart';
-import 'package:my_portfolio/features/contact/domain/usecases/submit_contact_message_use_case.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 import 'package:my_portfolio/features/home/presentation/controllers/home_controller.dart';
+import 'package:my_portfolio/features/newsletter/data/repositories/stub_newsletter_repository.dart';
+import 'package:my_portfolio/features/newsletter/domain/repositories/newsletter_repository.dart';
+import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 import 'package:my_portfolio/features/projects/data/repositories/static_projects_repository.dart';
 import 'package:my_portfolio/features/projects/domain/repositories/projects_repository.dart';
 
@@ -74,6 +76,9 @@ void setupDependencies() {
     ..registerLazySingleton<ContactRepository>(
       EmailJsContactRepository.new,
     )
+    ..registerLazySingleton<NewsletterRepository>(
+      StubNewsletterRepository.new,
+    )
     ..registerLazySingleton<BlogListRepository>(
       () => FirestoreBlogListRepositoryImpl(
         remoteDataSource: getIt.get<BlogListRemoteDataSource>(),
@@ -96,15 +101,15 @@ void setupDependencies() {
     ..registerLazySingleton<ProjectsRepository>(
       StaticProjectsRepository.new,
     )
-    ..registerLazySingleton<SubmitContactMessageUseCase>(
-      () => SubmitContactMessageUseCase(
-        getIt.get<ContactRepository>(),
+    ..registerFactory(
+      () => ContactController(
+        contactRepository: getIt.get<ContactRepository>(),
+        launchService: getIt.get<AppLaunchService>(),
       ),
     )
     ..registerFactory(
-      () => ContactController(
-        submitContactMessage: getIt.get<SubmitContactMessageUseCase>(),
-        launchService: getIt.get<AppLaunchService>(),
+      () => NewsletterController(
+        newsletterRepository: getIt.get<NewsletterRepository>(),
       ),
     )
     ..registerFactory(
