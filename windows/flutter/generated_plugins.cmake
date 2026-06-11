@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   cloud_firestore
+  firebase_app_check
   firebase_core
   flutter_inappwebview_windows
   url_launcher_windows

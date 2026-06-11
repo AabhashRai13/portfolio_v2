@@ -15,15 +15,19 @@ import 'package:my_portfolio/features/blog_detail/presentation/widgets/blog_post
 import 'package:my_portfolio/features/blog_detail/presentation/widgets/blog_post_markdown_card.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/widgets/blog_toc_sidebar.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/widgets/reading_progress_bar.dart';
+import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
+import 'package:my_portfolio/features/newsletter/presentation/widgets/newsletter_subscribe_widget.dart';
 
 class BlogPostDetailPage extends StatefulWidget {
   const BlogPostDetailPage({
     required this.blogPostDetailController,
+    required this.newsletterController,
     required this.slug,
     super.key,
   });
 
   final BlogPostDetailController blogPostDetailController;
+  final NewsletterController newsletterController;
   final String slug;
 
   @override
@@ -45,6 +49,7 @@ class _BlogPostDetailPageState extends State<BlogPostDetailPage> {
   void dispose() {
     controller.submitCommentCommand.removeListener(_onCommentFeedback);
     controller.dispose();
+    widget.newsletterController.dispose();
     super.dispose();
   }
 
@@ -118,6 +123,7 @@ class _BlogPostDetailPageState extends State<BlogPostDetailPage> {
             return _BlogPostContent(
               post: post,
               controller: controller,
+              newsletterController: widget.newsletterController,
               screenWidth: screenWidth,
             );
           },
@@ -131,11 +137,13 @@ class _BlogPostContent extends StatefulWidget {
   const _BlogPostContent({
     required this.post,
     required this.controller,
+    required this.newsletterController,
     required this.screenWidth,
   });
 
   final BlogPostEntity post;
   final BlogPostDetailController controller;
+  final NewsletterController newsletterController;
   final double screenWidth;
 
   @override
@@ -198,6 +206,10 @@ class _BlogPostContentState extends State<_BlogPostContent> {
           sections: _post.sections,
           onOpenLink: widget.controller.openLink,
           sectionKeys: _headingKeys,
+        ),
+        const SizedBox(height: 28),
+        NewsletterSubscribeWidget(
+          controller: widget.newsletterController,
         ),
         const SizedBox(height: 28),
         ListenableBuilder(
