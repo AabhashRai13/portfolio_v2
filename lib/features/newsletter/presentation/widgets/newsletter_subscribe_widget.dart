@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/constants/size.dart';
-import 'package:my_portfolio/core/presentation/widgets/custom_text_field.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 
 class NewsletterSubscribeWidget extends StatefulWidget {
@@ -63,17 +62,21 @@ class _NewsletterSubscribeWidgetState extends State<NewsletterSubscribeWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final palette = theme.blogPalette;
+    final primary = theme.colorScheme.primary;
+
     return Form(
       key: _controller.formKey,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 700),
         padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 32),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: palette.surfaceElevated,
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: palette.borderSoft),
           boxShadow: [
             BoxShadow(
-              color: CustomColor.primary.withValues(alpha: 0.08),
+              color: palette.shadowColor,
               blurRadius: 32,
               offset: const Offset(0, 8),
             ),
@@ -82,52 +85,51 @@ class _NewsletterSubscribeWidgetState extends State<NewsletterSubscribeWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.markunread_mailbox_rounded,
-                  color: CustomColor.primary,
+                  Icons.email,
+                  color: primary,
                   size: 28,
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Text(
-                  'Subscribe to the Newsletter',
+                  'Enjoyed this one?',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
-                    color: CustomColor.primary,
+                    color: primary,
                     letterSpacing: 1.1,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Get a short email when I publish a new post. '
               'No spam, unsubscribe any time.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
-                color: CustomColor.textSecondary,
+                color: palette.textSecondary,
                 height: 1.4,
               ),
             ),
             const SizedBox(height: 24),
             LayoutBuilder(
               builder: (context, constraints) {
-                final emailField = CustomTextField(
-                  hintText: 'you@example.com',
+                final emailField = _NewsletterEmailField(
                   controller: _controller.emailController,
-                  isEmail: true,
-                  inputType: 'Email',
                 );
                 final subscribeButton = ListenableBuilder(
                   listenable: _controller.subscribeCommand,
                   builder: (context, _) {
+                    final isLoading = _controller.subscribeCommand.isLoading;
+
                     return ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: CustomColor.primary,
+                        backgroundColor: primary,
                         foregroundColor: Colors.white,
                         elevation: 4,
                         padding: const EdgeInsets.symmetric(
@@ -143,10 +145,8 @@ class _NewsletterSubscribeWidgetState extends State<NewsletterSubscribeWidget> {
                           letterSpacing: 1.1,
                         ),
                       ),
-                      onPressed: _controller.subscribeCommand.isLoading
-                          ? null
-                          : _controller.subscribe,
-                      icon: _controller.subscribeCommand.isLoading
+                      onPressed: isLoading ? null : _controller.subscribe,
+                      icon: isLoading
                           ? const SizedBox(
                               width: 20,
                               height: 20,
@@ -157,9 +157,7 @@ class _NewsletterSubscribeWidgetState extends State<NewsletterSubscribeWidget> {
                             )
                           : const Icon(Icons.send_rounded, size: 20),
                       label: Text(
-                        _controller.subscribeCommand.isLoading
-                            ? 'Subscribing...'
-                            : 'Subscribe',
+                        isLoading ? 'Subscribing...' : 'Send me the next Blog',
                       ),
                     );
                   },
@@ -189,6 +187,54 @@ class _NewsletterSubscribeWidgetState extends State<NewsletterSubscribeWidget> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _NewsletterEmailField extends StatelessWidget {
+  const _NewsletterEmailField({required this.controller});
+
+  static final RegExp _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.emailAddress,
+      style: TextStyle(color: palette.textStrong),
+      validator: (value) {
+        final email = value?.trim() ?? '';
+        if (email.isEmpty) {
+          return 'Please enter your email';
+        }
+        if (!_emailRegex.hasMatch(email)) {
+          return 'Enter a valid email';
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.all(16),
+        filled: true,
+        fillColor: palette.surfaceSubtle,
+        focusedBorder: _inputBorder,
+        enabledBorder: _inputBorder,
+        border: _inputBorder,
+        errorBorder: _inputBorder,
+        focusedErrorBorder: _inputBorder,
+        hintText: 'you@example.com',
+        hintStyle: TextStyle(color: palette.textMuted),
+      ),
+    );
+  }
+
+  OutlineInputBorder get _inputBorder {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide.none,
     );
   }
 }

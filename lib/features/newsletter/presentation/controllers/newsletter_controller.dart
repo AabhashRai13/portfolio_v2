@@ -26,7 +26,6 @@ class NewsletterController {
 
   Future<void> subscribeWithEmail(String email) async {
     subscribeCommand.start();
-
     final result = await _newsletterRepository.subscribe(email);
     result.fold(
       (failure) => subscribeCommand.setError(

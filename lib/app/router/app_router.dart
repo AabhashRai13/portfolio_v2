@@ -9,6 +9,7 @@ import 'package:my_portfolio/features/blog_list/presentation/views/blog_list_pag
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 import 'package:my_portfolio/features/home/presentation/controllers/home_controller.dart';
 import 'package:my_portfolio/features/home/presentation/views/home_main_page.dart';
+import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -35,6 +36,7 @@ class AppRouter {
                 slug: state.pathParameters['slug']!,
                 blogPostDetailController:
                     getIt.get<BlogPostDetailController>(),
+                newsletterController: getIt.get<NewsletterController>(),
               ),
             ),
           ),
