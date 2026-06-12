@@ -38,6 +38,10 @@ jobs:
     - name: Get dependencies
       run: flutter pub get
 
+    # 🧪 Run unit tests — fail the deploy if any test fails
+    - name: Run tests
+      run: flutter test
+
     # 🧼 Clean previous builds (optional but recommended)
     - name: Clean build
       run: flutter clean
