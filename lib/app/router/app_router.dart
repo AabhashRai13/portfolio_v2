@@ -10,6 +10,7 @@ import 'package:my_portfolio/features/contact/presentation/controllers/contact_c
 import 'package:my_portfolio/features/home/presentation/controllers/home_controller.dart';
 import 'package:my_portfolio/features/home/presentation/views/home_main_page.dart';
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
+import 'package:my_portfolio/features/newsletter/presentation/views/newsletter_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -41,6 +42,14 @@ class AppRouter {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: AppRoutes.newsletter,
+        builder: (context, state) => AppThemeScope(
+          child: NewsletterPage(
+            newsletterController: getIt.get<NewsletterController>(),
+          ),
+        ),
       ),
       GoRoute(
         path: AppRoutes.content,

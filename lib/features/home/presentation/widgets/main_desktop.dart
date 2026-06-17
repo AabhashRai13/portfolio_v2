@@ -7,12 +7,14 @@ class MainDesktop extends StatelessWidget {
     required this.scrollToSection,
     required this.openResume,
     required this.openBlog,
+    required this.openNewsletter,
     required this.gameChild,
     super.key,
   });
   final VoidCallback scrollToSection;
   final Future<void> Function() openResume;
   final VoidCallback openBlog;
+  final VoidCallback openNewsletter;
   final Widget gameChild;
 
   @override
@@ -32,6 +34,7 @@ class MainDesktop extends StatelessWidget {
             child: Description(
               scrollToSection: scrollToSection,
               openBlog: openBlog,
+              openNewsletter: openNewsletter,
             ),
           )
         : FrostedGlassContainer(
@@ -41,6 +44,7 @@ class MainDesktop extends StatelessWidget {
                 ? Description(
                     scrollToSection: scrollToSection,
                     openBlog: openBlog,
+                    openNewsletter: openNewsletter,
                   )
                 : Row(
                     children: [
@@ -48,8 +52,8 @@ class MainDesktop extends StatelessWidget {
                         flex: 3,
                         child: Description(
                           scrollToSection: scrollToSection,
-                      
                           openBlog: openBlog,
+                          openNewsletter: openNewsletter,
                         ),
                       ),
                       Expanded(

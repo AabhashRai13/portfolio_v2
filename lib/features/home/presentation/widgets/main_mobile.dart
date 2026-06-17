@@ -7,12 +7,14 @@ class MainMobile extends StatelessWidget {
     required this.scrollToSection,
     required this.openResume,
     required this.openBlog,
+    required this.openNewsletter,
     super.key,
   });
 
   final VoidCallback scrollToSection;
   final Future<void> Function() openResume;
   final VoidCallback openBlog;
+  final VoidCallback openNewsletter;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class MainMobile extends StatelessWidget {
       child: Description(
         scrollToSection: scrollToSection,
         openBlog: openBlog,
+        openNewsletter: openNewsletter,
       ),
     );
   }
