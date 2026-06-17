@@ -11,6 +11,8 @@ import 'package:my_portfolio/features/home/presentation/controllers/home_control
 import 'package:my_portfolio/features/home/presentation/views/home_main_page.dart';
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 import 'package:my_portfolio/features/newsletter/presentation/views/newsletter_page.dart';
+import 'package:my_portfolio/features/resume/presentation/controllers/resume_controller.dart';
+import 'package:my_portfolio/features/resume/presentation/views/resume_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -48,6 +50,14 @@ class AppRouter {
         builder: (context, state) => AppThemeScope(
           child: NewsletterPage(
             newsletterController: getIt.get<NewsletterController>(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.resume,
+        builder: (context, state) => AppThemeScope(
+          child: ResumePage(
+            resumeController: getIt.get<ResumeController>(),
           ),
         ),
       ),

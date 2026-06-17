@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/core/resources/utils/static_utils.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
@@ -47,7 +48,7 @@ class HomeController {
     HomeNavigationItem(
       title: 'Resume',
       icon: Icons.description_outlined,
-      target: HomeNavigationTarget.external(SnsLinks.resume),
+      target: HomeNavigationTarget.route(AppRoutes.resume),
     ),
   ];
 

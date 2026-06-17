@@ -29,6 +29,7 @@ import 'package:my_portfolio/features/newsletter/domain/repositories/newsletter_
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 import 'package:my_portfolio/features/projects/data/repositories/static_projects_repository.dart';
 import 'package:my_portfolio/features/projects/domain/repositories/projects_repository.dart';
+import 'package:my_portfolio/features/resume/presentation/controllers/resume_controller.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -123,6 +124,11 @@ void setupDependencies() {
     ..registerFactory(
       () => NewsletterController(
         newsletterRepository: getIt.get<NewsletterRepository>(),
+      ),
+    )
+    ..registerFactory(
+      () => ResumeController(
+        launchService: getIt.get<AppLaunchService>(),
       ),
     )
     ..registerFactory(
