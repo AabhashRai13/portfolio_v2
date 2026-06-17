@@ -11,11 +11,13 @@ class Description extends StatelessWidget {
   const Description({
     required this.scrollToSection,
     required this.openBlog,
+    required this.openNewsletter,
     super.key,
   });
 
   final VoidCallback scrollToSection;
   final VoidCallback openBlog;
+  final VoidCallback openNewsletter;
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +102,10 @@ class Description extends StatelessWidget {
                 _SecondaryActionButton(
                   label: 'Blog',
                   onTap: openBlog,
+                ),
+                _SecondaryActionButton(
+                  label: 'Newsletter',
+                  onTap: openNewsletter,
                 ),
               ],
             ),

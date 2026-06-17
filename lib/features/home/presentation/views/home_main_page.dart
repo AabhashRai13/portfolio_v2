@@ -161,6 +161,11 @@ class _HomeMainPageState extends State<HomeMainPage> {
                             openBlog: () => _handleNavigation(
                               const HomeNavigationTarget.route(AppRoutes.blog),
                             ),
+                            openNewsletter: () => _handleNavigation(
+                              const HomeNavigationTarget.route(
+                                AppRoutes.newsletter,
+                              ),
+                            ),
                             gameChild: const RepaintBoundary(
                               child: GamePreview(),
                             ),
@@ -174,6 +179,11 @@ class _HomeMainPageState extends State<HomeMainPage> {
                             openResume: _homeController.openResume,
                             openBlog: () => _handleNavigation(
                               const HomeNavigationTarget.route(AppRoutes.blog),
+                            ),
+                            openNewsletter: () => _handleNavigation(
+                              const HomeNavigationTarget.route(
+                                AppRoutes.newsletter,
+                              ),
                             ),
                           ),
                   ),
