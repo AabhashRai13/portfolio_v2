@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 
 final TextTheme _baseTextTheme = GoogleFonts.poppinsTextTheme();
 
-ThemeData get kCustomTheme => ThemeData.light().copyWith(
+ThemeData get kLightTheme => ThemeData.light().copyWith(
       scaffoldBackgroundColor: CustomColor.scaffoldBg,
-
-      // General Theme
       primaryColor: CustomColor.primary,
       colorScheme: const ColorScheme.light(
         primary: CustomColor.primary,
@@ -16,8 +15,9 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
         tertiary: CustomColor.accent,
         surface: CustomColor.bgLight1,
       ),
-
-      // Text Theme
+      extensions: const <ThemeExtension<dynamic>>[
+        BlogPalette.light,
+      ],
       textTheme: _baseTextTheme.copyWith(
         headlineLarge: _baseTextTheme.headlineLarge?.copyWith(
           color: CustomColor.textPrimary,
@@ -57,8 +57,6 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
           height: 1.5,
         ),
       ),
-
-      // Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: CustomColor.primary,
@@ -79,8 +77,6 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
           ),
         ),
       ),
-
-      // Card Theme
       cardTheme: CardThemeData(
         color: CustomColor.bgLight1,
         elevation: 8,
@@ -89,8 +85,6 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
           borderRadius: BorderRadius.circular(16),
         ),
       ),
-
-      // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: CustomColor.bgLight1,
@@ -121,14 +115,10 @@ ThemeData get kCustomTheme => ThemeData.light().copyWith(
           color: CustomColor.primary,
         ),
       ),
-
-      // Icon Theme
       iconTheme: const IconThemeData(
         color: CustomColor.primary,
         size: 24,
       ),
-
-      // Floating Action Button Theme
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: CustomColor.secondary,
         foregroundColor: CustomColor.textLight,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 
 class BlogFeedbackState extends StatelessWidget {
   const BlogFeedbackState({
@@ -6,7 +7,7 @@ class BlogFeedbackState extends StatelessWidget {
     required this.message,
     required this.actionLabel,
     required this.onPressed,
-    super.key
+    super.key,
   });
 
   final String title;
@@ -16,15 +17,17 @@ class BlogFeedbackState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 520),
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.9),
+            color: palette.surfaceElevated,
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: const Color(0xFFF1E7DC)),
+            border: Border.all(color: palette.borderSoft),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -33,7 +36,7 @@ class BlogFeedbackState extends StatelessWidget {
                 title,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: const Color(0xFF2D241E),
+                  color: palette.textStrong,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -42,7 +45,7 @@ class BlogFeedbackState extends StatelessWidget {
                 message,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: const Color(0xFF85776A),
+                  color: palette.textSecondary,
                   height: 1.6,
                 ),
               ),

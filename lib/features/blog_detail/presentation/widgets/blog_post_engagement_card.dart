@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/blog_post_entity.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/widgets/editorial_action_button.dart';
 
@@ -19,6 +19,8 @@ class BlogPostEngagementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final palette = theme.blogPalette;
     final canLike = !isLiking && !post.isLikedByCurrentBrowser;
 
     return AnimatedContainer(
@@ -26,29 +28,18 @@ class BlogPostEngagementCard extends StatelessWidget {
       curve: Curves.easeOutCubic,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.94),
         borderRadius: BorderRadius.circular(30),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: <Color>[
-            Color(0xFFFFFFFF),
-            Color(0xFFFFFAF4),
-          ],
+          colors: palette.engagementGradient,
         ),
-        border: Border.all(
-          color: const Color(0xFFF0E3D6),
-        ),
+        border: Border.all(color: palette.borderSoft),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.045),
+            color: palette.shadowColor,
             blurRadius: 20,
             offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.75),
-            blurRadius: 10,
-            offset: const Offset(-4, -4),
           ),
         ],
       ),
@@ -62,7 +53,7 @@ class BlogPostEngagementCard extends StatelessWidget {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF4EA),
+                  color: palette.tagChipBackground,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 alignment: Alignment.center,
@@ -70,13 +61,11 @@ class BlogPostEngagementCard extends StatelessWidget {
                   post.isLikedByCurrentBrowser
                       ? Icons.favorite_rounded
                       : Icons.favorite_border_rounded,
-                  color: post.isLikedByCurrentBrowser
-                      ? CustomColor.pastelRed
-                      : CustomColor.secondary,
+                  color: theme.colorScheme.secondary,
                 ),
               ),
               const SizedBox(width: 14),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -85,17 +74,17 @@ class BlogPostEngagementCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
-                        color: CustomColor.textPrimary,
+                        color: palette.textStrong,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       'A like or a thoughtful note tells me what actually '
                       'landed with you.',
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.5,
-                        color: CustomColor.textSecondary,
+                        color: palette.textSecondary,
                       ),
                     ),
                   ],
@@ -137,15 +126,15 @@ class BlogPostEngagementCard extends StatelessWidget {
                   vertical: 11,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF8F1),
+                  color: palette.surfaceSubtle,
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   post.isLikedByCurrentBrowser
                       ? 'You already left a kind mark here.'
                       : 'Quiet appreciation is welcome too.',
-                  style: const TextStyle(
-                    color: CustomColor.textSecondary,
+                  style: TextStyle(
+                    color: palette.textSecondary,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),

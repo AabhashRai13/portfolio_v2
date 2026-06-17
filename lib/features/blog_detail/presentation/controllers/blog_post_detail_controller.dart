@@ -5,14 +5,18 @@ import 'package:my_portfolio/core/services/app_launch_service.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/blog_comment_entity.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/blog_post_entity.dart';
 import 'package:my_portfolio/features/blog_detail/domain/repositories/blog_detail_repository.dart';
+import 'package:my_portfolio/features/blog_detail/domain/usecases/get_blog_post_use_case.dart';
 
 class BlogPostDetailController {
   BlogPostDetailController({
+    required GetBlogPostUseCase getBlogPost,
     required BlogDetailRepository blogDetailRepository,
     required AppLaunchService launchService,
-  }) : _blogDetailRepository = blogDetailRepository,
+  }) : _getBlogPost = getBlogPost,
+       _blogDetailRepository = blogDetailRepository,
        _launchService = launchService;
 
+  final GetBlogPostUseCase _getBlogPost;
   final BlogDetailRepository _blogDetailRepository;
   final AppLaunchService _launchService;
 
@@ -33,7 +37,7 @@ class BlogPostDetailController {
   Future<void> loadPost(String slug) async {
     loadPostCommand.start();
 
-    final result = await _blogDetailRepository.getBlogPostBySlug(slug);
+    final result = await _getBlogPost(slug);
     await result.fold(
       (failure) async {
         loadPostCommand.setError(
@@ -143,6 +147,7 @@ class BlogPostDetailController {
         submitCommentCommand.setData(
           'Comment submitted for review. It will appear once approved.',
         );
+        resetCommentFeedback();
       },
     );
   }

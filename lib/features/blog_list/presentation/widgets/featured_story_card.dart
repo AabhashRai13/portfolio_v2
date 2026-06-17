@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/resources/utils/blog_formatters.dart';
 import 'package:my_portfolio/features/blog_list/domain/entities/blog_post_summary_entity.dart';
 import 'package:my_portfolio/features/blog_list/presentation/widgets/blog_tag_chip.dart';
@@ -17,18 +18,20 @@ class FeaturedStoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
     return InkWell(
       borderRadius: BorderRadius.circular(34),
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.9),
+          color: palette.surfaceElevated,
           borderRadius: BorderRadius.circular(34),
-          border: Border.all(color: const Color(0xFFF4EADF)),
+          border: Border.all(color: palette.borderSoft),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: const Color(0xFF926E4A).withValues(alpha: 0.08),
+              color: palette.shadowColor,
               blurRadius: 32,
               offset: const Offset(0, 16),
             ),
@@ -62,7 +65,7 @@ class FeaturedStoryCard extends StatelessWidget {
                     post.title,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: const Color(0xFF2D241E),
+                      color: palette.textStrong,
                       height: 1.08,
                       letterSpacing: -0.8,
                     ),
@@ -71,7 +74,7 @@ class FeaturedStoryCard extends StatelessWidget {
                   Text(
                     post.summary,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF847568),
+                      color: palette.textSecondary,
                       height: 1.6,
                     ),
                   ),

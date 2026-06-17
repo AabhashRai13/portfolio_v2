@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/resources/utils/blog_formatters.dart';
 import 'package:my_portfolio/features/blog_list/domain/entities/blog_post_summary_entity.dart';
 import 'package:my_portfolio/features/blog_list/presentation/widgets/blog_tag_chip.dart';
@@ -17,18 +18,20 @@ class StoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).blogPalette;
+
     return InkWell(
       borderRadius: BorderRadius.circular(30),
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.92),
+          color: palette.surfaceElevated,
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: const Color(0xFFF4EADF)),
+          border: Border.all(color: palette.borderSoft),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: const Color(0xFF926E4A).withValues(alpha: 0.06),
+              color: palette.shadowColor,
               blurRadius: 24,
               offset: const Offset(0, 14),
             ),
@@ -60,7 +63,7 @@ class StoryCard extends StatelessWidget {
                     post.title,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: const Color(0xFF2D241E),
+                      color: palette.textStrong,
                       height: 1.14,
                       letterSpacing: -0.6,
                     ),
@@ -69,7 +72,7 @@ class StoryCard extends StatelessWidget {
                   Text(
                     post.summary,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: const Color(0xFF85776A),
+                      color: palette.textSecondary,
                       height: 1.6,
                     ),
                   ),

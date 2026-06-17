@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/presentation/widgets/animated_logo.dart';
 import 'package:my_portfolio/core/resources/size_config.dart';
 import 'package:my_portfolio/features/home/presentation/models/home_navigation_item.dart';
-import 'package:my_portfolio/features/home/presentation/widgets/animated_logo.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/frosted_container_widget.dart';
 
 class HeaderDesktop extends StatelessWidget {
@@ -42,8 +42,7 @@ class HeaderDesktop extends StatelessWidget {
                         child: _NavButton(
                           title: item.title,
                           onTap: () => onNavMenuTap(item),
-                          isPrimaryAction:
-                              item == navigationItems.last,
+                          isPrimaryAction: item == navigationItems.last,
                         ),
                       ),
                   ],

@@ -14,12 +14,7 @@ class PortfolioApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       scrollBehavior: const PortfolioScrollBehavior(),
-      theme: ThemeData.light().copyWith(
-        scaffoldBackgroundColor: Colors.white,
-        primaryColor: const Color(0xFF2563EB),
-      ),
-      darkTheme: kCustomTheme,
-      themeMode: ThemeMode.light,
+      theme: kLightTheme,
       title: 'Aabhash Rai',
       routerConfig: AppRouter.router,
     );

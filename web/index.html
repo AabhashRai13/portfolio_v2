@@ -79,6 +79,21 @@
             pointer-events: none;
         }
     </style>
+    <script>
+        // One-time cleanup for visitors who registered a service worker from an earlier
+        // deploy. Unregister it and purge its caches so they stop being served stale
+        // assets. Safe to remove after a few weeks once returning visitors are cleaned up.
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+                regs.forEach(function (r) { r.unregister(); });
+            });
+            if (window.caches) {
+                caches.keys().then(function (keys) {
+                    keys.forEach(function (k) { caches.delete(k); });
+                });
+            }
+        }
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.10/lottie.min.js"></script>
     <script type="module" src="/assets/packages/flutter_3d_controller/assets/model_viewer.min.js" defer></script>
 
