@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_portfolio/constants/colors.dart';
-import 'package:my_portfolio/core/presentation/widgets/animated_logo.dart';
 import 'package:my_portfolio/core/resources/size_config.dart';
 import 'package:my_portfolio/features/home/presentation/models/home_navigation_item.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/frosted_container_widget.dart';
@@ -10,10 +9,12 @@ class HeaderDesktop extends StatelessWidget {
   const HeaderDesktop({
     required this.navigationItems,
     required this.onNavMenuTap,
+    required this.onOpenNewsletter,
     super.key,
   });
   final List<HomeNavigationItem> navigationItems;
   final void Function(HomeNavigationItem) onNavMenuTap;
+  final VoidCallback onOpenNewsletter;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,13 @@ class HeaderDesktop extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const AnimatedLogo(),
+              // The hero carries the name now; the old logo slot holds the
+              // newsletter entry point instead.
+              _NavButton(
+                title: 'Newsletter',
+                onTap: onOpenNewsletter,
+                isPrimaryAction: false,
+              ),
               const Spacer(),
               if (SizeConfig.screenWidth >= 1100)
                 Row(
