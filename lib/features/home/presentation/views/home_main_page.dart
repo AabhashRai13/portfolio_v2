@@ -140,9 +140,18 @@ class _HomeMainPageState extends State<HomeMainPage> {
                           navigationItems: HomeController.navigationItems,
                           onNavMenuTap: (item) =>
                               _handleNavigation(item.target),
+                          onOpenNewsletter: () => _handleNavigation(
+                            const HomeNavigationTarget.route(
+                              AppRoutes.newsletter,
+                            ),
+                          ),
                         )
                       : HeaderMobile(
-                          onLogoTap: () {},
+                          onOpenNewsletter: () => _handleNavigation(
+                            const HomeNavigationTarget.route(
+                              AppRoutes.newsletter,
+                            ),
+                          ),
                           onMenuTap: () {
                             scaffoldKey.currentState?.openEndDrawer();
                           },
