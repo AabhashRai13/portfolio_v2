@@ -35,28 +35,60 @@ class Description extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start, // align text to left
         children: [
           // Name — the dominant, memorable element of the hero.
-          Text(
-            'Aabhash Rai',
-            style: GoogleFonts.poppins(
-              fontSize: nameSize,
-              height: 1.05,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1,
-              color: CustomColor.textPrimary, // dark brown
+          // Editorial serif + warm gradient makes the name the memorable hook.
+          ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [CustomColor.textPrimary, CustomColor.secondary],
+            ).createShader(bounds),
+            child: Text(
+              'Aabhash Rai',
+              style: GoogleFonts.playfairDisplay(
+                fontSize: nameSize,
+                height: 1,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -1,
+                color: Colors.white, // painted over by the shader
+              ),
             ),
           ),
           if (screenSize.height > 420) ...[
             const SizedBox(height: 20),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 560),
-              child: Text(
-                'I build mobile apps for a living: rock-solid when it counts, '
-                'a little extra when it gets to be fun.',
-                style: GoogleFonts.poppins(
-                  fontSize: bodySize,
-                  height: 1.5,
-                  fontWeight: FontWeight.w500,
-                  color: CustomColor.textPrimary, // dark brown
+              child: Text.rich(
+                TextSpan(
+                  style: GoogleFonts.poppins(
+                    fontSize: bodySize,
+                    height: 1.5,
+                    fontWeight: FontWeight.w500,
+                    color: CustomColor.textSecondary, // medium brown
+                  ),
+                  children: const [
+                    TextSpan(
+                      text: 'I build mobile apps for a living: ',
+                    ),
+                    TextSpan(
+                      text: 'rock-solid',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: CustomColor.textPrimary, // dark brown
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' when it counts, a little extra when it gets '
+                          'to be ',
+                    ),
+                    TextSpan(
+                      text: 'fun',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: CustomColor.secondary, // muted coral
+                      ),
+                    ),
+                    TextSpan(text: '.'),
+                  ],
                 ),
               ),
             ),

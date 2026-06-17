@@ -17,6 +17,7 @@ import 'package:my_portfolio/features/home/presentation/widgets/header_desktop.d
 import 'package:my_portfolio/features/home/presentation/widgets/header_mobile.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/main_desktop.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/main_mobile.dart';
+import 'package:my_portfolio/features/home/presentation/widgets/section_scroll_indicator.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/youtube_player.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/portfolio_section.dart';
 import 'package:my_portfolio/features/skills/presentation/widgets/skills_section.dart';
@@ -47,6 +48,14 @@ class _HomeMainPageState extends State<HomeMainPage> {
     HomeSection.portfolio: GlobalKey(),
     HomeSection.contact: GlobalKey(),
   };
+
+  static const _indicatorSections = <({HomeSection section, String label})>[
+    (section: HomeSection.hero, label: 'Home'),
+    (section: HomeSection.skills, label: 'Skills'),
+    (section: HomeSection.introVideo, label: 'Video'),
+    (section: HomeSection.portfolio, label: 'Projects'),
+    (section: HomeSection.contact, label: 'Contact'),
+  ];
 
   @override
   void initState() {
@@ -111,151 +120,173 @@ class _HomeMainPageState extends State<HomeMainPage> {
                     _handleNavigation(item.target);
                   },
                 ),
-          body: SmoothScrollWrapper(
-            controller: scrollController,
-            enabled: shouldEnableSmoothWheelScroll(constraints.maxWidth),
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.topLeft,
-                  radius: 2,
-                  colors: [
-                    Color(0xFFFFF1E6),
-                    Color(0xFFF5DCC6),
-                    Color(0xFFD7B49E),
-                    Color(0xFFB08968),
-                  ],
-                  stops: [0.1, 0.4, 0.7, 1.0],
+          body: Stack(
+            children: <Widget>[
+              SmoothScrollWrapper(
+                controller: scrollController,
+                enabled: shouldEnableSmoothWheelScroll(constraints.maxWidth),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: RadialGradient(
+                      center: Alignment.topLeft,
+                      radius: 2,
+                      colors: [
+                        Color(0xFFFFF1E6),
+                        Color(0xFFF5DCC6),
+                        Color(0xFFD7B49E),
+                        Color(0xFFB08968),
+                      ],
+                      stops: [0.1, 0.4, 0.7, 1.0],
+                    ),
+                  ),
+                  child: CustomScrollView(
+                    controller: scrollController,
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: SizedBox(key: _sectionKeys[HomeSection.hero]),
+                      ),
+                      SliverToBoxAdapter(
+                        child: constraints.maxWidth >= kMinDesktopWidth
+                            ? HeaderDesktop(
+                                navigationItems: HomeController.navigationItems,
+                                onNavMenuTap: (item) =>
+                                    _handleNavigation(item.target),
+                                onOpenNewsletter: () => _handleNavigation(
+                                  const HomeNavigationTarget.route(
+                                    AppRoutes.newsletter,
+                                  ),
+                                ),
+                              )
+                            : HeaderMobile(
+                                onOpenNewsletter: () => _handleNavigation(
+                                  const HomeNavigationTarget.route(
+                                    AppRoutes.newsletter,
+                                  ),
+                                ),
+                                onMenuTap: () {
+                                  scaffoldKey.currentState?.openEndDrawer();
+                                },
+                              ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: RepaintBoundary(
+                          child: constraints.maxWidth >= kMinDesktopWidth
+                              ? MainDesktop(
+                                  scrollToSection: () {
+                                    _handleNavigation(
+                                      _homeController.scrollToContact(),
+                                    );
+                                  },
+                                  openResume: _homeController.openResume,
+                                  openBlog: () => _handleNavigation(
+                                    const HomeNavigationTarget.route(
+                                      AppRoutes.blog,
+                                    ),
+                                  ),
+                                  openNewsletter: () => _handleNavigation(
+                                    const HomeNavigationTarget.route(
+                                      AppRoutes.newsletter,
+                                    ),
+                                  ),
+                                  gameChild: const RepaintBoundary(
+                                    child: GamePreview(),
+                                  ),
+                                )
+                              : MainMobile(
+                                  scrollToSection: () {
+                                    _handleNavigation(
+                                      _homeController.scrollToContact(),
+                                    );
+                                  },
+                                  openResume: _homeController.openResume,
+                                  openBlog: () => _handleNavigation(
+                                    const HomeNavigationTarget.route(
+                                      AppRoutes.blog,
+                                    ),
+                                  ),
+                                  openNewsletter: () => _handleNavigation(
+                                    const HomeNavigationTarget.route(
+                                      AppRoutes.newsletter,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: RepaintBoundary(
+                          child: SizedBox(
+                            key: _sectionKeys[HomeSection.skills],
+                            child: SkillsSection(
+                              isDesktop:
+                                  constraints.maxWidth >= kMedDesktopWidth,
+                              width: screenWidth,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: RepaintBoundary(
+                          child: SizedBox(
+                            key: _sectionKeys[HomeSection.introVideo],
+                            height: constraints.maxWidth >= kMinDesktopWidth
+                                ? 700
+                                : 500,
+                            width: double.infinity,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Image.asset(
+                                  ImageAssets.creamCurtain,
+                                  fit: BoxFit.fill,
+                                ),
+                                YoutubePlayerScreen(
+                                  isMobile:
+                                      constraints.maxWidth < kMinDesktopWidth,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: RepaintBoundary(
+                          child: Portfolio(
+                            key: _sectionKeys[HomeSection.portfolio],
+                            projects: _homeController.featuredProjects,
+                            onOpenMore: _homeController.openPortfolioSource,
+                            onOpenProject: _homeController.openProject,
+                          ),
+                        ),
+                      ),
+                      const SliverToBoxAdapter(
+                        child: SizedBox(height: 30),
+                      ),
+                      SliverToBoxAdapter(
+                        child: ContactSection(
+                          controller: _contactController,
+                          key: _sectionKeys[HomeSection.contact],
+                        ),
+                      ),
+                      const SliverToBoxAdapter(
+                        child: Footer(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              child: CustomScrollView(
-                controller: scrollController,
-                slivers: [
-                SliverToBoxAdapter(
-                  child: SizedBox(key: _sectionKeys[HomeSection.hero]),
-                ),
-                SliverToBoxAdapter(
-                  child: constraints.maxWidth >= kMinDesktopWidth
-                      ? HeaderDesktop(
-                          navigationItems: HomeController.navigationItems,
-                          onNavMenuTap: (item) =>
-                              _handleNavigation(item.target),
-                          onOpenNewsletter: () => _handleNavigation(
-                            const HomeNavigationTarget.route(
-                              AppRoutes.newsletter,
-                            ),
-                          ),
-                        )
-                      : HeaderMobile(
-                          onOpenNewsletter: () => _handleNavigation(
-                            const HomeNavigationTarget.route(
-                              AppRoutes.newsletter,
-                            ),
-                          ),
-                          onMenuTap: () {
-                            scaffoldKey.currentState?.openEndDrawer();
-                          },
-                        ),
-                ),
-                SliverToBoxAdapter(
-                  child: RepaintBoundary(
-                    child: constraints.maxWidth >= kMinDesktopWidth
-                        ? MainDesktop(
-                            scrollToSection: () {
-                              _handleNavigation(
-                                _homeController.scrollToContact(),
-                              );
-                            },
-                            openResume: _homeController.openResume,
-                            openBlog: () => _handleNavigation(
-                              const HomeNavigationTarget.route(AppRoutes.blog),
-                            ),
-                            openNewsletter: () => _handleNavigation(
-                              const HomeNavigationTarget.route(
-                                AppRoutes.newsletter,
-                              ),
-                            ),
-                            gameChild: const RepaintBoundary(
-                              child: GamePreview(),
-                            ),
-                          )
-                        : MainMobile(
-                            scrollToSection: () {
-                              _handleNavigation(
-                                _homeController.scrollToContact(),
-                              );
-                            },
-                            openResume: _homeController.openResume,
-                            openBlog: () => _handleNavigation(
-                              const HomeNavigationTarget.route(AppRoutes.blog),
-                            ),
-                            openNewsletter: () => _handleNavigation(
-                              const HomeNavigationTarget.route(
-                                AppRoutes.newsletter,
-                              ),
-                            ),
-                          ),
+              if (constraints.maxWidth >= 1100)
+                Positioned(
+                  left: 28,
+                  top: 0,
+                  bottom: 0,
+                  child: SectionScrollIndicator(
+                    sections: _indicatorSections,
+                    sectionKeys: _sectionKeys,
+                    scrollController: scrollController,
+                    onSectionTap: _scrollToSection,
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: RepaintBoundary(
-                    child: SizedBox(
-                      key: _sectionKeys[HomeSection.skills],
-                      child: SkillsSection(
-                        isDesktop: constraints.maxWidth >= kMedDesktopWidth,
-                        width: screenWidth,
-                      ),
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: RepaintBoundary(
-                    child: SizedBox(
-                      key: _sectionKeys[HomeSection.introVideo],
-                      height: constraints.maxWidth >= kMinDesktopWidth
-                          ? 700
-                          : 500,
-                      width: double.infinity,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Image.asset(
-                            ImageAssets.creamCurtain,
-                            fit: BoxFit.fill,
-                          ),
-                          YoutubePlayerScreen(
-                            isMobile: constraints.maxWidth < kMinDesktopWidth,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: RepaintBoundary(
-                    child: Portfolio(
-                      key: _sectionKeys[HomeSection.portfolio],
-                      projects: _homeController.featuredProjects,
-                      onOpenMore: _homeController.openPortfolioSource,
-                      onOpenProject: _homeController.openProject,
-                    ),
-                  ),
-                ),
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 30),
-                ),
-                SliverToBoxAdapter(
-                  child: ContactSection(
-                    controller: _contactController,
-                    key: _sectionKeys[HomeSection.contact],
-                  ),
-                ),
-                const SliverToBoxAdapter(
-                  child: Footer(),
-                ),
-              ],
-            ),
-            ),
+            ],
           ),
         );
       },
