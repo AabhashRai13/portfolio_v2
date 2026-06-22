@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
-import 'package:my_portfolio/core/resources/styles/style.dart';
+import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 
 class HeaderMobile extends StatelessWidget {
   const HeaderMobile({
@@ -12,10 +12,21 @@ class HeaderMobile extends StatelessWidget {
   final VoidCallback? onMenuTap;
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return Container(
       height: 50,
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: kHeaderDecoration,
+      decoration: BoxDecoration(
+        color: palette.surfaceCard,
+        borderRadius: BorderRadius.circular(35),
+        boxShadow: [
+          BoxShadow(
+            color: palette.shadowColor.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       // The hero carries the name now; the old logo slot holds the newsletter
       // entry point instead.
       child: Row(
@@ -24,14 +35,15 @@ class HeaderMobile extends StatelessWidget {
           TextButton(
             onPressed: onOpenNewsletter,
             style: TextButton.styleFrom(
-              foregroundColor: CustomColor.textPrimary,
+              foregroundColor: palette.textStrong,
             ),
             child: const Text('Newsletter'),
           ),
           const Spacer(),
+          ThemeToggleButton(iconColor: palette.textStrong),
           IconButton(
             onPressed: onMenuTap,
-            icon: const Icon(Icons.menu),
+            icon: Icon(Icons.menu, color: palette.textStrong),
           ),
           const SizedBox(width: 15),
         ],

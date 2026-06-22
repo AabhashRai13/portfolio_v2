@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 24),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F8FA),
+        color: palette.surfaceMuted,
         border: Border(
           top: BorderSide(
-            color: CustomColor.primary.withValues(alpha: 0.12),
+            color: palette.primaryAccent.withValues(alpha: 0.12),
             width: 2,
           ),
         ),
       ),
-      child: const Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // Name and heart
@@ -31,7 +32,7 @@ class Footer extends StatelessWidget {
                 'Made by ',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
-                  color: CustomColor.textSecondary,
+                  color: palette.textSecondary,
                   fontSize: 16,
                 ),
               ),
@@ -39,40 +40,40 @@ class Footer extends StatelessWidget {
                 'Aabhash Rai',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: CustomColor.primary,
+                  color: palette.primaryAccent,
                   fontSize: 17,
                   letterSpacing: 0.5,
                 ),
               ),
-              SizedBox(width: 6),
-              Icon(
+              const SizedBox(width: 6),
+              const Icon(
                 Icons.favorite_rounded,
                 color: Colors.redAccent,
                 size: 18,
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               Text(
                 'with',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
-                  color: CustomColor.textSecondary,
+                  color: palette.textSecondary,
                   fontSize: 16,
                 ),
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               FaIcon(
                 FontAwesomeIcons.flutter,
-                color: CustomColor.primary,
+                color: palette.primaryAccent,
                 size: 18,
               ),
             ],
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             'Built with Flutter 3.32',
             style: TextStyle(
               fontWeight: FontWeight.w400,
-              color: CustomColor.textSecondary,
+              color: palette.textSecondary,
               fontSize: 14,
               letterSpacing: 0.2,
             ),

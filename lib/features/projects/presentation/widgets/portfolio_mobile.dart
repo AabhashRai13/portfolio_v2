@@ -1,8 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/core/resources/configs/space.dart';
 import 'package:my_portfolio/core/resources/size_config.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/custom_text_heading.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/project_card.dart';
@@ -21,6 +21,7 @@ class PortfolioMobileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     final height = MediaQuery.of(context).size.height;
     return Column(
       children: [
@@ -52,9 +53,9 @@ class PortfolioMobileTab extends StatelessWidget {
           width: getProportionateScreenWidth(200),
           child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: CustomColor.pastelRed,
+              backgroundColor: palette.secondaryAccent,
               elevation: 4,
-              shadowColor: CustomColor.primary.withValues(alpha: 0.18),
+              shadowColor: palette.primaryAccent.withValues(alpha: 0.18),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(28),
               ),
@@ -68,12 +69,12 @@ class PortfolioMobileTab extends StatelessWidget {
             icon: Icon(
               Icons.explore_rounded,
               size: getProportionateScreenHeight(16),
-              color: Colors.white,
+              color: palette.onAccent,
             ),
             label: Text(
               'See More',
               style: TextStyle(
-                color: Colors.white,
+                color: palette.onAccent,
                 fontWeight: FontWeight.bold,
                 fontSize: getProportionateScreenHeight(18),
                 letterSpacing: 1.1,

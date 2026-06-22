@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/core/resources/size_config.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/get_in_touch_button.dart';
 
 class Description extends StatelessWidget {
@@ -20,6 +20,7 @@ class Description extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     final screenSize = MediaQuery.of(context).size;
     final isCompact = screenSize.width < 750;
     final nameSize = isCompact ? 44.0 : 64.0;
@@ -37,10 +38,10 @@ class Description extends StatelessWidget {
           // Name — the dominant, memorable element of the hero.
           // Editorial serif + warm gradient makes the name the memorable hook.
           ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
+            shaderCallback: (bounds) => LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [CustomColor.textPrimary, CustomColor.secondary],
+              colors: palette.nameGradient,
             ).createShader(bounds),
             child: Text(
               'Aabhash Rai',
@@ -63,20 +64,20 @@ class Description extends StatelessWidget {
                     fontSize: bodySize,
                     height: 1.5,
                     fontWeight: FontWeight.w500,
-                    color: CustomColor.textSecondary, // medium brown
+                    color: palette.textSecondary, // medium brown
                   ),
-                  children: const [
-                    TextSpan(
+                  children: [
+                    const TextSpan(
                       text: 'I build mobile apps for a living: ',
                     ),
                     TextSpan(
                       text: 'rock-solid',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: CustomColor.textPrimary, // dark brown
+                        color: palette.textStrong, // dark brown
                       ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: ' when it counts, a little extra when it gets '
                           'to be ',
                     ),
@@ -84,10 +85,10 @@ class Description extends StatelessWidget {
                       text: 'fun',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: CustomColor.secondary, // muted coral
+                        color: palette.secondaryAccent, // muted coral
                       ),
                     ),
-                    TextSpan(text: '.'),
+                    const TextSpan(text: '.'),
                   ],
                 ),
               ),
@@ -127,6 +128,7 @@ class _SecondaryActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     final horizontalPadding = SizeConfig.screenWidth < 600
         ? 10.0
         : SizeConfig.screenWidth < 900
@@ -153,16 +155,16 @@ class _SecondaryActionButton extends StatelessWidget {
             vertical: verticalPadding,
           ),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.65),
+            color: palette.surfaceCard.withValues(alpha: 0.65),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: CustomColor.primary.withValues(alpha: 0.25),
+              color: palette.primaryAccent.withValues(alpha: 0.25),
             ),
           ),
           child: Text(
             label,
             style: GoogleFonts.poppins(
-              color: CustomColor.textPrimary,
+              color: palette.textStrong,
               fontSize: fontSize,
               fontWeight: FontWeight.w600,
             ),
