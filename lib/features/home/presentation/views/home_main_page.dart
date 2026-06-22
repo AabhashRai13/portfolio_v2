@@ -4,6 +4,7 @@ import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/core/resources/asset_manager.dart';
 import 'package:my_portfolio/core/resources/configs/app.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/services/smooth_wheel_scroll_controller.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 import 'package:my_portfolio/features/contact/presentation/views/contact_section_view.dart';
@@ -105,6 +106,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
+    final palette = Theme.of(context).homePalette;
     App.init(context);
 
     return LayoutBuilder(
@@ -126,17 +128,12 @@ class _HomeMainPageState extends State<HomeMainPage> {
                 controller: scrollController,
                 enabled: shouldEnableSmoothWheelScroll(constraints.maxWidth),
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: RadialGradient(
                       center: Alignment.topLeft,
                       radius: 2,
-                      colors: [
-                        Color(0xFFFFF1E6),
-                        Color(0xFFF5DCC6),
-                        Color(0xFFD7B49E),
-                        Color(0xFFB08968),
-                      ],
-                      stops: [0.1, 0.4, 0.7, 1.0],
+                      colors: palette.heroGradient,
+                      stops: const [0.1, 0.4, 0.7, 1.0],
                     ),
                   ),
                   child: CustomScrollView(
@@ -239,6 +236,14 @@ class _HomeMainPageState extends State<HomeMainPage> {
                                   ImageAssets.creamCurtain,
                                   fit: BoxFit.fill,
                                 ),
+                                // Dim the bright cream curtain in dark mode so
+                                // it doesn't glow against the dark page.
+                                if (Theme.of(context).brightness ==
+                                    Brightness.dark)
+                                  ColoredBox(
+                                    color: palette.sectionBackground
+                                        .withValues(alpha: 0.6),
+                                  ),
                                 YoutubePlayerScreen(
                                   isMobile:
                                       constraints.maxWidth < kMinDesktopWidth,

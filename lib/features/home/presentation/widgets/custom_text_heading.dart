@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/core/resources/size_config.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 
 class CustomSectionHeading extends StatelessWidget {
   const CustomSectionHeading({
@@ -19,12 +19,14 @@ class CustomSectionHeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (icon != null) Icon(icon, color: CustomColor.primary, size: 32),
+            if (icon != null)
+              Icon(icon, color: palette.primaryAccent, size: 32),
             const SizedBox(width: 10),
             if (isVideoHeading!)
               Text(
@@ -41,8 +43,8 @@ class CustomSectionHeading extends StatelessWidget {
             else
               ShaderMask(
                 shaderCallback: (Rect bounds) {
-                  return const LinearGradient(
-                    colors: [CustomColor.primary, CustomColor.pastelRed],
+                  return LinearGradient(
+                    colors: palette.accentGradient,
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ).createShader(bounds);
@@ -73,7 +75,7 @@ class CustomSectionHeading extends StatelessWidget {
                       Colors.white.withValues(alpha: 0.7),
                       Colors.white.withValues(alpha: 0.7),
                     ]
-                  : [CustomColor.primary, CustomColor.pastelRed],
+                  : palette.accentGradient,
             ),
           ),
         ),
@@ -84,7 +86,7 @@ class CustomSectionHeading extends StatelessWidget {
             fontSize: 18,
             color: isVideoHeading!
                 ? Colors.white.withValues(alpha: 0.7)
-                : CustomColor.textSecondary,
+                : palette.textSecondary,
             fontWeight: FontWeight.w400,
           ),
         ),

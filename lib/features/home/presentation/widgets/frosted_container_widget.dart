@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 
 class FrostedGlassContainer extends StatelessWidget {
   const FrostedGlassContainer({
@@ -15,6 +16,7 @@ class FrostedGlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
       child: Center(
@@ -29,15 +31,15 @@ class FrostedGlassContainer extends StatelessWidget {
                   height: height,
                   width: width,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: palette.glassFill,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.25),
+                      color: palette.glassBorder,
                       width: 1.2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.02),
+                        color: palette.shadowColor.withValues(alpha: 0.02),
                         blurRadius: 30,
                         offset: const Offset(0, 4),
                       ),
@@ -56,8 +58,8 @@ class FrostedGlassContainer extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.white.withValues(alpha: 0.2),
-                          Colors.white.withValues(alpha: 0.05),
+                          palette.glassHighlightStrong,
+                          palette.glassHighlightSoft,
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,

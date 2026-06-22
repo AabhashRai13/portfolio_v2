@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/skills/data/static_skill_catalog.dart';
 
 class SkillsMobile extends StatelessWidget {
@@ -9,6 +9,7 @@ class SkillsMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return ConstrainedBox(
       constraints: const BoxConstraints(
         maxWidth: 500,
@@ -21,7 +22,7 @@ class SkillsMobile extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 5),
               width: double.maxFinite,
               decoration: BoxDecoration(
-                color: CustomColor.bgLight2,
+                color: palette.surfaceMuted,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: ListTile(
@@ -49,8 +50,11 @@ class SkillsMobile extends StatelessWidget {
                   width: 150,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                    color: palette.surfaceCard,
+                    border: Border.all(
+                      color: palette.primaryAccent.withValues(alpha: 0.2),
+                      width: 1.5,
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(

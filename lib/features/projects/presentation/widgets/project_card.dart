@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/core/resources/configs/app_dimensions.dart';
-import 'package:my_portfolio/core/resources/configs/app_theme.dart';
 import 'package:my_portfolio/core/resources/configs/app_typography.dart';
 import 'package:my_portfolio/core/resources/configs/space.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 
 class ProjectCard extends StatefulWidget {
   const ProjectCard({
@@ -29,6 +29,7 @@ class ProjectCardState extends State<ProjectCard> {
   bool isHover = false;
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     final width = MediaQuery.of(context).size.width;
     final isCompactLayout = width <= 1135 && width >= 950;
     final isTouchLayout = width < 950;
@@ -56,18 +57,18 @@ class ProjectCardState extends State<ProjectCard> {
         width: AppDimensions.normalize(155),
         height: AppDimensions.normalize(95),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: palette.surfaceCard,
           borderRadius: BorderRadius.circular(10),
           boxShadow: isHover
               ? [
                   BoxShadow(
-                    color: AppTheme.c!.primary!.withAlpha(100),
+                    color: palette.primaryAccent.withAlpha(100),
                     blurRadius: 12,
                   ),
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withAlpha(100),
+                    color: palette.shadowColor.withAlpha(100),
                     blurRadius: 12,
                   ),
                 ],
@@ -126,7 +127,7 @@ class ProjectCardState extends State<ProjectCard> {
                       if (widget.projectIconData != null)
                         Icon(
                           widget.projectIconData,
-                          color: AppTheme.c!.primary,
+                          color: palette.primaryAccent,
                           size: iconDataSize,
                         ),
                       if (!isCompactLayout) ...[
@@ -145,7 +146,7 @@ class ProjectCardState extends State<ProjectCard> {
                           widget.projectSummary,
                           style: AppText.b2?.copyWith(
                             fontSize: summaryFontSize,
-                            color: Colors.black.withValues(alpha: 0.72),
+                            color: palette.textSecondary,
                             height: 1.35,
                           ),
                           textAlign: TextAlign.center,
@@ -159,11 +160,12 @@ class ProjectCardState extends State<ProjectCard> {
                             vertical: AppDimensions.space(0.15),
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.c!.primary!.withValues(alpha: 0.08),
+                            color:
+                                palette.primaryAccent.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(999),
                             border: Border.all(
                               color:
-                               AppTheme.c!.primary!.withValues(alpha: 0.2),
+                                  palette.primaryAccent.withValues(alpha: 0.2),
                             ),
                           ),
                           child: Text(
@@ -171,7 +173,7 @@ class ProjectCardState extends State<ProjectCard> {
                             style: AppText.b2?.copyWith(
                               fontSize: ctaFontSize,
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.c!.primary,
+                              color: palette.primaryAccent,
                             ),
                           ),
                         ),
