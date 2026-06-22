@@ -5,17 +5,21 @@ import 'package:my_portfolio/features/skills/domain/models/orbiting_icon.dart';
 class AnimatedSkillIcons extends StatelessWidget {
   const AnimatedSkillIcons({
     required this.icon,
+    required this.color,
     super.key,
   });
 
   final OrbitingIcon icon;
+
+  /// Icon tint, resolved from the theme by the caller.
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return FaIcon(
       icon.iconData,
       size: 70,
-      color: icon.color,
+      color: color,
       shadows: [
         Shadow(
           color: Colors.black.withValues(alpha: 0.3),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart';
 import 'package:my_portfolio/core/resources/size_config.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/home/presentation/models/home_navigation_item.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/frosted_container_widget.dart';
 
@@ -18,6 +19,7 @@ class HeaderDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return FrostedGlassContainer(
       height: 75,
       width: double.maxFinite,
@@ -76,6 +78,8 @@ class HeaderDesktop extends StatelessWidget {
                       ),
                   ],
                 ),
+              const SizedBox(width: 8),
+              ThemeToggleButton(iconColor: palette.textStrong),
             ],
           ),
         ),
@@ -103,6 +107,7 @@ class _NavButtonState extends State<_NavButton> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
@@ -114,24 +119,24 @@ class _NavButtonState extends State<_NavButton> {
           decoration: BoxDecoration(
             color: widget.isPrimaryAction
                 ? (isHovered
-                      ? CustomColor.secondary
-                      : CustomColor.secondary.withValues(alpha: 0.1))
+                      ? palette.secondaryAccent
+                      : palette.secondaryAccent.withValues(alpha: 0.1))
                 : (isHovered
-                      ? CustomColor.primary.withValues(alpha: 0.1)
+                      ? palette.primaryAccent.withValues(alpha: 0.1)
                       : Colors.transparent),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: widget.isPrimaryAction
                   ? isHovered
-                        ? CustomColor.secondary
-                        : Colors.white
-                  : (isHovered ? Colors.black : Colors.transparent),
+                        ? palette.secondaryAccent
+                        : palette.onAccent
+                  : (isHovered ? palette.textStrong : Colors.transparent),
               width: widget.isPrimaryAction ? 2 : 1.5,
             ),
             boxShadow: widget.isPrimaryAction
                 ? [
                     BoxShadow(
-                      color: CustomColor.secondary.withValues(alpha: 0.1),
+                      color: palette.secondaryAccent.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -146,8 +151,8 @@ class _NavButtonState extends State<_NavButton> {
                   ? FontWeight.w600
                   : (isHovered ? FontWeight.w600 : FontWeight.w500),
               color: widget.isPrimaryAction
-                  ? Colors.white
-                  : CustomColor.textPrimary,
+                  ? palette.onAccent
+                  : palette.textStrong,
               letterSpacing: 0.3,
             ),
           ),

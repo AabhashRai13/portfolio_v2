@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/skills/data/static_skill_catalog.dart';
 import 'package:my_portfolio/features/skills/presentation/services/dash_3d_animation_service.dart';
 import 'package:my_portfolio/features/skills/presentation/widgets/skill_orbit_animation.dart';
@@ -15,6 +15,7 @@ class SkillsDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.8,
       child: Row(
@@ -39,11 +40,11 @@ class SkillsDesktop extends StatelessWidget {
                       horizontal: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: palette.surfaceCard,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
-                          color: CustomColor.primary.withValues(alpha: 0.6),
+                          color: palette.primaryAccent.withValues(alpha: 0.6),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -55,16 +56,13 @@ class SkillsDesktop extends StatelessWidget {
                         Container(
                           width: 6,
                           height: 56,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(14),
                               bottomLeft: Radius.circular(14),
                             ),
                             gradient: LinearGradient(
-                              colors: [
-                                CustomColor.primary,
-                                CustomColor.pastelRed,
-                              ],
+                              colors: palette.accentGradient,
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             ),
@@ -76,7 +74,8 @@ class SkillsDesktop extends StatelessWidget {
                           width: 38,
                           height: 38,
                           decoration: BoxDecoration(
-                            color: CustomColor.primary.withValues(alpha: 0.08),
+                            color:
+                                palette.primaryAccent.withValues(alpha: 0.08),
                             shape: BoxShape.circle,
                           ),
                             child: Center(
@@ -91,10 +90,10 @@ class SkillsDesktop extends StatelessWidget {
                         Expanded(
                           child: Text(
                             capability.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
-                              color: CustomColor.textPrimary,
+                              color: palette.textStrong,
                               letterSpacing: 0.2,
                             ),
                           ),

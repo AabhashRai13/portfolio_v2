@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/home/presentation/models/home_section.dart';
 
 /// A fixed, subtle glass "01 — 05" rail that tracks the section currently in
@@ -82,6 +82,7 @@ class _SectionScrollIndicatorState extends State<SectionScrollIndicator> {
   @override
   Widget build(BuildContext context) {
     // Hidden on the first (hero) section; fades in from the second onward.
+    final palette = Theme.of(context).homePalette;
     final visible = _activeIndex > 0;
 
     return Column(
@@ -105,10 +106,10 @@ class _SectionScrollIndicatorState extends State<SectionScrollIndicator> {
                       horizontal: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.32),
+                      color: palette.surfaceCard.withValues(alpha: 0.32),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: palette.onAccent.withValues(alpha: 0.45),
                         width: 1.2,
                       ),
                     ),
@@ -164,9 +165,10 @@ class _IndicatorItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     final color = isActive
-        ? CustomColor.textPrimary
-        : CustomColor.textSecondary.withValues(alpha: isHovered ? 0.6 : 0.4);
+        ? palette.textStrong
+        : palette.textSecondary.withValues(alpha: isHovered ? 0.6 : 0.4);
     final lineWidth = isActive
         ? (isHovered ? 26.0 : 16.0)
         : (isHovered ? 16.0 : 10.0);

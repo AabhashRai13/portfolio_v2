@@ -17,9 +17,11 @@ class AppRouter {
     routes: [
       GoRoute(
         path: AppRoutes.home,
-        builder: (context, state) => HomeMainPage(
-          homeController: getIt.get<HomeController>(),
-          contactController: getIt.get<ContactController>(),
+        builder: (context, state) => AppThemeScope(
+          child: HomeMainPage(
+            homeController: getIt.get<HomeController>(),
+            contactController: getIt.get<ContactController>(),
+          ),
         ),
       ),
       GoRoute(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/home/presentation/models/home_navigation_item.dart';
 
 class DrawerMobile extends StatelessWidget {
@@ -13,8 +13,9 @@ class DrawerMobile extends StatelessWidget {
   final void Function(HomeNavigationItem) onNavItemTap;
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return Drawer(
-      backgroundColor: CustomColor.scaffoldBg,
+      backgroundColor: palette.sectionBackground,
       child: ListView(
         children: [
           Align(
@@ -29,7 +30,7 @@ class DrawerMobile extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                icon: const Icon(Icons.close),
+                icon: Icon(Icons.close, color: palette.textStrong),
               ),
             ),
           ),
@@ -38,11 +39,12 @@ class DrawerMobile extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 30,
               ),
-              titleTextStyle: const TextStyle(
-                color: CustomColor.textPrimary,
+              titleTextStyle: TextStyle(
+                color: palette.textStrong,
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
               ),
+              iconColor: palette.primaryAccent,
               onTap: () {
                 onNavItemTap(item);
               },
