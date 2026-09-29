@@ -26,6 +26,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     required this.accentGradient,
     required this.nameGradient,
     required this.shadowColor,
+    required this.taglineText,
   });
 
   /// Hero background gradient stops (4 stops, top-left radial).
@@ -76,6 +77,9 @@ class HomePalette extends ThemeExtension<HomePalette> {
   /// Generic shadow color.
   final Color shadowColor;
 
+  /// Landing tagline: deep tan that still meets 3:1 on the page background.
+  final Color taglineText;
+
   static const HomePalette light = HomePalette(
     heroGradient: <Color>[
       Color(0xFFFFF1E6),
@@ -104,6 +108,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       Color(0xFFE6A4A4),
     ],
     shadowColor: Color(0xFF000000),
+    taglineText: Color(0xFFB08968),
   );
 
   static const HomePalette dark = HomePalette(
@@ -134,6 +139,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       Color(0xFFE6A4A4),
     ],
     shadowColor: Color(0xFF000000),
+    taglineText: Color(0xFFD4B896),
   );
 
   @override
@@ -154,6 +160,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     List<Color>? accentGradient,
     List<Color>? nameGradient,
     Color? shadowColor,
+    Color? taglineText,
   }) {
     return HomePalette(
       heroGradient: heroGradient ?? this.heroGradient,
@@ -172,6 +179,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       accentGradient: accentGradient ?? this.accentGradient,
       nameGradient: nameGradient ?? this.nameGradient,
       shadowColor: shadowColor ?? this.shadowColor,
+      taglineText: taglineText ?? this.taglineText,
     );
   }
 
@@ -180,16 +188,25 @@ class HomePalette extends ThemeExtension<HomePalette> {
     if (other is! HomePalette) return this;
     return HomePalette(
       heroGradient: _lerpColorList(heroGradient, other.heroGradient, t),
-      sectionBackground:
-          Color.lerp(sectionBackground, other.sectionBackground, t)!,
+      sectionBackground: Color.lerp(
+        sectionBackground,
+        other.sectionBackground,
+        t,
+      )!,
       surfaceCard: Color.lerp(surfaceCard, other.surfaceCard, t)!,
       surfaceMuted: Color.lerp(surfaceMuted, other.surfaceMuted, t)!,
       glassFill: Color.lerp(glassFill, other.glassFill, t)!,
       glassBorder: Color.lerp(glassBorder, other.glassBorder, t)!,
-      glassHighlightStrong:
-          Color.lerp(glassHighlightStrong, other.glassHighlightStrong, t)!,
-      glassHighlightSoft:
-          Color.lerp(glassHighlightSoft, other.glassHighlightSoft, t)!,
+      glassHighlightStrong: Color.lerp(
+        glassHighlightStrong,
+        other.glassHighlightStrong,
+        t,
+      )!,
+      glassHighlightSoft: Color.lerp(
+        glassHighlightSoft,
+        other.glassHighlightSoft,
+        t,
+      )!,
       textStrong: Color.lerp(textStrong, other.textStrong, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       onAccent: Color.lerp(onAccent, other.onAccent, t)!,
@@ -198,6 +215,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       accentGradient: _lerpColorList(accentGradient, other.accentGradient, t),
       nameGradient: _lerpColorList(nameGradient, other.nameGradient, t),
       shadowColor: Color.lerp(shadowColor, other.shadowColor, t)!,
+      taglineText: Color.lerp(taglineText, other.taglineText, t)!,
     );
   }
 
@@ -214,6 +232,5 @@ class HomePalette extends ThemeExtension<HomePalette> {
 }
 
 extension HomePaletteX on ThemeData {
-  HomePalette get homePalette =>
-      extension<HomePalette>() ?? HomePalette.light;
+  HomePalette get homePalette => extension<HomePalette>() ?? HomePalette.light;
 }

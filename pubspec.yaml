@@ -89,7 +89,20 @@ flutter:
     - assets/images/
     - assets/projects/
     - assets/3d_models/flutter_dash.glb
-   
+
+  fonts:
+    - family: ArchivoExtraCondensed
+      fonts:
+        - asset: assets/fonts/ArchivoExtraCondensed-Black.ttf
+          weight: 900
+    - family: ArchivoCondensed
+      fonts:
+        - asset: assets/fonts/ArchivoCondensed-ExtraBold.ttf
+          weight: 800
+    - family: IBMPlexMono
+      fonts:
+        - asset: assets/fonts/IBMPlexMono-Medium.ttf
+          weight: 500
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
