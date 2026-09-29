@@ -4,7 +4,7 @@ import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 
 void main() {
   test('tagline text uses the deep tan in light and dark', () {
-    expect(HomePalette.light.taglineText, const Color(0xFFB08968));
+    expect(HomePalette.light.taglineText, const Color(0xFFA67B5B));
     expect(HomePalette.dark.taglineText, const Color(0xFFD4B896));
   });
 
@@ -12,7 +12,7 @@ void main() {
     final mid = HomePalette.light.lerp(HomePalette.dark, 0.5);
     expect(
       mid.taglineText,
-      Color.lerp(const Color(0xFFB08968), const Color(0xFFD4B896), 0.5),
+      Color.lerp(const Color(0xFFA67B5B), const Color(0xFFD4B896), 0.5),
     );
 
     final copy = HomePalette.light.copyWith(

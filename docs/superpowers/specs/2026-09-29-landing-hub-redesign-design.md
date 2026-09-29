@@ -69,7 +69,7 @@ The same widget-grid component is used in both layouts, framed by the phone on d
 
 ### Colour
 
-- Light: background `#FFF1E6`, name `#5C4033`, tagline `#B08968` (the palette's deep tan; meets 3:1 for large text), labels `#6B4F3A`, links `#5C4033` with `#E6A4A4` hover and focus.
+- Light: background `#FFF1E6`, name `#5C4033`, tagline `#A67B5B` (a deeper tan than the palette's #B08968, which only reaches 2.86:1; this meets 3:1 for large text), labels `#6B4F3A`, links `#5C4033` with `#E6A4A4` hover and focus.
 - Dark: background `#1A1410`, name `#F2E4D1`, tagline `#D4B896`, labels `#B8A896`.
 - Widget screens are the only strong colour on the page. They use colours from the palette family: dusty pink `#E6A4A4`, tan `#BFA181`, deep brown `#5C4033` and cream `#FFF1E6`.
 - New colour values become `HomePalette` fields, not hard-coded literals.

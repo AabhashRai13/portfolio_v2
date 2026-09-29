@@ -108,7 +108,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       Color(0xFFE6A4A4),
     ],
     shadowColor: Color(0xFF000000),
-    taglineText: Color(0xFFB08968),
+    taglineText: Color(0xFFA67B5B),
   );
 
   static const HomePalette dark = HomePalette(
