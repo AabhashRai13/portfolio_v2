@@ -31,7 +31,7 @@ class SkillsMobile extends StatelessWidget {
                   horizontal: 20,
                 ),
                 leading: FaIcon(
-                  capability.icon,
+                  FaIconData(capability.icon),
                   size: 26,
                 ),
                 title: Text(capability.title),
@@ -61,7 +61,7 @@ class SkillsMobile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FaIcon(
-                        skill.icon,
+                        FaIconData(skill.icon),
                         color: skill.color,
                         size: 22,
                       ),

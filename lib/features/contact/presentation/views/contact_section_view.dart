@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/core/presentation/widgets/custom_text_field.dart';
+import 'package:my_portfolio/core/resources/fa_icons.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 
@@ -227,17 +228,17 @@ class _ContactSectionState extends State<ContactSection> {
                   alignment: WrapAlignment.center,
                   children: [
                     _ContactIconButton(
-                      icon: FontAwesomeIcons.github,
+                      icon: FaIcons.github,
                       url: SnsLinks.github,
                       onTap: _controller.openSocialLink,
                     ),
                     _ContactIconButton(
-                      icon: FontAwesomeIcons.linkedin,
+                      icon: FaIcons.linkedin,
                       url: SnsLinks.linkedIn,
                       onTap: _controller.openSocialLink,
                     ),
                     _ContactIconButton(
-                      icon: FontAwesomeIcons.instagram,
+                      icon: FaIcons.instagram,
                       url: SnsLinks.instagram,
                       onTap: _controller.openSocialLink,
                     ),
@@ -299,7 +300,7 @@ class _ContactIconButtonState extends State<_ContactIconButton> {
           ),
           child: Center(
             child: FaIcon(
-              widget.icon,
+              FaIconData(widget.icon),
               color: palette.primaryAccent,
               size: 22,
             ),

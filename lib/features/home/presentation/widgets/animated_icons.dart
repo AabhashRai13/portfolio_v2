@@ -17,7 +17,7 @@ class AnimatedSkillIcons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FaIcon(
-      icon.iconData,
+      FaIconData(icon.iconData),
       size: 70,
       color: color,
       shadows: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:my_portfolio/core/resources/fa_icons.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 
 class Footer extends StatelessWidget {
@@ -62,7 +63,9 @@ class Footer extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               FaIcon(
-                FontAwesomeIcons.flutter,
+                // Non-const on purpose, see fa_icons.dart.
+                // ignore: prefer_const_constructors
+                FaIconData(FaIcons.flutter),
                 color: palette.primaryAccent,
                 size: 18,
               ),
@@ -70,7 +73,7 @@ class Footer extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Built with Flutter 3.32',
+            'Built with Flutter 3.47',
             style: TextStyle(
               fontWeight: FontWeight.w400,
               color: palette.textSecondary,

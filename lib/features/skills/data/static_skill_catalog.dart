@@ -1,75 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:my_portfolio/core/resources/fa_icons.dart';
 import 'package:my_portfolio/features/skills/domain/models/platform_capability.dart';
 import 'package:my_portfolio/features/skills/domain/models/skill_badge.dart';
 
 const platformCapabilities = <PlatformCapability>[
   PlatformCapability(
-    icon: FontAwesomeIcons.android,
+    icon: FaIcons.android,
     title: 'Android',
   ),
   PlatformCapability(
-    icon: FontAwesomeIcons.globe,
+    icon: FaIcons.globe,
     title: 'Web',
   ),
   PlatformCapability(
-    icon: FontAwesomeIcons.apple,
+    icon: FaIcons.apple,
     title: 'IOS',
   ),
   PlatformCapability(
-    icon: FontAwesomeIcons.server,
+    icon: FaIcons.server,
     title: 'Backend',
   ),
 ];
 
 const skillBadges = <SkillBadge>[
   SkillBadge(
-    icon: FontAwesomeIcons.flutter,
+    icon: FaIcons.flutter,
     title: 'Flutter',
     color: Colors.blue,
   ),
   SkillBadge(
-    icon: FontAwesomeIcons.fire,
+    icon: FaIcons.fire,
     title: 'Firebase',
     color: Color(0xFFFFCA28),
   ),
   SkillBadge(
-    icon: FontAwesomeIcons.js,
+    icon: FaIcons.js,
     title: 'JavaScript',
     color: Colors.yellow,
   ),
   SkillBadge(
-    icon: FontAwesomeIcons.python,
+    icon: FaIcons.python,
     title: 'Python',
     color: Color(0xFFFFDE57),
   ),
   SkillBadge(
-    icon: FontAwesomeIcons.android,
+    icon: FaIcons.android,
     title: 'Android',
     color: Color(0xFFA4C639),
   ),
   SkillBadge(
-    icon: FontAwesomeIcons.apple,
+    icon: FaIcons.apple,
     title: 'Apple',
     color: Color(0xFF1D1D1F),
   ),
   SkillBadge(
-    icon: FontAwesomeIcons.nodeJs,
+    icon: FaIcons.nodeJs,
     title: 'Node.js',
     color: Colors.green,
   ),
   SkillBadge(
-    icon: FontAwesomeIcons.stripe,
+    icon: FaIcons.stripe,
     title: 'Stripe',
     color: Color(0xFF635BFF),
   ),
   SkillBadge(
-    icon: FontAwesomeIcons.googlePay,
+    icon: FaIcons.googlePay,
     title: 'Google Pay',
     color: Color(0xFF4285F4),
   ),
   SkillBadge(
-    icon: FontAwesomeIcons.applePay,
+    icon: FaIcons.applePay,
     title: 'Apple Pay',
     color: Color(0xFF000000),
   ),

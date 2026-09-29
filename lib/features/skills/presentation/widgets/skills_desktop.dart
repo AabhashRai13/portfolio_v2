@@ -80,7 +80,7 @@ class SkillsDesktop extends StatelessWidget {
                           ),
                             child: Center(
                               child: FaIcon(
-                              capability.icon,
+                              FaIconData(capability.icon),
                               size: 22,
                             ),
                           ),
