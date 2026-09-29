@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/custom_text_heading.dart';
 import 'package:my_portfolio/features/skills/presentation/services/dash_3d_animation_service.dart';
 import 'package:my_portfolio/features/skills/presentation/widgets/skills_desktop.dart';
@@ -31,6 +31,7 @@ class _SkillsSectionState extends State<SkillsSection> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return MouseRegion(
       onHover: (event) =>
           _dash3DAnimationService.handleMouseMove(event, context),
@@ -38,7 +39,7 @@ class _SkillsSectionState extends State<SkillsSection> {
       child: Container(
         width: widget.width,
         padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-        color: CustomColor.bgLight1,
+        color: palette.sectionBackground,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

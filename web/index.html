@@ -6,11 +6,26 @@
 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Aabhash's personal portfolio website.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aabhash Rai | Mobile App Developer for iOS &amp; Android</title>
+    <meta name="description"
+        content="Aabhash Rai is a Sydney-based mobile app developer with 6+ years building iOS and Android apps for charities, healthcare, government and NGOs. Available for freelance projects and full-time roles.">
+    <link rel="canonical" href="https://aabhashrai.com/">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <meta name="theme-color" content="#FFF1E6">
+
+    <!-- Link previews (LinkedIn, Slack, WhatsApp, X, Upwork) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aabhashrai.com/">
+    <meta property="og:title" content="Aabhash Rai | Mobile App Developer for iOS &amp; Android">
+    <meta property="og:description"
+        content="6+ years building iOS and Android apps for charities, healthcare, government and NGOs. Available for freelance projects and full-time roles.">
+    <meta property="og:image" content="https://aabhashrai.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
 
     <!-- Favicon for Web -->
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
@@ -21,62 +36,49 @@
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
-    <title>Say Hi to Aabhash</title>
     <style>
         body {
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background:
-                radial-gradient(circle at top, rgba(230, 164, 164, 0.14), transparent 42%),
-                linear-gradient(180deg, #FFF8F1 0%, #FFF1E6 55%, #FFFFFF 100%);
-            color: #5C4033;
-            font-family: 'Poppins', Arial, sans-serif;
+            background: #FFF1E6;
         }
 
-        .splash-container {
+        /* Plain-HTML placeholder shown until Flutter paints its first frame. */
+        #loader {
             position: fixed;
-            width: 100%;
-            height: 100vh;
-            background:
-                radial-gradient(circle at top, rgba(230, 164, 164, 0.14), transparent 42%),
-                linear-gradient(180deg, #FFF8F1 0%, #FFF1E6 55%, #FFFFFF 100%);
+            inset: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
-            transition: opacity 1s ease-in-out;
-        }
-
-        .lottie-container {
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.78);
-            border-radius: 32px;
-            border: 1px solid rgba(191, 161, 129, 0.18);
-            box-shadow:
-                0 24px 44px 0 rgba(92, 64, 51, 0.08),
-                0 8px 18px 0 rgba(230, 164, 164, 0.18);
-            display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        .loading-text {
-            font-size: 18px;
-            font-weight: bold;
-            color: #6B4F3A;
-            margin-top: 16px;
-            font-family: 'Poppins', Arial, sans-serif;
-            letter-spacing: 0.5px;
+            gap: 8px;
+            background: #FFF1E6;
+            color: #5C4033;
+            font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
             text-align: center;
+            animation: pulse 1.6s ease-in-out infinite;
         }
 
-        .fade-out {
-            opacity: 0;
-            pointer-events: none;
+        #loader h1 {
+            margin: 0;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 40px;
+        }
+
+        #loader p {
+            margin: 0;
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        @keyframes pulse {
+            50% { opacity: 0.55; }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body, #loader {
+                background: #1C1512;
+                color: #F3E3D3;
+            }
         }
     </style>
     <script>
@@ -94,81 +96,20 @@
             }
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.10/lottie.min.js"></script>
     <script type="module" src="/assets/packages/flutter_3d_controller/assets/model_viewer.min.js" defer></script>
 
 </head>
 
 <body>
-    <div class="splash-container" id="splash">
-        <div class="lottie-container" id="lottie"></div>
-        <p class="loading-text" id="welcome-message">Loading...</p>
-    </div>
-    <div class="loading-container" id="loading" style="display: none;">
-        <div class="spinner"></div>
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
-        </div>
-        <p class="loading-text">Loading, please wait...</p>
+    <div id="loader">
+        <h1>Aabhash Rai</h1>
+        <p>Mobile app developer · iOS &amp; Android</p>
     </div>
     <script>
-        window.onload = function () {
-            const lottiePath = new URL(
-                'assets/assets/lottie/laptop_animation.json',
-                document.baseURI,
-            ).toString();
-
-            // Fetch the JSON data
-            fetch(lottiePath)
-                .then(response => response.json())
-                .then(data => {
-                    // Load the Lottie animation
-                    const animationContainer = document.getElementById('lottie');
-                    lottie.loadAnimation({
-                        container: animationContainer, // the DOM element to contain the animation
-                        renderer: 'svg',
-                        loop: true,
-                        autoplay: true,
-                        path: data.animationUrl || lottiePath // Path to the Lottie JSON animation
-                    });
-
-                    // Set the welcome message
-                    const messageElement = document.getElementById('welcome-message');
-                    messageElement.textContent = data.message || 'Warming up the portfolio and polishing the pixels...'; // Fallback message if not available
-
-                    // Show splash screen for 2 seconds, then transition to loading
-                    setTimeout(() => {
-                        document.getElementById("splash").classList.add("fade-out");
-                        setTimeout(() => {
-                            document.getElementById("splash").style.display = "none";
-                            document.getElementById("loading").style.display = "block";
-                        }, 1000); // Fade out duration
-                    }, 2000); // Show splash screen for 2 seconds
-                })
-                .catch(error => {
-                    console.error('Error loading JSON file:', error);
-                    // Fallback to default content if there's an error
-                    const animationContainer = document.getElementById('lottie');
-                    lottie.loadAnimation({
-                        container: animationContainer,
-                        renderer: 'svg',
-                        loop: true,
-                        autoplay: true,
-                        path: lottiePath
-                    });
-
-                    document.getElementById('welcome-message').textContent =
-                        'Getting everything ready for you...';
-                    // Proceed with splash fade out
-                    setTimeout(() => {
-                        document.getElementById("splash").classList.add("fade-out");
-                        setTimeout(() => {
-                            document.getElementById("splash").style.display = "none";
-                            document.getElementById("loading").style.display = "block";
-                        }, 1000); // Fade out duration
-                    }, 2000); // Show splash screen for 2 seconds
-                });
-        };
+        window.addEventListener('flutter-first-frame', function () {
+            var loader = document.getElementById('loader');
+            if (loader) loader.remove();
+        });
     </script>
     <script src="flutter_bootstrap.js" async></script>
 </body>

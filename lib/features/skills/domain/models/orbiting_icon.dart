@@ -8,7 +8,6 @@ class OrbitingIcon {
     required this.initialAngle,
     required this.wobbleFreq,
     required this.wobbleAmp,
-    required this.color,
   });
   final IconData iconData;
   final double baseRadius;
@@ -16,5 +15,4 @@ class OrbitingIcon {
   final double initialAngle;
   final double wobbleFreq;
   final double wobbleAmp;
-  final Color color;
 }

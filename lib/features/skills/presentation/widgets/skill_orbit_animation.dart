@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:my_portfolio/constants/colors.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/animated_icons.dart';
 import 'package:my_portfolio/features/skills/data/static_skill_catalog.dart';
 import 'package:my_portfolio/features/skills/domain/models/orbiting_icon.dart';
@@ -10,15 +10,20 @@ import 'package:my_portfolio/features/skills/presentation/services/dash_3d_anima
 import 'package:my_portfolio/features/skills/presentation/widgets/dash_3d.dart';
 
 class OrbitLinesPainter extends CustomPainter {
-  OrbitLinesPainter({required this.radii, required this.center});
+  OrbitLinesPainter({
+    required this.radii,
+    required this.center,
+    required this.lineColor,
+  });
 
   final List<double> radii;
   final Offset center;
+  final Color lineColor;
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.2)
+      ..color = lineColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -53,7 +58,9 @@ class OrbitLinesPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant OrbitLinesPainter oldDelegate) =>
-      oldDelegate.center != center || oldDelegate.radii != radii;
+      oldDelegate.center != center ||
+      oldDelegate.radii != radii ||
+      oldDelegate.lineColor != lineColor;
 }
 
 class SkillOrbitDemo extends StatefulWidget {
@@ -118,7 +125,6 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
             initialAngle: angle,
             wobbleFreq: 0.5 + random.nextDouble() * 1.5,
             wobbleAmp: 10 + random.nextDouble() * 20,
-            color: CustomColor.textPrimary,
           ),
         );
       }
@@ -145,6 +151,7 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return LayoutBuilder(
       builder: (context, constraints) {
         final widgetSize = Size(constraints.maxWidth, constraints.maxHeight);
@@ -162,6 +169,7 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
               painter: OrbitLinesPainter(
                 radii: radii,
                 center: center,
+                lineColor: palette.textStrong.withValues(alpha: 0.2),
               ),
             ),
             // Center image (you)
@@ -183,7 +191,10 @@ class SkillOrbitDemoState extends State<SkillOrbitDemo>
               return Positioned(
                 left: pos.dx,
                 top: pos.dy,
-                child: AnimatedSkillIcons(icon: icon),
+                child: AnimatedSkillIcons(
+                  icon: icon,
+                  color: palette.textStrong,
+                ),
               );
             }),
           ],

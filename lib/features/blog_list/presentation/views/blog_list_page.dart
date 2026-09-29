@@ -71,6 +71,8 @@ class _BlogListPageState extends State<BlogListPage> {
                     children: <Widget>[
                       BlogTopNavigationBar(
                         onOpenHome: () => context.go(AppRoutes.home),
+                        onOpenNewsletter: () =>
+                            context.go(AppRoutes.newsletter),
                       ),
                       const SizedBox(height: 24),
                       Expanded(

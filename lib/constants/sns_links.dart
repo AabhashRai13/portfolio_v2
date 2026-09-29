@@ -3,6 +3,7 @@ class SnsLinks {
   static const String linkedIn = 'https://linkedin.com/in/aabhashrai/';
   static const String instagram = 'https://www.instagram.com/_aabhash13/';
 
-  static const String resume =
-      'https://docs.google.com/document/d/17uKkTfFtu4N4dMV8qNiI8kQhvI2GKQ7YeVOJ6ff7aBg/edit?tab=t.0';
+  // web/resume.pdf is rendered from career-ops output/cv-aabhash-rai-portfolio.html.
+  // Relative so it resolves on localhost as well as production.
+  static const String resume = '/resume.pdf';
 }

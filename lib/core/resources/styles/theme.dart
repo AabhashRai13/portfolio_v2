@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 
 final TextTheme _baseTextTheme = GoogleFonts.poppinsTextTheme();
 
@@ -17,6 +18,7 @@ ThemeData get kLightTheme => ThemeData.light().copyWith(
       ),
       extensions: const <ThemeExtension<dynamic>>[
         BlogPalette.light,
+        HomePalette.light,
       ],
       textTheme: _baseTextTheme.copyWith(
         headlineLarge: _baseTextTheme.headlineLarge?.copyWith(

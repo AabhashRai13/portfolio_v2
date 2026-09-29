@@ -7,11 +7,13 @@ class BlogTopNavigationBar extends StatelessWidget {
   const BlogTopNavigationBar({
     required this.onOpenHome,
     this.onOpenBlogList,
+    this.onOpenNewsletter,
     super.key,
   });
 
   final VoidCallback onOpenHome;
   final VoidCallback? onOpenBlogList;
+  final VoidCallback? onOpenNewsletter;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,14 @@ class BlogTopNavigationBar extends StatelessWidget {
               icon: Icons.article_outlined,
               label: 'All posts',
               onTap: onOpenBlogList!,
+            ),
+            const SizedBox(width: 12),
+          ],
+          if (onOpenNewsletter != null) ...<Widget>[
+            _NavigationPillButton(
+              icon: Icons.mail_outline,
+              label: 'Subscribe',
+              onTap: onOpenNewsletter!,
             ),
             const SizedBox(width: 12),
           ],

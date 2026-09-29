@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:my_portfolio/constants/colors.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/core/presentation/widgets/custom_text_field.dart';
+import 'package:my_portfolio/core/resources/fa_icons.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 
 class ContactSection extends StatefulWidget {
@@ -65,21 +66,22 @@ class _ContactSectionState extends State<ContactSection> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return Form(
       key: _controller.formKey,
       child: Container(
-        color: CustomColor.bgLight1,
+        color: palette.sectionBackground,
         padding: const EdgeInsets.symmetric(vertical: 60),
         child: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 700),
             padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 32),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: palette.surfaceCard,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: CustomColor.primary.withValues(alpha: 0.08),
+                  color: palette.primaryAccent.withValues(alpha: 0.08),
                   blurRadius: 32,
                   offset: const Offset(0, 8),
                 ),
@@ -88,21 +90,21 @@ class _ContactSectionState extends State<ContactSection> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.mail_rounded,
-                      color: CustomColor.primary,
+                      color: palette.primaryAccent,
                       size: 28,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text(
                       'Get In Touch',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 26,
-                        color: CustomColor.primary,
+                        color: palette.primaryAccent,
                         letterSpacing: 1.1,
                       ),
                     ),
@@ -172,8 +174,8 @@ class _ContactSectionState extends State<ContactSection> {
                     builder: (context, _) {
                       return ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: CustomColor.primary,
-                          foregroundColor: Colors.white,
+                          backgroundColor: palette.primaryAccent,
+                          foregroundColor: palette.onAccent,
                           elevation: 4,
                           padding: const EdgeInsets.symmetric(vertical: 18),
                           shape: RoundedRectangleBorder(
@@ -189,11 +191,11 @@ class _ContactSectionState extends State<ContactSection> {
                             ? null
                             : _controller.submit,
                         icon: _controller.submitCommand.isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
-                                  color: Colors.white,
+                                  color: palette.onAccent,
                                   strokeWidth: 2,
                                 ),
                               )
@@ -214,8 +216,8 @@ class _ContactSectionState extends State<ContactSection> {
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(2),
-                    gradient: const LinearGradient(
-                      colors: [CustomColor.primary, CustomColor.pastelRed],
+                    gradient: LinearGradient(
+                      colors: palette.accentGradient,
                     ),
                   ),
                 ),
@@ -226,17 +228,17 @@ class _ContactSectionState extends State<ContactSection> {
                   alignment: WrapAlignment.center,
                   children: [
                     _ContactIconButton(
-                      icon: FontAwesomeIcons.github,
+                      icon: FaIcons.github,
                       url: SnsLinks.github,
                       onTap: _controller.openSocialLink,
                     ),
                     _ContactIconButton(
-                      icon: FontAwesomeIcons.linkedin,
+                      icon: FaIcons.linkedin,
                       url: SnsLinks.linkedIn,
                       onTap: _controller.openSocialLink,
                     ),
                     _ContactIconButton(
-                      icon: FontAwesomeIcons.instagram,
+                      icon: FaIcons.instagram,
                       url: SnsLinks.instagram,
                       onTap: _controller.openSocialLink,
                     ),
@@ -271,6 +273,7 @@ class _ContactIconButtonState extends State<_ContactIconButton> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -282,13 +285,13 @@ class _ContactIconButtonState extends State<_ContactIconButton> {
           height: 44,
           decoration: BoxDecoration(
             color: _hovered
-                ? CustomColor.primary.withValues(alpha: 0.12)
-                : const Color(0xFFF7F8FA),
+                ? palette.primaryAccent.withValues(alpha: 0.12)
+                : palette.surfaceMuted,
             shape: BoxShape.circle,
             boxShadow: _hovered
                 ? [
                     BoxShadow(
-                      color: CustomColor.primary.withValues(alpha: 0.18),
+                      color: palette.primaryAccent.withValues(alpha: 0.18),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -297,8 +300,8 @@ class _ContactIconButtonState extends State<_ContactIconButton> {
           ),
           child: Center(
             child: FaIcon(
-              widget.icon,
-              color: CustomColor.primary,
+              FaIconData(widget.icon),
+              color: palette.primaryAccent,
               size: 22,
             ),
           ),

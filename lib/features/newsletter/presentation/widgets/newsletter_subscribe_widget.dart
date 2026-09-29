@@ -6,10 +6,20 @@ import 'package:my_portfolio/features/newsletter/presentation/controllers/newsle
 class NewsletterSubscribeWidget extends StatefulWidget {
   const NewsletterSubscribeWidget({
     required this.controller,
+    this.title = 'Enjoyed this one?',
+    this.description =
+        'Get a short email when I publish a new post. '
+        'No spam, unsubscribe any time.',
     super.key,
   });
 
   final NewsletterController controller;
+
+  /// Headline shown above the subscribe form.
+  final String title;
+
+  /// Supporting copy shown beneath the [title].
+  final String description;
 
   @override
   State<NewsletterSubscribeWidget> createState() =>
@@ -94,21 +104,22 @@ class _NewsletterSubscribeWidgetState extends State<NewsletterSubscribeWidget> {
                   size: 28,
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  'Enjoyed this one?',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                    color: primary,
-                    letterSpacing: 1.1,
+                Flexible(
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      color: primary,
+                      letterSpacing: 1.1,
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
             Text(
-              'Get a short email when I publish a new post. '
-              'No spam, unsubscribe any time.',
+              widget.description,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
