@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_portfolio/app/navigation/site_footer.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/core/resources/asset_manager.dart';
@@ -13,7 +14,6 @@ import 'package:my_portfolio/features/home/presentation/controllers/home_control
 import 'package:my_portfolio/features/home/presentation/models/home_navigation_target.dart';
 import 'package:my_portfolio/features/home/presentation/models/home_section.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/drawer_mobile.dart';
-import 'package:my_portfolio/features/home/presentation/widgets/footer.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/header_desktop.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/header_mobile.dart';
 import 'package:my_portfolio/features/home/presentation/widgets/main_desktop.dart';
@@ -273,7 +273,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
                         ),
                       ),
                       const SliverToBoxAdapter(
-                        child: Footer(),
+                        child: SiteFooter(),
                       ),
                     ],
                   ),

@@ -4,8 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_portfolio/core/resources/fa_icons.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 
-class Footer extends StatelessWidget {
-  const Footer({super.key});
+class SiteFooter extends StatelessWidget {
+  const SiteFooter({super.key});
 
   @override
   Widget build(BuildContext context) {
