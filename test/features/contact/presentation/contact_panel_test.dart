@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/core/resources/styles/theme.dart';
 import 'package:my_portfolio/features/contact/presentation/views/contact_panel.dart';
@@ -39,6 +40,26 @@ void main() {
     expect(find.text('Get In Touch'), findsNothing);
 
     await tester.tap(find.byTooltip('Close'));
+    await tester.pumpAndSettle();
+    expect(find.text('Send Message'), findsNothing);
+  });
+
+  testWidgets('desktop Esc closes the panel', (tester) async {
+    setViewSize(tester, const Size(1440, 900));
+    await openPanel(tester);
+    expect(find.text('Send Message'), findsOneWidget);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.text('Send Message'), findsNothing);
+  });
+
+  testWidgets('desktop tapping outside the panel closes it', (tester) async {
+    setViewSize(tester, const Size(1440, 900));
+    await openPanel(tester);
+    expect(find.text('Send Message'), findsOneWidget);
+
+    await tester.tapAt(const Offset(20, 450));
     await tester.pumpAndSettle();
     expect(find.text('Send Message'), findsNothing);
   });

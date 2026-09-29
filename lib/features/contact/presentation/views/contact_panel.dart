@@ -12,56 +12,63 @@ const double _panelWidth = 420;
 /// desktop, a bottom sheet below [kSiteDesktopBreakpoint]. Completes when it
 /// closes.
 Future<void> showContactPanel(BuildContext context) async {
-  final controller = getIt<ContactController>();
   final isDesktop = MediaQuery.sizeOf(context).width >= kSiteDesktopBreakpoint;
 
-  try {
-    if (isDesktop) {
-      await showGeneralDialog<void>(
-        context: context,
-        barrierDismissible: true,
-        barrierLabel: 'Close contact',
-        barrierColor: Colors.black54,
-        transitionDuration: const Duration(milliseconds: 280),
-        pageBuilder: (context, _, _) => Align(
-          alignment: Alignment.centerRight,
-          child: SizedBox(
-            width: _panelWidth,
-            height: double.infinity,
-            child: _ContactPanelBody(controller: controller),
-          ),
+  if (isDesktop) {
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Close contact',
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (context, _, _) => const Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: _panelWidth,
+          height: double.infinity,
+          child: _ContactPanelBody(),
         ),
-        transitionBuilder: (context, animation, _, child) => SlideTransition(
-          position:
-              Tween<Offset>(
-                begin: const Offset(1, 0),
-                end: Offset.zero,
-              ).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-              ),
-          child: child,
-        ),
-      );
-    } else {
-      await showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        builder: (context) => FractionallySizedBox(
-          heightFactor: 0.92,
-          child: _ContactPanelBody(controller: controller),
-        ),
-      );
-    }
-  } finally {
-    controller.dispose();
+      ),
+      transitionBuilder: (context, animation, _, child) => SlideTransition(
+        position:
+            Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+            ),
+        child: child,
+      ),
+    );
+  } else {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => const FractionallySizedBox(
+        heightFactor: 0.92,
+        child: _ContactPanelBody(),
+      ),
+    );
   }
 }
 
-class _ContactPanelBody extends StatelessWidget {
-  const _ContactPanelBody({required this.controller});
+/// Owns the form controller so it is disposed only once the route, including
+/// its exit animation, has been removed from the tree.
+class _ContactPanelBody extends StatefulWidget {
+  const _ContactPanelBody();
 
-  final ContactController controller;
+  @override
+  State<_ContactPanelBody> createState() => _ContactPanelBodyState();
+}
+
+class _ContactPanelBodyState extends State<_ContactPanelBody> {
+  late final ContactController _controller = getIt<ContactController>();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +109,7 @@ class _ContactPanelBody extends StatelessWidget {
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(bottom: 24),
                   child: ContactSection(
-                    controller: controller,
+                    controller: _controller,
                     embedded: true,
                   ),
                 ),
