@@ -10,10 +10,15 @@ import 'package:my_portfolio/features/contact/presentation/controllers/contact_c
 class ContactSection extends StatefulWidget {
   const ContactSection({
     required this.controller,
+    this.embedded = false,
     super.key,
   });
 
   final ContactController controller;
+
+  /// Drops the section background, card and heading so the form can sit
+  /// inside the contact panel, which provides its own chrome.
+  final bool embedded;
 
   @override
   State<ContactSection> createState() => _ContactSectionState();
@@ -70,47 +75,55 @@ class _ContactSectionState extends State<ContactSection> {
     return Form(
       key: _controller.formKey,
       child: Container(
-        color: palette.sectionBackground,
-        padding: const EdgeInsets.symmetric(vertical: 60),
+        color: widget.embedded ? null : palette.sectionBackground,
+        padding: widget.embedded
+            ? const EdgeInsets.symmetric(horizontal: 24)
+            : const EdgeInsets.symmetric(vertical: 60),
         child: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 700),
-            padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 32),
-            decoration: BoxDecoration(
-              color: palette.surfaceCard,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: palette.primaryAccent.withValues(alpha: 0.08),
-                  blurRadius: 32,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
+            padding: widget.embedded
+                ? EdgeInsets.zero
+                : const EdgeInsets.symmetric(vertical: 36, horizontal: 32),
+            decoration: widget.embedded
+                ? null
+                : BoxDecoration(
+                    color: palette.surfaceCard,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: palette.primaryAccent.withValues(alpha: 0.08),
+                        blurRadius: 32,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.mail_rounded,
-                      color: palette.primaryAccent,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Get In Touch',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 26,
+                if (!widget.embedded) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.mail_rounded,
                         color: palette.primaryAccent,
-                        letterSpacing: 1.1,
+                        size: 28,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Get In Touch',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          color: palette.primaryAccent,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                ],
                 LayoutBuilder(
                   builder: (context, constraints) {
                     if (constraints.maxWidth >= kMinDesktopWidth) {
