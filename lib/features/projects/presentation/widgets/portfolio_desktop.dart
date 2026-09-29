@@ -38,10 +38,7 @@ class PortfolioDesktop extends StatelessWidget {
             children: projects
                 .map(
                   (project) => ProjectCard(
-                    banner: project.banner,
-                    projectIcon: project.icon,
-                    projectTitle: project.title,
-                    projectSummary: project.summary,
+                    project: project,
                     onTap: () => onOpenProject(project),
                   ),
                 )
