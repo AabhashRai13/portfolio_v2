@@ -29,6 +29,7 @@ import 'package:my_portfolio/features/newsletter/domain/repositories/newsletter_
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 import 'package:my_portfolio/features/projects/data/repositories/static_projects_repository.dart';
 import 'package:my_portfolio/features/projects/domain/repositories/projects_repository.dart';
+import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -127,6 +128,12 @@ void setupDependencies() {
     )
     ..registerFactory(
       () => HomeController(
+        launchService: getIt.get<AppLaunchService>(),
+        projectsRepository: getIt.get<ProjectsRepository>(),
+      ),
+    )
+    ..registerFactory(
+      () => WorkController(
         launchService: getIt.get<AppLaunchService>(),
         projectsRepository: getIt.get<ProjectsRepository>(),
       ),

@@ -11,6 +11,7 @@ import 'package:my_portfolio/features/contact/domain/repositories/contact_reposi
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 import 'package:my_portfolio/features/projects/data/repositories/static_projects_repository.dart';
 import 'package:my_portfolio/features/projects/domain/repositories/projects_repository.dart';
+import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
 
 class FakeLaunchService implements AppLaunchService {
   final List<String> opened = <String>[];
@@ -49,6 +50,12 @@ Future<FakeLaunchService> registerSiteFakes() async {
       () => ContactController(
         contactRepository: _NoopContactRepository(),
         launchService: launch,
+      ),
+    )
+    ..registerFactory<WorkController>(
+      () => WorkController(
+        launchService: launch,
+        projectsRepository: getIt<ProjectsRepository>(),
       ),
     );
   return launch;
