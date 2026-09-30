@@ -25,4 +25,9 @@ void main() {
     expect(HomePalette.light.linkActive, const Color(0xFF9E4F52));
     expect(HomePalette.dark.linkActive, const Color(0xFFE6A4A4));
   });
+
+  test('media foreground is white in both light and dark', () {
+    expect(HomePalette.light.mediaForeground, const Color(0xFFFFFFFF));
+    expect(HomePalette.dark.mediaForeground, const Color(0xFFFFFFFF));
+  });
 }

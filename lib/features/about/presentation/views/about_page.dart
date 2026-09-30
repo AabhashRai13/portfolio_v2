@@ -86,6 +86,7 @@ class _JobRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         border: Border(
@@ -97,6 +98,7 @@ class _JobRow extends StatelessWidget {
       child: Wrap(
         alignment: WrapAlignment.spaceBetween,
         crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 24,
         runSpacing: 6,
         children: [
           Column(

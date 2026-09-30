@@ -1,7 +1,7 @@
 /// About page copy, drafted from the résumé. Aabhash edits the bio before
 /// this phase merges.
 const String aboutBio =
-    "I'm Aabhash, a mobile engineer in Sydney. For six years I've built "
+    "I'm Aabhash, a mobile app developer in Sydney. For six years I've built "
     'iOS and Android apps for charities, hospitals, NGOs and startups, '
     'first in Kathmandu and now in Sydney. I care about the parts users '
     "never notice until they break: payments that don't fail, data that "

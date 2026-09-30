@@ -28,6 +28,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     required this.shadowColor,
     required this.taglineText,
     required this.linkActive,
+    required this.mediaForeground,
   });
 
   /// Hero background gradient stops (4 stops, top-left radial).
@@ -84,6 +85,9 @@ class HomePalette extends ThemeExtension<HomePalette> {
   /// Link colour on hover/focus; meets 4.5:1 on the page background.
   final Color linkActive;
 
+  /// Icons and text drawn over photos or video frames.
+  final Color mediaForeground;
+
   static const HomePalette light = HomePalette(
     heroGradient: <Color>[
       Color(0xFFFFF1E6),
@@ -114,6 +118,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     shadowColor: Color(0xFF000000),
     taglineText: Color(0xFFA67B5B),
     linkActive: Color(0xFF9E4F52),
+    mediaForeground: Color(0xFFFFFFFF),
   );
 
   static const HomePalette dark = HomePalette(
@@ -146,6 +151,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     shadowColor: Color(0xFF000000),
     taglineText: Color(0xFFD4B896),
     linkActive: Color(0xFFE6A4A4),
+    mediaForeground: Color(0xFFFFFFFF),
   );
 
   @override
@@ -168,6 +174,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     Color? shadowColor,
     Color? taglineText,
     Color? linkActive,
+    Color? mediaForeground,
   }) {
     return HomePalette(
       heroGradient: heroGradient ?? this.heroGradient,
@@ -188,6 +195,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       shadowColor: shadowColor ?? this.shadowColor,
       taglineText: taglineText ?? this.taglineText,
       linkActive: linkActive ?? this.linkActive,
+      mediaForeground: mediaForeground ?? this.mediaForeground,
     );
   }
 
@@ -225,6 +233,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       shadowColor: Color.lerp(shadowColor, other.shadowColor, t)!,
       taglineText: Color.lerp(taglineText, other.taglineText, t)!,
       linkActive: Color.lerp(linkActive, other.linkActive, t)!,
+      mediaForeground: Color.lerp(mediaForeground, other.mediaForeground, t)!,
     );
   }
 

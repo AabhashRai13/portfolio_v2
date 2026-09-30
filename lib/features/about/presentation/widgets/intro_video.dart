@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 /// Thumbnail first; the YouTube iframe (a platform view) is created only when
@@ -21,6 +22,7 @@ class IntroVideo extends StatefulWidget {
 
 class _IntroVideoState extends State<IntroVideo> {
   YoutubePlayerController? _controller;
+  StreamSubscription<YoutubePlayerValue>? _errorSubscription;
 
   void _play() {
     final controller = YoutubePlayerController(
@@ -31,11 +33,22 @@ class _IntroVideoState extends State<IntroVideo> {
       ),
     );
     unawaited(controller.loadVideoById(videoId: IntroVideo.videoId));
+    _errorSubscription = controller.listen(
+      (value) {
+        if (value.error != YoutubeError.none && mounted) {
+          unawaited(controller.close());
+          _errorSubscription?.cancel();
+          _errorSubscription = null;
+          setState(() => _controller = null);
+        }
+      },
+    );
     setState(() => _controller = controller);
   }
 
   @override
   void dispose() {
+    _errorSubscription?.cancel();
     unawaited(_controller?.close());
     super.dispose();
   }
@@ -43,6 +56,7 @@ class _IntroVideoState extends State<IntroVideo> {
   @override
   Widget build(BuildContext context) {
     final controller = _controller;
+    final mediaForeground = Theme.of(context).homePalette.mediaForeground;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,9 +74,9 @@ class _IntroVideoState extends State<IntroVideo> {
                         child: IconButton(
                           tooltip: 'Play intro video',
                           iconSize: 72,
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.play_circle_fill_rounded,
-                            color: Colors.white,
+                            color: mediaForeground,
                           ),
                           onPressed: _play,
                         ),
