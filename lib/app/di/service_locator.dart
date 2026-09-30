@@ -22,7 +22,6 @@ import 'package:my_portfolio/features/blog_list/presentation/controllers/blog_li
 import 'package:my_portfolio/features/contact/data/repositories/email_js_contact_repository.dart';
 import 'package:my_portfolio/features/contact/domain/repositories/contact_repository.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
-import 'package:my_portfolio/features/home/presentation/controllers/home_controller.dart';
 import 'package:my_portfolio/features/newsletter/data/datasources/newsletter_remote_data_source.dart';
 import 'package:my_portfolio/features/newsletter/data/repositories/buttondown_newsletter_repository.dart';
 import 'package:my_portfolio/features/newsletter/domain/repositories/newsletter_repository.dart';
@@ -124,12 +123,6 @@ void setupDependencies() {
     ..registerFactory(
       () => NewsletterController(
         newsletterRepository: getIt.get<NewsletterRepository>(),
-      ),
-    )
-    ..registerFactory(
-      () => HomeController(
-        launchService: getIt.get<AppLaunchService>(),
-        projectsRepository: getIt.get<ProjectsRepository>(),
       ),
     )
     ..registerFactory(
