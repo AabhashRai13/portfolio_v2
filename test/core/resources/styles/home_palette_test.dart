@@ -20,4 +20,9 @@ void main() {
     );
     expect(copy.taglineText, const Color(0xFF000000));
   });
+
+  test('link hover/focus colour is a darker rose in light, coral in dark', () {
+    expect(HomePalette.light.linkActive, const Color(0xFF9E4F52));
+    expect(HomePalette.dark.linkActive, const Color(0xFFE6A4A4));
+  });
 }

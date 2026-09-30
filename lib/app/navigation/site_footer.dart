@@ -26,8 +26,9 @@ class SiteFooter extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Name and heart
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(
                 'Made by ',

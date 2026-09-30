@@ -25,7 +25,8 @@ class SiteTopBar extends StatelessWidget {
 
     return Row(
       children: [
-        // Takes the free space and only shrinks the name if it cannot fit.
+        // Scales the name down at very narrow widths or large text scale
+        // instead of overflowing.
         Expanded(
           child: FittedBox(
             fit: BoxFit.scaleDown,

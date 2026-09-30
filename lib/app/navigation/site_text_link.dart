@@ -3,7 +3,7 @@ import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 
 /// Understated mono caps link used across the site. Keyboard focusable,
-/// at least 48 px tall, coral on hover or focus.
+/// at least 48 px tall, rose on hover or focus.
 class SiteTextLink extends StatefulWidget {
   const SiteTextLink({
     required this.label,
@@ -46,7 +46,7 @@ class _SiteTextLinkState extends State<SiteTextLink> {
               child: Text(
                 widget.label.toUpperCase(),
                 style: SiteText.label(
-                  _active ? palette.secondaryAccent : palette.textStrong,
+                  _active ? palette.linkActive : palette.textStrong,
                   size: widget.fontSize,
                 ),
               ),

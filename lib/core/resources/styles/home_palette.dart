@@ -27,6 +27,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     required this.nameGradient,
     required this.shadowColor,
     required this.taglineText,
+    required this.linkActive,
   });
 
   /// Hero background gradient stops (4 stops, top-left radial).
@@ -80,6 +81,9 @@ class HomePalette extends ThemeExtension<HomePalette> {
   /// Landing tagline: deep tan that still meets 3:1 on the page background.
   final Color taglineText;
 
+  /// Link colour on hover/focus; meets 4.5:1 on the page background.
+  final Color linkActive;
+
   static const HomePalette light = HomePalette(
     heroGradient: <Color>[
       Color(0xFFFFF1E6),
@@ -109,6 +113,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     ],
     shadowColor: Color(0xFF000000),
     taglineText: Color(0xFFA67B5B),
+    linkActive: Color(0xFF9E4F52),
   );
 
   static const HomePalette dark = HomePalette(
@@ -140,6 +145,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     ],
     shadowColor: Color(0xFF000000),
     taglineText: Color(0xFFD4B896),
+    linkActive: Color(0xFFE6A4A4),
   );
 
   @override
@@ -161,6 +167,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     List<Color>? nameGradient,
     Color? shadowColor,
     Color? taglineText,
+    Color? linkActive,
   }) {
     return HomePalette(
       heroGradient: heroGradient ?? this.heroGradient,
@@ -180,6 +187,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       nameGradient: nameGradient ?? this.nameGradient,
       shadowColor: shadowColor ?? this.shadowColor,
       taglineText: taglineText ?? this.taglineText,
+      linkActive: linkActive ?? this.linkActive,
     );
   }
 
@@ -216,6 +224,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       nameGradient: _lerpColorList(nameGradient, other.nameGradient, t),
       shadowColor: Color.lerp(shadowColor, other.shadowColor, t)!,
       taglineText: Color.lerp(taglineText, other.taglineText, t)!,
+      linkActive: Color.lerp(linkActive, other.linkActive, t)!,
     );
   }
 
