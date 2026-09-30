@@ -16,7 +16,10 @@ void main() {
     await tester.pumpWidget(
       MaterialApp.router(theme: kLightTheme, routerConfig: router),
     );
-    await tester.pumpAndSettle();
+    // The landing previews intentionally loop, so route tests use a fixed
+    // pump instead of waiting for the animation tree to become idle.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
   }
 
   String? pageTitle(WidgetTester tester) =>
@@ -24,7 +27,7 @@ void main() {
 
   testWidgets('/ shows the landing', (tester) async {
     await pumpAt(tester, '/');
-    expect(find.text('AABHASH RAI'), findsOneWidget);
+    expect(find.bySemanticsLabel('AABHASH RAI'), findsOneWidget);
     expect(find.byKey(SitePage.titleKey), findsNothing);
   });
 
@@ -42,7 +45,7 @@ void main() {
     await pumpAt(tester, '/contact');
     expect(find.text('Send Message'), findsOneWidget);
     expect(
-      find.text('I HELP FOUNDERS & TECH TEAMS BUILD MOBILE APPS'),
+      find.bySemanticsLabel('I HELP FOUNDERS & TECH TEAMS BUILD MOBILE APPS'),
       findsOneWidget,
     );
   });

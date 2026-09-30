@@ -68,7 +68,11 @@ void setViewSize(WidgetTester tester, Size size) {
 }
 
 /// Pumps [home] at `/` with stub pages for every other site route.
-Future<void> pumpRouted(WidgetTester tester, Widget home) async {
+Future<void> pumpRouted(
+  WidgetTester tester,
+  Widget home, {
+  bool settle = true,
+}) async {
   final router = GoRouter(
     routes: <RouteBase>[
       GoRoute(path: '/', builder: (_, _) => home),
@@ -83,5 +87,10 @@ Future<void> pumpRouted(WidgetTester tester, Widget home) async {
   await tester.pumpWidget(
     MaterialApp.router(theme: kLightTheme, routerConfig: router),
   );
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+  }
 }
