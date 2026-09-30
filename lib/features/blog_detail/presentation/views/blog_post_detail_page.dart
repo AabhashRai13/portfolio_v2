@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:my_portfolio/app/router/app_routes.dart';
-import 'package:my_portfolio/core/presentation/widgets/blog_top_navigation_bar.dart';
+import 'package:my_portfolio/app/navigation/site_top_bar.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/services/smooth_wheel_scroll_controller.dart';
 import 'package:my_portfolio/features/blog_detail/domain/entities/blog_post_entity.dart';
@@ -191,10 +189,7 @@ class _BlogPostContentState extends State<_BlogPostContent> {
     final contentColumn = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        BlogTopNavigationBar(
-          onOpenHome: () => context.go(AppRoutes.home),
-          onOpenBlogList: () => context.go(AppRoutes.blog),
-        ),
+        const SiteTopBar(),
         const SizedBox(height: 20),
         BlogPostHeader(post: _post),
         const SizedBox(height: 32),
