@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
+import 'package:my_portfolio/features/landing/presentation/views/contact_landing_page.dart';
 import 'package:my_portfolio/features/landing/presentation/views/landing_page.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_phone.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
@@ -11,6 +12,10 @@ void main() {
   setUp(registerSiteFakes);
 
   const tagline = 'I HELP FOUNDERS & TECH TEAMS BUILD MOBILE APPS';
+
+  test('landing page is a stateless composition boundary', () {
+    expect(const LandingPage(), isA<StatelessWidget>());
+  });
 
   for (final size in const [Size(375, 812), Size(768, 1024), Size(1440, 900)]) {
     testWidgets('shows name, tagline and every link at $size', (tester) async {
@@ -49,10 +54,7 @@ void main() {
     await pumpRouted(tester, const LandingPage(), settle: false);
 
     expect(find.byType(LandingPhone), findsOneWidget);
-    expect(
-      find.text('LIVE FLUTTER WIDGETS, NOT VIDEO. DRAG ONE.'),
-      findsOneWidget,
-    );
+    expect(find.text('EXPLORE THE TILES'), findsOneWidget);
   });
 
   testWidgets('desktop phone follows a drag and springs home', (tester) async {
@@ -61,8 +63,7 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
 
     final phone = find.byKey(LandingPhone.motionKey);
-    final restingCenter = tester.getCenter(find.byType(LandingPhone));
-    final gesture = await tester.startGesture(restingCenter);
+    final gesture = await tester.startGesture(tester.getCenter(phone));
     // The first move wins the pan gesture arena; the second carries the drag.
     await gesture.moveBy(const Offset(24, 6));
     await tester.pump();
@@ -87,7 +88,7 @@ void main() {
     await pumpRouted(tester, const LandingPage(), settle: false);
 
     expect(find.byType(LandingPhone), findsNothing);
-    expect(find.text('LIVE FLUTTER WIDGETS, NOT VIDEO.'), findsOneWidget);
+    expect(find.text('EXPLORE THE TILES'), findsOneWidget);
   });
 
   for (final section in SiteSection.values.where(
@@ -140,11 +141,11 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('openContactOnStart opens the panel on load', (tester) async {
+  testWidgets('contact route adapter opens the panel on load', (tester) async {
     setViewSize(tester, const Size(1440, 900));
     await pumpRouted(
       tester,
-      const LandingPage(openContactOnStart: true),
+      const ContactLandingPage(),
       settle: false,
     );
     await tester.pump(const Duration(milliseconds: 500));

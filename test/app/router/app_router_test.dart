@@ -6,6 +6,7 @@ import 'package:my_portfolio/app/navigation/site_page.dart';
 import 'package:my_portfolio/app/router/app_router.dart';
 import 'package:my_portfolio/app/router/site_transition_page.dart';
 import 'package:my_portfolio/core/resources/styles/theme.dart';
+import 'package:my_portfolio/features/landing/presentation/views/landing_page.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
 
 import '../../helpers/site_test_harness.dart';
@@ -67,6 +68,14 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 1));
     expect(find.byKey(SiteRouteTransition.expandKey), findsOneWidget);
+    final transition = tester.widget<ClipPath>(
+      find.byKey(SiteRouteTransition.expandKey),
+    );
+    expect(transition.child, isA<RepaintBoundary>());
+    expect(
+      tester.widget<TickerMode>(find.byKey(LandingPage.tickerModeKey)).enabled,
+      isFalse,
+    );
 
     await tester.pump(const Duration(milliseconds: 500));
     expect(pageTitle(tester), 'WORK');

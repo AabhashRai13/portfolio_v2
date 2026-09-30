@@ -9,6 +9,7 @@ import 'package:my_portfolio/features/blog_detail/presentation/controllers/blog_
 import 'package:my_portfolio/features/blog_detail/presentation/views/blog_post_detail_page.dart';
 import 'package:my_portfolio/features/blog_list/presentation/controllers/blog_list_controller.dart';
 import 'package:my_portfolio/features/blog_list/presentation/views/blog_list_page.dart';
+import 'package:my_portfolio/features/landing/presentation/views/contact_landing_page.dart';
 import 'package:my_portfolio/features/landing/presentation/views/landing_page.dart';
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 import 'package:my_portfolio/features/newsletter/presentation/views/newsletter_page.dart';
@@ -46,7 +47,7 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.contact,
           builder: (context, state) => const AppThemeScope(
-            child: LandingPage(openContactOnStart: true),
+            child: ContactLandingPage(),
           ),
         ),
         GoRoute(

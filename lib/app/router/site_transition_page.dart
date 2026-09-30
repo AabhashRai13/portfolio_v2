@@ -54,51 +54,52 @@ class SiteRouteTransition extends StatelessWidget {
     );
     final transitionOrigin = origin;
     if (transitionOrigin == null) {
-      return AnimatedBuilder(
+      return FadeTransition(
         key: fallbackKey,
-        animation: curved,
-        child: child,
-        builder: (context, child) => Opacity(
-          opacity: curved.value,
-          child: Transform.translate(
-            offset: Offset(0, 12 * (1 - curved.value)),
-            child: child,
-          ),
+        opacity: curved,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.015),
+            end: Offset.zero,
+          ).animate(curved),
+          child: RepaintBoundary(child: child),
         ),
       );
     }
 
-    final viewport = MediaQuery.sizeOf(context);
-    final target = Offset.zero & viewport;
-    return AnimatedBuilder(
+    // Keep the destination at its final size and animate only a clip layer.
+    // Scaling the full page each frame is particularly expensive on web.
+    return ClipPath(
       key: expandKey,
-      animation: curved,
-      child: child,
-      builder: (context, child) {
-        final value = curved.value;
-        final rect = Rect.lerp(transitionOrigin.rect, target, value)!;
-        final pageOpacity = ((value - 0.08) / 0.42).clamp(0.0, 1.0);
-
-        return Stack(
-          fit: StackFit.expand,
-          children: [
-            Positioned.fromRect(
-              rect: rect,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(18 * (1 - value)),
-                child: Opacity(
-                  opacity: pageOpacity,
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    alignment: Alignment.topLeft,
-                    child: SizedBox.fromSize(size: viewport, child: child),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+      clipper: _ExpandingRouteClipper(
+        origin: transitionOrigin.rect,
+        progress: curved,
+      ),
+      child: RepaintBoundary(child: child),
     );
   }
+}
+
+class _ExpandingRouteClipper extends CustomClipper<Path> {
+  _ExpandingRouteClipper({required this.origin, required this.progress})
+    : super(reclip: progress);
+
+  final Rect origin;
+  final Animation<double> progress;
+
+  @override
+  Path getClip(Size size) {
+    final value = progress.value;
+    final rect = Rect.lerp(origin, Offset.zero & size, value)!;
+    return Path()..addRRect(
+      RRect.fromRectAndRadius(
+        rect,
+        Radius.circular(18 * (1 - value)),
+      ),
+    );
+  }
+
+  @override
+  bool shouldReclip(_ExpandingRouteClipper oldClipper) =>
+      oldClipper.origin != origin || oldClipper.progress != progress;
 }

@@ -1,12 +1,8 @@
-import 'dart:async';
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
+import 'package:my_portfolio/features/landing/presentation/controllers/landing_phone_motion_controller.dart';
 
-/// Desktop frame for the live widget grid. It floats at rest, neutralises its
-/// tilt on hover, follows pointer drags, then springs home on release.
+/// Desktop frame for the live widget grid.
 class LandingPhone extends StatefulWidget {
   const LandingPhone({
     required this.child,
@@ -23,168 +19,108 @@ class LandingPhone extends StatefulWidget {
   State<LandingPhone> createState() => _LandingPhoneState();
 }
 
+/// The state object is only a ticker lifecycle adapter. Motion state and policy
+/// belong to [LandingPhoneMotionController].
 class _LandingPhoneState extends State<LandingPhone>
     with TickerProviderStateMixin {
-  static const _restingRotation = -0.045;
-  static const double _maxRotation = 8 * math.pi / 180;
-  static const _spring = SpringDescription(
-    mass: 1,
-    stiffness: 170,
-    damping: 17,
-  );
-
-  late final AnimationController _floatController = AnimationController(
-    vsync: this,
-    duration: const Duration(seconds: 6),
-  )..addListener(_rebuild);
-  late final AnimationController _xController = AnimationController.unbounded(
-    vsync: this,
-  )..addListener(_rebuild);
-  late final AnimationController _yController = AnimationController.unbounded(
-    vsync: this,
-  )..addListener(_rebuild);
-
-  bool _hovered = false;
-  bool _dragging = false;
-  double _dragRotation = 0;
+  late final LandingPhoneMotionController _motion =
+      LandingPhoneMotionController(vsync: this);
 
   bool get _motionEnabled =>
       widget.motionEnabled &&
       !MediaQuery.of(context).disableAnimations &&
       TickerMode.valuesOf(context).enabled;
 
-  void _rebuild() {
-    if (mounted) setState(() {});
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _syncFloat();
+    _syncMotion();
   }
 
   @override
   void didUpdateWidget(LandingPhone oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.motionEnabled != widget.motionEnabled) _syncFloat();
+    if (oldWidget.motionEnabled != widget.motionEnabled) _syncMotion();
   }
 
-  void _syncFloat() {
-    if (_motionEnabled) {
-      if (!_floatController.isAnimating) _floatController.repeat();
-    } else {
-      _floatController.stop();
-    }
-  }
-
-  void _onPanStart(DragStartDetails details) {
-    if (!_motionEnabled) return;
-    _xController.stop();
-    _yController.stop();
-    setState(() => _dragging = true);
-  }
-
-  void _onPanUpdate(DragUpdateDetails details) {
-    if (!_motionEnabled) return;
-    _xController.value += details.delta.dx;
-    _yController.value += details.delta.dy;
-    setState(() {
-      _dragRotation = (details.delta.dx * math.pi / 60).clamp(
-        -_maxRotation,
-        _maxRotation,
-      );
-    });
-  }
-
-  void _onPanEnd(DragEndDetails details) {
-    if (!_motionEnabled) return;
-    setState(() {
-      _dragging = false;
-      _dragRotation = 0;
-    });
-    unawaited(
-      _xController.animateWith(
-        SpringSimulation(
-          _spring,
-          _xController.value,
-          0,
-          details.velocity.pixelsPerSecond.dx,
-        ),
-      ),
-    );
-    unawaited(
-      _yController.animateWith(
-        SpringSimulation(
-          _spring,
-          _yController.value,
-          0,
-          details.velocity.pixelsPerSecond.dy,
-        ),
-      ),
-    );
+  void _syncMotion() {
+    _motion
+      ..setEnabled(isEnabled: _motionEnabled)
+      ..start();
   }
 
   @override
   void dispose() {
-    _floatController.dispose();
-    _xController.dispose();
-    _yController.dispose();
+    _motion.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final palette = Theme.of(context).homePalette;
-    final floatOffset = _motionEnabled
-        ? math.sin(_floatController.value * math.pi * 2) * 4
-        : 0.0;
-    final rotation = _dragging
-        ? _dragRotation
-        : (_motionEnabled && _hovered ? 0.0 : _restingRotation);
-    final offset = Offset(
-      _motionEnabled ? _xController.value : 0,
-      (_motionEnabled ? _yController.value : 0) +
-          floatOffset -
-          (_hovered && _motionEnabled ? 7 : 0),
+    return ListenableBuilder(
+      listenable: _motion,
+      child: widget.child,
+      builder: (context, child) => _LandingPhoneView(
+        motion: _motion,
+        child: child!,
+      ),
     );
+  }
+}
+
+/// Stateless phone renderer. All values and event decisions come from the
+/// presentation controller.
+class _LandingPhoneView extends StatelessWidget {
+  const _LandingPhoneView({required this.motion, required this.child});
+
+  final LandingPhoneMotionController motion;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
 
     return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
+      onEnter: (_) => motion.setHovered(isHovered: true),
+      onExit: (_) => motion.setHovered(isHovered: false),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onPanStart: _onPanStart,
-        onPanUpdate: _onPanUpdate,
-        onPanEnd: _onPanEnd,
+        onPanStart: motion.onPanStart,
+        onPanUpdate: motion.onPanUpdate,
+        onPanEnd: motion.onPanEnd,
         child: TweenAnimationBuilder<double>(
-          tween: Tween<double>(end: rotation),
-          duration: Duration(milliseconds: _dragging ? 70 : 420),
+          tween: Tween<double>(end: motion.rotation),
+          duration: Duration(milliseconds: motion.dragging ? 70 : 420),
           curve: Curves.easeOutCubic,
-          builder: (context, angle, child) => Transform.translate(
+          builder: (context, angle, framedChild) => Transform.translate(
             key: LandingPhone.motionKey,
-            offset: offset,
+            offset: motion.offset,
             child: Transform.rotate(
               angle: angle,
               child: AnimatedScale(
-                scale: _hovered && _motionEnabled ? 1.02 : 1,
+                scale: motion.hovered && motion.enabled ? 1.02 : 1,
                 duration: const Duration(milliseconds: 240),
                 curve: Curves.easeOutCubic,
-                child: child,
+                child: framedChild,
               ),
             ),
           ),
           child: Container(
-            width: 292,
+            width: 248,
             height: 420,
             padding: const EdgeInsets.fromLTRB(11, 28, 11, 12),
             decoration: BoxDecoration(
-              color: palette.textStrong,
-              borderRadius: BorderRadius.circular(44),
+              color: palette.shadowColor,
+              borderRadius: BorderRadius.circular(38),
+              border: Border.all(
+                color: palette.primaryAccent.withValues(alpha: 0.7),
+                width: 1.5,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: palette.shadowColor.withValues(alpha: 0.22),
-                  blurRadius: 30,
-                  offset: const Offset(0, 18),
+                  color: palette.shadowColor.withValues(alpha: 0.52),
+                  blurRadius: 46,
+                  offset: const Offset(0, 24),
                 ),
               ],
             ),
@@ -195,22 +131,22 @@ class _LandingPhoneState extends State<LandingPhone>
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(32),
                     child: ColoredBox(
-                      color: palette.sectionBackground,
+                      color: palette.shadowColor,
                       child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: widget.child,
+                        padding: const EdgeInsets.all(6),
+                        child: child,
                       ),
                     ),
                   ),
                 ),
                 Positioned(
                   top: -17,
-                  left: 88,
-                  right: 88,
+                  left: 72,
+                  right: 72,
                   child: Container(
-                    height: 7,
+                    height: 5,
                     decoration: BoxDecoration(
-                      color: palette.sectionBackground,
+                      color: palette.primaryAccent.withValues(alpha: 0.45),
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),

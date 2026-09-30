@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
+import 'package:my_portfolio/features/landing/presentation/controllers/landing_preview_controller.dart';
 
 typedef LandingWidgetOpen = void Function(SiteSection section, Rect origin);
 
@@ -248,10 +249,16 @@ class _LoopingPreview extends StatefulWidget {
 
 class _LoopingPreviewState extends State<_LoopingPreview>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: widget.duration,
-  );
+  late final LandingPreviewController _motion;
+
+  @override
+  void initState() {
+    super.initState();
+    _motion = LandingPreviewController(
+      vsync: this,
+      duration: widget.duration,
+    );
+  }
 
   @override
   void didChangeDependencies() {
@@ -259,28 +266,31 @@ class _LoopingPreviewState extends State<_LoopingPreview>
     final motionDisabled = MediaQuery.of(context).disableAnimations;
     final tickerEnabled = TickerMode.valuesOf(context).enabled;
 
-    if (motionDisabled) {
-      _controller
-        ..stop()
-        ..value = 1;
-    } else if (tickerEnabled && !_controller.isAnimating) {
-      _controller.repeat();
-    } else if (!tickerEnabled) {
-      _controller.stop();
+    _motion.sync(
+      tickerEnabled: tickerEnabled,
+      reduceMotion: motionDisabled,
+    );
+  }
+
+  @override
+  void didUpdateWidget(_LoopingPreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.duration != widget.duration) {
+      _motion.duration = widget.duration;
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _motion.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) => widget.builder(context, _controller),
+      animation: _motion.animation,
+      builder: (context, _) => widget.builder(context, _motion.animation),
     );
   }
 }

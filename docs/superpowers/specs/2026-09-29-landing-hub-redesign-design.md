@@ -83,7 +83,7 @@ Each widget is a real Flutter widget with its own looping `AnimationController`,
 | Work | An app screen assembling itself from wireframe blocks to finished UI, about 5 s | `/work` |
 | About | A still from the intro video (bundled asset) with a slow zoom and a play glyph, about 6 s | `/about` |
 | Writing | An article card whose text lines write themselves, about 4 s | `/blog` |
-| Contact | A chat bubble typing "Hi Aabhash, we're building…", then the typing dots, about 4 s | Contact panel |
+| Contact | A chat bubble typing "Hi Aabhash, we're building…", then the typing dots, about 4 s | Embedded contact form inside the desktop phone (deferred); panel fallback elsewhere |
 
 The Work preview is an invented screen and never shows employer apps.
 
@@ -194,7 +194,12 @@ Each phase is a PR into `development`, and the site stays usable after each one.
 3. **Transitions.**
    - The widget-to-page expand and collapse, the fallback fade, and the contact panel animation.
    - Back and swipe behaviour.
-4. **Work content.**
+4. **Contact inside the phone.**
+   - [ ] Activating the Contact widget on desktop replaces the phone's 2×2 widget grid with the usable contact form inside the phone screen instead of opening the global panel.
+   - [ ] Add an obvious close/back action that restores the widget grid without losing the landing page.
+   - [ ] Make the embedded form scroll and resize safely inside the phone, including when the software keyboard is open.
+   - [ ] Keep the existing contact panel as the fallback for mobile, text-link navigation, inner pages and the shareable `/contact` route unless a later design decision replaces those entry points.
+5. **Work content.**
    - The content session for Babe, Get This and Sadaqa (Aabhash provides assets), then the flagship layout.
 
 ## Out of scope
