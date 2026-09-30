@@ -1,6 +1,8 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/di/service_locator.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
+import 'package:my_portfolio/app/router/site_transition_page.dart';
 import 'package:my_portfolio/core/presentation/widgets/app_theme_scope.dart';
 import 'package:my_portfolio/features/about/presentation/views/about_page.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/controllers/blog_post_detail_controller.dart';
@@ -27,13 +29,19 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.work,
-          builder: (context, state) => AppThemeScope(
-            child: WorkPage(controller: getIt.get<WorkController>()),
+          pageBuilder: (context, state) => _sitePage(
+            state,
+            AppThemeScope(
+              child: WorkPage(controller: getIt.get<WorkController>()),
+            ),
           ),
         ),
         GoRoute(
           path: AppRoutes.about,
-          builder: (context, state) => const AppThemeScope(child: AboutPage()),
+          pageBuilder: (context, state) => _sitePage(
+            state,
+            const AppThemeScope(child: AboutPage()),
+          ),
         ),
         GoRoute(
           path: AppRoutes.contact,
@@ -43,20 +51,26 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.blog,
-          builder: (context, state) => AppThemeScope(
-            child: BlogListPage(
-              blogListController: getIt.get<BlogListController>(),
+          pageBuilder: (context, state) => _sitePage(
+            state,
+            AppThemeScope(
+              child: BlogListPage(
+                blogListController: getIt.get<BlogListController>(),
+              ),
             ),
           ),
           routes: [
             GoRoute(
               path: AppRoutes.blogDetailSegment,
-              builder: (context, state) => AppThemeScope(
-                child: BlogPostDetailPage(
-                  slug: state.pathParameters['slug']!,
-                  blogPostDetailController: getIt
-                      .get<BlogPostDetailController>(),
-                  newsletterController: getIt.get<NewsletterController>(),
+              pageBuilder: (context, state) => _sitePage(
+                state,
+                AppThemeScope(
+                  child: BlogPostDetailPage(
+                    slug: state.pathParameters['slug']!,
+                    blogPostDetailController: getIt
+                        .get<BlogPostDetailController>(),
+                    newsletterController: getIt.get<NewsletterController>(),
+                  ),
                 ),
               ),
             ),
@@ -64,9 +78,12 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.newsletter,
-          builder: (context, state) => AppThemeScope(
-            child: NewsletterPage(
-              newsletterController: getIt.get<NewsletterController>(),
+          pageBuilder: (context, state) => _sitePage(
+            state,
+            AppThemeScope(
+              child: NewsletterPage(
+                newsletterController: getIt.get<NewsletterController>(),
+              ),
             ),
           ),
         ),
@@ -75,6 +92,15 @@ class AppRouter {
           redirect: (context, state) => AppRoutes.home,
         ),
       ],
+    );
+  }
+
+  static Page<void> _sitePage(GoRouterState state, Widget child) {
+    final extra = state.extra;
+    return SiteTransitionPage(
+      key: state.pageKey,
+      origin: extra is SiteTransitionOrigin ? extra : null,
+      child: child,
     );
   }
 }

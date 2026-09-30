@@ -122,8 +122,11 @@ class _LandingPageState extends State<LandingPage>
                                   : 360,
                               child: LandingWidgetGrid(
                                 entrance: _entranceController,
-                                onOpen: (section) =>
-                                    openSiteSection(context, section),
+                                onOpen: (section, origin) => openSiteSection(
+                                  context,
+                                  section,
+                                  origin: origin,
+                                ),
                               ),
                             ),
                           ] else ...[
@@ -141,8 +144,11 @@ class _LandingPageState extends State<LandingPage>
                                 motionEnabled: motionEnabled,
                                 child: LandingWidgetGrid(
                                   entrance: _entranceController,
-                                  onOpen: (section) =>
-                                      openSiteSection(context, section),
+                                  onOpen: (section, origin) => openSiteSection(
+                                    context,
+                                    section,
+                                    origin: origin,
+                                  ),
                                 ),
                               ),
                             ),

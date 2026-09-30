@@ -5,6 +5,8 @@ import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 
+typedef LandingWidgetOpen = void Function(SiteSection section, Rect origin);
+
 /// The four live previews used both inside the desktop phone and as the
 /// full-width mobile landing surface.
 class LandingWidgetGrid extends StatelessWidget {
@@ -14,7 +16,7 @@ class LandingWidgetGrid extends StatelessWidget {
     super.key,
   });
 
-  final ValueChanged<SiteSection> onOpen;
+  final LandingWidgetOpen onOpen;
   final Animation<double>? entrance;
 
   static Key keyFor(SiteSection section) =>
@@ -56,7 +58,7 @@ class LandingWidgetGrid extends StatelessWidget {
               child: _LandingTile(
                 key: keyFor(section),
                 section: section,
-                onTap: () => onOpen(section),
+                onTap: (origin) => onOpen(section, origin),
               ),
             );
           },
@@ -74,7 +76,7 @@ class _LandingTile extends StatefulWidget {
   });
 
   final SiteSection section;
-  final VoidCallback onTap;
+  final ValueChanged<Rect> onTap;
 
   @override
   State<_LandingTile> createState() => _LandingTileState();
@@ -82,6 +84,11 @@ class _LandingTile extends StatefulWidget {
 
 class _LandingTileState extends State<_LandingTile> {
   bool _active = false;
+
+  void _open() {
+    final box = context.findRenderObject()! as RenderBox;
+    widget.onTap(box.localToGlobal(Offset.zero) & box.size);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +113,7 @@ class _LandingTileState extends State<_LandingTile> {
             child: Material(
               color: background,
               child: InkWell(
-                onTap: widget.onTap,
+                onTap: _open,
                 onHover: (value) => setState(() => _active = value),
                 onFocusChange: (value) => setState(() => _active = value),
                 child: Stack(
