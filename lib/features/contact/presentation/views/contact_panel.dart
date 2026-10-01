@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/di/service_locator.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
-import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 import 'package:my_portfolio/features/contact/presentation/views/contact_section_view.dart';
+import 'package:my_portfolio/features/contact/presentation/widgets/contact_chat_header.dart';
 
 const double _panelWidth = 420;
 
@@ -84,34 +84,13 @@ class _ContactPanelBodyState extends State<_ContactPanelBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 8, 0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'CONTACT',
-                        style: SiteText.display(palette.textStrong, size: 44),
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: 'Close',
-                      icon: Icon(
-                        Icons.close_rounded,
-                        color: palette.textSecondary,
-                      ),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
+              ContactChatHeader(
+                onClose: () => Navigator.of(context).pop(),
               ),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(bottom: 24),
-                  child: ContactSection(
-                    controller: _controller,
-                    embedded: true,
-                  ),
+                  child: ContactSection(controller: _controller),
                 ),
               ),
             ],

@@ -47,7 +47,7 @@ void main() {
 
   testWidgets('/contact opens the panel over the landing', (tester) async {
     await pumpAt(tester, '/contact');
-    expect(find.text('Send Message'), findsOneWidget);
+    expect(find.text('Send message'), findsOneWidget);
     expect(
       find.bySemanticsLabel('I HELP FOUNDERS & TECH TEAMS BUILD MOBILE APPS'),
       findsOneWidget,

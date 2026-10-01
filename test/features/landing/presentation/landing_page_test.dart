@@ -109,7 +109,7 @@ void main() {
       await tester.tap(tile);
       if (section == SiteSection.contact) {
         await tester.pump(const Duration(milliseconds: 500));
-        expect(find.text('Send Message'), findsOneWidget);
+        expect(find.text('Send message'), findsOneWidget);
       } else {
         await tester.pumpAndSettle();
         expect(find.text('page ${section.route}'), findsOneWidget);
@@ -267,7 +267,7 @@ void main() {
     ) async {
       await openPhoneContact(tester);
 
-      expect(inPhone(find.text('Send Message')), findsOneWidget);
+      expect(inPhone(find.text('Send message')), findsOneWidget);
       expect(find.byType(LandingWidgetGrid), findsNothing);
       expect(find.byType(BottomSheet), findsNothing);
       expect(find.text('page /contact'), findsNothing);
@@ -282,7 +282,7 @@ void main() {
       await tester.tap(find.byTooltip('Back to widgets'));
       await settleSwitch(tester);
       expect(find.byType(LandingWidgetGrid), findsOneWidget);
-      expect(find.text('Send Message'), findsNothing);
+      expect(find.text('Send message'), findsNothing);
     });
 
     testWidgets('escape restores the grid', (tester) async {
@@ -291,7 +291,7 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await settleSwitch(tester);
       expect(find.byType(LandingWidgetGrid), findsOneWidget);
-      expect(find.text('Send Message'), findsNothing);
+      expect(find.text('Send message'), findsNothing);
     });
 
     testWidgets('phone ignores drag while the form is open', (tester) async {
@@ -316,7 +316,7 @@ void main() {
     testWidgets('send button is reachable inside the phone', (tester) async {
       await openPhoneContact(tester);
 
-      final send = find.text('Send Message');
+      final send = find.text('Send message');
       await tester.ensureVisible(send);
       await tester.pump(const Duration(milliseconds: 300));
       expect(send.hitTestable(), findsOneWidget);
@@ -332,7 +332,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
       expect(tester.takeException(), isNull);
-      expect(inPhone(find.text('Send Message')), findsOneWidget);
+      expect(inPhone(find.text('Send message')), findsOneWidget);
     });
 
     testWidgets('resizing to mobile while open releases the phone', (
@@ -362,8 +362,8 @@ void main() {
       await tester.pump();
       await tester.tap(link);
       await tester.pump(const Duration(milliseconds: 600));
-      expect(find.text('Send Message'), findsOneWidget);
-      expect(inPhone(find.text('Send Message')), findsNothing);
+      expect(find.text('Send message'), findsOneWidget);
+      expect(inPhone(find.text('Send message')), findsNothing);
       expect(find.byType(LandingWidgetGrid), findsOneWidget);
     });
   });
@@ -407,7 +407,7 @@ void main() {
     await tester.pump();
     await tester.tap(tile);
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text('Send Message'), findsOneWidget);
+    expect(find.text('Send message'), findsOneWidget);
   });
 
   testWidgets('reduced motion renders every preview at rest', (tester) async {
@@ -438,7 +438,7 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 500));
 
-    expect(find.text('Send Message'), findsOneWidget);
+    expect(find.text('Send message'), findsOneWidget);
     expect(find.bySemanticsLabel(tagline), findsOneWidget);
   });
 }

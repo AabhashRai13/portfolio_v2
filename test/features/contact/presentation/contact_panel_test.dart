@@ -35,33 +35,32 @@ void main() {
     setViewSize(tester, const Size(1440, 900));
     await openPanel(tester);
 
-    expect(find.text('CONTACT'), findsOneWidget);
-    expect(find.text('Send Message'), findsOneWidget);
-    expect(find.text('Get In Touch'), findsNothing);
+    expect(find.text('Aabhash Rai'), findsOneWidget);
+    expect(find.text('Send message'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Close'));
     await tester.pumpAndSettle();
-    expect(find.text('Send Message'), findsNothing);
+    expect(find.text('Send message'), findsNothing);
   });
 
   testWidgets('desktop Esc closes the panel', (tester) async {
     setViewSize(tester, const Size(1440, 900));
     await openPanel(tester);
-    expect(find.text('Send Message'), findsOneWidget);
+    expect(find.text('Send message'), findsOneWidget);
 
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
-    expect(find.text('Send Message'), findsNothing);
+    expect(find.text('Send message'), findsNothing);
   });
 
   testWidgets('desktop tapping outside the panel closes it', (tester) async {
     setViewSize(tester, const Size(1440, 900));
     await openPanel(tester);
-    expect(find.text('Send Message'), findsOneWidget);
+    expect(find.text('Send message'), findsOneWidget);
 
     await tester.tapAt(const Offset(20, 450));
     await tester.pumpAndSettle();
-    expect(find.text('Send Message'), findsNothing);
+    expect(find.text('Send message'), findsNothing);
   });
 
   testWidgets('mobile opens a bottom sheet with the form', (tester) async {
@@ -69,6 +68,6 @@ void main() {
     await openPanel(tester);
 
     expect(find.byType(BottomSheet), findsOneWidget);
-    expect(find.text('Send Message'), findsOneWidget);
+    expect(find.text('Send message'), findsOneWidget);
   });
 }

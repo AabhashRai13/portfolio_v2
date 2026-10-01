@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_portfolio/app/di/service_locator.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
-import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 import 'package:my_portfolio/features/contact/presentation/views/contact_section_view.dart';
+import 'package:my_portfolio/features/contact/presentation/widgets/contact_chat_header.dart';
 
 /// The contact form sized for the landing phone's screen: a back header over
 /// the shared form. Owns its controller, like the contact panel.
@@ -48,30 +48,11 @@ class _PhoneContactFormState extends State<PhoneContactForm> {
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    IconButton(
-                      tooltip: 'Back to widgets',
-                      icon: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 18,
-                        color: palette.textStrong,
-                      ),
-                      onPressed: widget.onClose,
-                    ),
-                    Text(
-                      'CONTACT',
-                      style: SiteText.label(palette.textStrong, size: 12),
-                    ),
-                  ],
-                ),
+                ContactChatHeader(onBack: widget.onClose),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: ContactSection(
-                      controller: _controller,
-                      embedded: true,
-                    ),
+                    child: ContactSection(controller: _controller),
                   ),
                 ),
               ],
