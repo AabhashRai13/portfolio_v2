@@ -9,7 +9,7 @@ import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart'
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_phone_motion_controller.dart';
-import 'package:my_portfolio/features/landing/presentation/widgets/landing_phone.dart';
+import 'package:my_portfolio/features/landing/presentation/widgets/landing_phone_stage.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
 
 /// Stateless renderer for the landing hub.
@@ -141,12 +141,10 @@ class LandingView extends StatelessWidget {
                                     curve: Curves.elasticOut,
                                   ),
                                 ),
-                                child: LandingPhone(
+                                child: LandingPhoneStage(
                                   motion: phoneMotion,
-                                  child: LandingWidgetGrid(
-                                    entrance: entrance,
-                                    onOpen: onOpenWidget,
-                                  ),
+                                  entrance: entrance,
+                                  onOpenWidget: onOpenWidget,
                                 ),
                               ),
                               SizedBox(height: phoneHeadlineGap),

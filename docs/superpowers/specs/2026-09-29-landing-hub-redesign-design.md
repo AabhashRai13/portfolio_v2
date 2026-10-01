@@ -195,10 +195,10 @@ Each phase is a PR into `development`, and the site stays usable after each one.
    - The widget-to-page expand and collapse, the fallback fade, and the contact panel animation.
    - Back and swipe behaviour.
 4. **Contact inside the phone.**
-   - [ ] Activating the Contact widget on desktop replaces the phone's 2×2 widget grid with the usable contact form inside the phone screen instead of opening the global panel.
-   - [ ] Add an obvious close/back action that restores the widget grid without losing the landing page.
-   - [ ] Make the embedded form scroll and resize safely inside the phone, including when the software keyboard is open.
-   - [ ] Keep the existing contact panel as the fallback for mobile, text-link navigation, inner pages and the shareable `/contact` route unless a later design decision replaces those entry points.
+   - [x] Activating the Contact widget on desktop replaces the phone's 2×2 widget grid with the usable contact form inside the phone screen instead of opening the global panel.
+   - [x] Add an obvious close/back action that restores the widget grid without losing the landing page.
+   - [x] Make the embedded form scroll and resize safely inside the phone, including when the software keyboard is open.
+   - [x] Keep the existing contact panel as the fallback for mobile, text-link navigation, inner pages and the shareable `/contact` route unless a later design decision replaces those entry points.
 5. **Work content.**
    - The content session for Babe, Get This and Sadaqa (Aabhash provides assets), then the flagship layout.
 

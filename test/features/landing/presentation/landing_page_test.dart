@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/constants/size.dart';
@@ -233,6 +234,138 @@ void main() {
       tester.widget<Transform>(phone).transform.getTranslation().x,
       closeTo(0, 2),
     );
+  });
+
+  group('desktop contact inside the phone', () {
+    Finder inPhone(Finder finder) =>
+        find.descendant(of: find.byType(LandingPhone), matching: finder);
+
+    // Starts the cross-fade, runs it to the end, then lets AnimatedSwitcher
+    // drop the outgoing child on the following frame.
+    Future<void> settleSwitch(WidgetTester tester) async {
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump();
+    }
+
+    Future<void> openPhoneContact(
+      WidgetTester tester, {
+      Size size = const Size(1440, 900),
+    }) async {
+      setViewSize(tester, size);
+      await pumpRouted(tester, const LandingPage(), settle: false);
+      await tester.pump(const Duration(seconds: 2));
+      final tile = find.byKey(LandingWidgetGrid.keyFor(SiteSection.contact));
+      await tester.ensureVisible(tile);
+      await tester.pump();
+      await tester.tap(tile);
+      await settleSwitch(tester);
+    }
+
+    testWidgets('contact tile swaps the grid for the form in the phone', (
+      tester,
+    ) async {
+      await openPhoneContact(tester);
+
+      expect(inPhone(find.text('Send Message')), findsOneWidget);
+      expect(find.byType(LandingWidgetGrid), findsNothing);
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(find.text('page /contact'), findsNothing);
+      expect(find.bySemanticsLabel(tagline), findsOneWidget);
+    });
+
+    testWidgets('back restores the grid without leaving the landing', (
+      tester,
+    ) async {
+      await openPhoneContact(tester);
+
+      await tester.tap(find.byTooltip('Back to widgets'));
+      await settleSwitch(tester);
+      expect(find.byType(LandingWidgetGrid), findsOneWidget);
+      expect(find.text('Send Message'), findsNothing);
+    });
+
+    testWidgets('escape restores the grid', (tester) async {
+      await openPhoneContact(tester);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await settleSwitch(tester);
+      expect(find.byType(LandingWidgetGrid), findsOneWidget);
+      expect(find.text('Send Message'), findsNothing);
+    });
+
+    testWidgets('phone ignores drag while the form is open', (tester) async {
+      await openPhoneContact(tester);
+
+      final phone = find.byKey(LandingPhone.motionKey);
+      final gesture = await tester.startGesture(
+        tester.getTopLeft(phone) + const Offset(150, 12),
+      );
+      for (var i = 0; i < 3; i++) {
+        await gesture.moveBy(const Offset(24, 0));
+        await tester.pump();
+      }
+      await gesture.up();
+      await tester.pump();
+      expect(
+        tester.widget<Transform>(phone).transform.getTranslation().x.abs(),
+        lessThan(1),
+      );
+    });
+
+    testWidgets('send button is reachable inside the phone', (tester) async {
+      await openPhoneContact(tester);
+
+      final send = find.text('Send Message');
+      await tester.ensureVisible(send);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(send.hitTestable(), findsOneWidget);
+    });
+
+    testWidgets('on-screen keyboard at tablet width does not overflow', (
+      tester,
+    ) async {
+      await openPhoneContact(tester, size: const Size(1024, 1366));
+
+      tester.view.viewInsets = const FakeViewPadding(bottom: 320);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(tester.takeException(), isNull);
+      expect(inPhone(find.text('Send Message')), findsOneWidget);
+    });
+
+    testWidgets('resizing to mobile while open releases the phone', (
+      tester,
+    ) async {
+      await openPhoneContact(tester);
+
+      tester.view.physicalSize = const Size(390, 844);
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      tester.view.physicalSize = const Size(1440, 900);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.byType(LandingWidgetGrid), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('desktop contact text link still opens the panel', (
+      tester,
+    ) async {
+      setViewSize(tester, const Size(1440, 900));
+      await pumpRouted(tester, const LandingPage(), settle: false);
+      await tester.pump(const Duration(seconds: 2));
+
+      final link = find.text('CONTACT').last;
+      await tester.ensureVisible(link);
+      await tester.pump();
+      await tester.tap(link);
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.text('Send Message'), findsOneWidget);
+      expect(inPhone(find.text('Send Message')), findsNothing);
+      expect(find.byType(LandingWidgetGrid), findsOneWidget);
+    });
   });
 
   testWidgets('mobile uses the full grid without the phone', (tester) async {
