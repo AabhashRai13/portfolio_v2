@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/di/service_locator.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
-import 'package:my_portfolio/app/router/site_transition_page.dart';
 import 'package:my_portfolio/core/presentation/widgets/app_theme_scope.dart';
 import 'package:my_portfolio/features/about/presentation/views/about_page.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/controllers/blog_post_detail_controller.dart';
@@ -25,8 +24,10 @@ class AppRouter {
       routes: [
         GoRoute(
           path: AppRoutes.home,
-          builder: (context, state) =>
-              const AppThemeScope(child: LandingPage()),
+          pageBuilder: (context, state) => _sitePage(
+            state,
+            const AppThemeScope(child: LandingPage()),
+          ),
         ),
         GoRoute(
           path: AppRoutes.work,
@@ -46,8 +47,9 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.contact,
-          builder: (context, state) => const AppThemeScope(
-            child: ContactLandingPage(),
+          pageBuilder: (context, state) => _sitePage(
+            state,
+            const AppThemeScope(child: ContactLandingPage()),
           ),
         ),
         GoRoute(
@@ -97,10 +99,8 @@ class AppRouter {
   }
 
   static Page<void> _sitePage(GoRouterState state, Widget child) {
-    final extra = state.extra;
-    return SiteTransitionPage(
+    return NoTransitionPage<void>(
       key: state.pageKey,
-      origin: extra is SiteTransitionOrigin ? extra : null,
       child: child,
     );
   }
