@@ -19,9 +19,9 @@ class LandingPage extends StatelessWidget {
       enabled: routeActive,
       child: LandingEntrance(
         routeActive: routeActive,
-        builder: (context, entrance, {required motionEnabled}) => LandingView(
+        builder: (context, entrance, {required phoneMotion}) => LandingView(
           entrance: entrance,
-          motionEnabled: motionEnabled,
+          phoneMotion: phoneMotion,
           onOpenWidget: (section, origin) => openSiteSection(
             context,
             section,

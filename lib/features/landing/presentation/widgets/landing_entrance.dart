@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_entrance_controller.dart';
+import 'package:my_portfolio/features/landing/presentation/controllers/landing_phone_motion_controller.dart';
 
 typedef LandingEntranceBuilder =
     Widget Function(
       BuildContext context,
       Animation<double> animation, {
-      required bool motionEnabled,
+      required LandingPhoneMotionController phoneMotion,
     });
 
 /// Lifecycle adapter between Flutter's ticker system and the landing view.
@@ -24,10 +26,12 @@ class LandingEntrance extends StatefulWidget {
 }
 
 class _LandingEntranceState extends State<LandingEntrance>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final LandingEntranceController _controller = LandingEntranceController(
     vsync: this,
   );
+  late final LandingPhoneMotionController _phoneMotion =
+      LandingPhoneMotionController(vsync: this);
 
   bool get _reduceMotion => MediaQuery.of(context).disableAnimations;
 
@@ -43,14 +47,25 @@ class _LandingEntranceState extends State<LandingEntrance>
     if (oldWidget.routeActive != widget.routeActive) _sync();
   }
 
-  void _sync() => _controller.sync(
-    routeActive: widget.routeActive,
-    reduceMotion: _reduceMotion,
-  );
+  void _sync() {
+    _controller.sync(
+      routeActive: widget.routeActive,
+      reduceMotion: _reduceMotion,
+    );
+    _phoneMotion
+      ..setEnabled(
+        isEnabled:
+            widget.routeActive &&
+            !_reduceMotion &&
+            MediaQuery.sizeOf(context).width >= kSiteDesktopBreakpoint,
+      )
+      ..start();
+  }
 
   @override
   void dispose() {
     _controller.dispose();
+    _phoneMotion.dispose();
     super.dispose();
   }
 
@@ -58,6 +73,6 @@ class _LandingEntranceState extends State<LandingEntrance>
   Widget build(BuildContext context) => widget.builder(
     context,
     _controller.animation,
-    motionEnabled: !_reduceMotion && widget.routeActive,
+    phoneMotion: _phoneMotion,
   );
 }

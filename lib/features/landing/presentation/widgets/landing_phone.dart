@@ -2,154 +2,181 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_phone_motion_controller.dart';
 
-/// Desktop frame for the live widget grid.
-class LandingPhone extends StatefulWidget {
-  const LandingPhone({
-    required this.child,
-    required this.motionEnabled,
-    super.key,
-  });
+/// Desktop hardware and live screen, rendered from shared motion state.
+class LandingPhone extends StatelessWidget {
+  const LandingPhone({required this.child, required this.motion, super.key});
 
   final Widget child;
-  final bool motionEnabled;
+  final LandingPhoneMotionController motion;
 
   static const Key motionKey = ValueKey<String>('landing-phone-motion');
 
   @override
-  State<LandingPhone> createState() => _LandingPhoneState();
-}
-
-/// The state object is only a ticker lifecycle adapter. Motion state and policy
-/// belong to [LandingPhoneMotionController].
-class _LandingPhoneState extends State<LandingPhone>
-    with TickerProviderStateMixin {
-  late final LandingPhoneMotionController _motion =
-      LandingPhoneMotionController(vsync: this);
-
-  bool get _motionEnabled =>
-      widget.motionEnabled &&
-      !MediaQuery.of(context).disableAnimations &&
-      TickerMode.valuesOf(context).enabled;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _syncMotion();
-  }
-
-  @override
-  void didUpdateWidget(LandingPhone oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.motionEnabled != widget.motionEnabled) _syncMotion();
-  }
-
-  void _syncMotion() {
-    _motion
-      ..setEnabled(isEnabled: _motionEnabled)
-      ..start();
-  }
-
-  @override
-  void dispose() {
-    _motion.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: _motion,
-      child: widget.child,
-      builder: (context, child) => _LandingPhoneView(
-        motion: _motion,
-        child: child!,
-      ),
-    );
-  }
-}
-
-/// Stateless phone renderer. All values and event decisions come from the
-/// presentation controller.
-class _LandingPhoneView extends StatelessWidget {
-  const _LandingPhoneView({required this.motion, required this.child});
-
-  final LandingPhoneMotionController motion;
-  final Widget child;
-
-  @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
+    final rimDark = Color.lerp(
+      palette.shadowColor,
+      palette.primaryAccent,
+      0.4,
+    )!;
+    final rimMid = Color.lerp(
+      palette.shadowColor,
+      palette.primaryAccent,
+      0.58,
+    )!;
+    final rimLight = Color.lerp(
+      palette.primaryAccent,
+      palette.mediaForeground,
+      0.16,
+    )!;
 
-    return MouseRegion(
-      onEnter: (_) => motion.setHovered(isHovered: true),
-      onExit: (_) => motion.setHovered(isHovered: false),
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onPanStart: motion.onPanStart,
-        onPanUpdate: motion.onPanUpdate,
-        onPanEnd: motion.onPanEnd,
-        child: TweenAnimationBuilder<double>(
-          tween: Tween<double>(end: motion.rotation),
-          duration: Duration(milliseconds: motion.dragging ? 70 : 420),
-          curve: Curves.easeOutCubic,
-          builder: (context, angle, framedChild) => Transform.translate(
-            key: LandingPhone.motionKey,
-            offset: motion.offset,
-            child: Transform.rotate(
-              angle: angle,
-              child: AnimatedScale(
-                scale: motion.hovered && motion.enabled ? 1.02 : 1,
-                duration: const Duration(milliseconds: 240),
-                curve: Curves.easeOutCubic,
-                child: framedChild,
-              ),
-            ),
-          ),
-          child: Container(
-            width: 248,
-            height: 420,
-            padding: const EdgeInsets.fromLTRB(11, 28, 11, 12),
-            decoration: BoxDecoration(
-              color: palette.shadowColor,
-              borderRadius: BorderRadius.circular(38),
-              border: Border.all(
-                color: palette.primaryAccent.withValues(alpha: 0.7),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: palette.shadowColor.withValues(alpha: 0.52),
-                  blurRadius: 46,
-                  offset: const Offset(0, 24),
-                ),
-              ],
-            ),
+    return ListenableBuilder(
+      listenable: motion,
+      builder: (context, frame) => Transform(
+        key: motionKey,
+        alignment: Alignment.center,
+        transform: motion.transform,
+        child: frame,
+      ),
+      child: MouseRegion(
+        onEnter: (_) => motion.setHovered(isHovered: true),
+        onHover: (_) => motion.setHovered(isHovered: true),
+        onExit: (_) => motion.setHovered(isHovered: false),
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onPanStart: motion.onPanStart,
+          onPanUpdate: motion.onPanUpdate,
+          onPanEnd: motion.onPanEnd,
+          child: SizedBox(
+            width: 300,
+            height: 550,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
+                // A narrow rear lip gives the left side depth without changing
+                // the rounded front face or separating the side buttons.
+                Positioned(
+                  left: -2.5,
+                  right: 0,
+                  top: 1,
+                  bottom: -0.5,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      gradient: LinearGradient(
+                        colors: [rimDark, palette.shadowColor, rimDark],
+                        stops: const [0, 0.08, 1],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: palette.shadowColor.withValues(alpha: 0.35),
+                          blurRadius: 32,
+                          offset: const Offset(5, 20),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Positioned.fill(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
-                    child: ColoredBox(
-                      color: palette.shadowColor,
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: child,
+                  child: Container(
+                    padding: const EdgeInsets.all(1.5),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          rimMid,
+                          rimLight,
+                          rimDark,
+                          rimMid,
+                        ],
+                        stops: const [0, 0.12, 0.65, 1],
+                      ),
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(9, 34, 9, 14),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color.lerp(
+                              palette.shadowColor,
+                              palette.mediaForeground,
+                              0.075,
+                            )!,
+                            Color.lerp(
+                              palette.shadowColor,
+                              palette.mediaForeground,
+                              0.035,
+                            )!,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(38.5),
+                      ),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned.fill(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(24),
+                              child: Padding(
+                                padding: const EdgeInsets.all(6),
+                                child: child,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: -21,
+                            left: 116,
+                            right: 116,
+                            child: Container(
+                              height: 5,
+                              decoration: BoxDecoration(
+                                color: palette.primaryAccent.withValues(
+                                  alpha: 0.45,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: -21,
+                            right: 94,
+                            child: Container(
+                              width: 5,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: palette.textSecondary.withValues(
+                                  alpha: 0.35,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
                 Positioned(
-                  top: -17,
-                  left: 72,
-                  right: 72,
-                  child: Container(
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: palette.primaryAccent.withValues(alpha: 0.45),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  left: -3.5,
+                  top: 90,
+                  child: Column(
+                    children: [
+                      _sideButton(palette, 20),
+                      const SizedBox(height: 9),
+                      _sideButton(palette, 36),
+                      const SizedBox(height: 7),
+                      _sideButton(palette, 36),
+                    ],
                   ),
+                ),
+                Positioned(
+                  right: -2,
+                  top: 130,
+                  child: _sideButton(palette, 43),
                 ),
               ],
             ),
@@ -158,4 +185,22 @@ class _LandingPhoneView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _sideButton(HomePalette palette, double height) => Container(
+    width: 3,
+    height: height,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [
+          Color.lerp(palette.primaryAccent, palette.mediaForeground, 0.2)!,
+          Color.lerp(palette.shadowColor, palette.primaryAccent, 0.4)!,
+        ],
+      ),
+      borderRadius: BorderRadius.circular(2),
+      border: Border.all(
+        color: palette.shadowColor.withValues(alpha: 0.55),
+        width: 0.5,
+      ),
+    ),
+  );
 }

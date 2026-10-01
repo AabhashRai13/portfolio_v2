@@ -8,6 +8,7 @@ import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
+import 'package:my_portfolio/features/landing/presentation/controllers/landing_phone_motion_controller.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_phone.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
 
@@ -15,14 +16,14 @@ import 'package:my_portfolio/features/landing/presentation/widgets/landing_widge
 class LandingView extends StatelessWidget {
   const LandingView({
     required this.entrance,
-    required this.motionEnabled,
+    required this.phoneMotion,
     required this.onOpenWidget,
     required this.onOpenLink,
     super.key,
   });
 
   final Animation<double> entrance;
-  final bool motionEnabled;
+  final LandingPhoneMotionController phoneMotion;
   final LandingWidgetOpen onOpenWidget;
   final ValueChanged<SiteSection> onOpenLink;
 
@@ -30,8 +31,19 @@ class LandingView extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isDesktop =
-        MediaQuery.sizeOf(context).width >= kSiteDesktopBreakpoint;
+    final viewport = MediaQuery.sizeOf(context);
+    final isDesktop = viewport.width >= kSiteDesktopBreakpoint;
+    final isRoomyDesktop = viewport.width >= 1280;
+    final metadataNameGap = isDesktop ? (isRoomyDesktop ? 32.0 : 24.0) : 14.0;
+    // Reserve the enlarged phone's paint bounds without moving hover targets.
+    final namePhoneGap = isRoomyDesktop ? 68.0 : 60.0;
+    final phoneHeadlineGap = isRoomyDesktop ? 84.0 : 76.0;
+    final headlineInstructionGap = isDesktop
+        ? (isRoomyDesktop ? 24.0 : 18.0)
+        : 20.0;
+    final instructionNavigationGap = isDesktop
+        ? (isRoomyDesktop ? 24.0 : 16.0)
+        : 8.0;
     final glow = Color.lerp(
       palette.sectionBackground,
       palette.primaryAccent,
@@ -72,17 +84,24 @@ class LandingView extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _LocationLine(palette: palette),
-                            SizedBox(height: isDesktop ? 12 : 14),
-                            _AnimatedWords(
-                              text: 'AABHASH RAI',
-                              animation: entrance,
-                              style: SiteText.display(
-                                palette.textStrong,
-                                size: isDesktop ? 160 : 88,
+                            ScaleTransition(
+                              scale: phoneMotion.textScale,
+                              child: _LocationLine(palette: palette),
+                            ),
+                            SizedBox(height: metadataNameGap),
+                            ScaleTransition(
+                              scale: phoneMotion.textScale,
+                              alignment: Alignment.topCenter,
+                              child: _AnimatedWords(
+                                text: 'AABHASH RAI',
+                                animation: entrance,
+                                style: SiteText.display(
+                                  palette.textStrong,
+                                  size: isDesktop ? 128 : 88,
+                                ),
+                                header: true,
+                                fit: true,
                               ),
-                              header: true,
-                              fit: true,
                             ),
                             if (!isDesktop) ...[
                               const SizedBox(height: 16),
@@ -103,7 +122,7 @@ class LandingView extends StatelessWidget {
                                 ),
                               ),
                             ] else ...[
-                              const SizedBox(height: 8),
+                              SizedBox(height: namePhoneGap),
                               ScaleTransition(
                                 scale: CurvedAnimation(
                                   parent: entrance,
@@ -114,31 +133,41 @@ class LandingView extends StatelessWidget {
                                   ),
                                 ),
                                 child: LandingPhone(
-                                  motionEnabled: motionEnabled,
+                                  motion: phoneMotion,
                                   child: LandingWidgetGrid(
                                     entrance: entrance,
                                     onOpen: onOpenWidget,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              _Tagline(
-                                animation: entrance,
-                                palette: palette,
-                                fontSize: 52,
+                              SizedBox(height: phoneHeadlineGap),
+                              ScaleTransition(
+                                scale: phoneMotion.textScale,
+                                alignment: Alignment.bottomCenter,
+                                child: _Tagline(
+                                  animation: entrance,
+                                  palette: palette,
+                                  fontSize: 52,
+                                ),
                               ),
                             ],
-                            SizedBox(height: isDesktop ? 10 : 20),
-                            Text(
-                              'EXPLORE THE TILES',
-                              textAlign: TextAlign.center,
-                              style: SiteText.label(
-                                palette.textSecondary,
-                                size: 10,
+                            SizedBox(height: headlineInstructionGap),
+                            ScaleTransition(
+                              scale: phoneMotion.textScale,
+                              child: Text(
+                                'EXPLORE THE TILES',
+                                textAlign: TextAlign.center,
+                                style: SiteText.label(
+                                  palette.textSecondary,
+                                  size: 10,
+                                ),
                               ),
                             ),
-                            SizedBox(height: isDesktop ? 2 : 8),
-                            _NavigationLinks(onOpen: onOpenLink),
+                            SizedBox(height: instructionNavigationGap),
+                            ScaleTransition(
+                              scale: phoneMotion.textScale,
+                              child: _NavigationLinks(onOpen: onOpenLink),
+                            ),
                           ],
                         ),
                       ),
@@ -203,10 +232,16 @@ class _Tagline extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 900),
-      child: _AnimatedWords(
-        text: text,
-        animation: animation,
-        style: SiteText.tagline(palette.taglineText, size: fontSize),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: _AnimatedWords(
+          text: text,
+          animation: animation,
+          style: SiteText.tagline(
+            palette.taglineText,
+            size: fontSize,
+          ).copyWith(height: 1.06),
+        ),
       ),
     );
   }

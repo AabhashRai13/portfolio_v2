@@ -5,12 +5,13 @@ import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_preview_controller.dart';
+import 'package:my_portfolio/features/landing/presentation/controllers/landing_tile_interaction_controller.dart';
 
 typedef LandingWidgetOpen = void Function(SiteSection section, Rect origin);
 
 /// The four live previews used both inside the desktop phone and as the
 /// full-width mobile landing surface.
-class LandingWidgetGrid extends StatelessWidget {
+class LandingWidgetGrid extends StatefulWidget {
   const LandingWidgetGrid({
     required this.onOpen,
     this.entrance,
@@ -24,6 +25,20 @@ class LandingWidgetGrid extends StatelessWidget {
       ValueKey<String>('landing-widget-${section.name}');
 
   @override
+  State<LandingWidgetGrid> createState() => _LandingWidgetGridState();
+}
+
+/// Owns controller lifetime; tile interaction policy stays in the controller.
+class _LandingWidgetGridState extends State<LandingWidgetGrid> {
+  final _interaction = LandingTileInteractionController();
+
+  @override
+  void dispose() {
+    _interaction.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -33,6 +48,7 @@ class LandingWidgetGrid extends StatelessWidget {
 
         return GridView.builder(
           padding: EdgeInsets.zero,
+          clipBehavior: Clip.none,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -43,10 +59,10 @@ class LandingWidgetGrid extends StatelessWidget {
           itemCount: SiteSection.values.length,
           itemBuilder: (context, index) {
             final section = SiteSection.values[index];
-            final scale = entrance == null
+            final scale = widget.entrance == null
                 ? const AlwaysStoppedAnimation<double>(1)
                 : CurvedAnimation(
-                    parent: entrance!,
+                    parent: widget.entrance!,
                     curve: Interval(
                       0.2 + (index * 0.04),
                       0.72 + (index * 0.04),
@@ -56,10 +72,30 @@ class LandingWidgetGrid extends StatelessWidget {
 
             return ScaleTransition(
               scale: scale,
-              child: _LandingTile(
-                key: keyFor(section),
-                section: section,
-                onTap: (origin) => onOpen(section, origin),
+              child: ListenableBuilder(
+                listenable: _interaction,
+                builder: (context, _) => AnimatedScale(
+                  scale: _interaction.scaleFor(section),
+                  duration: MediaQuery.disableAnimationsOf(context)
+                      ? Duration.zero
+                      : const Duration(milliseconds: 200),
+                  curve: Curves.easeOutCubic,
+                  child: _LandingTile(
+                    key: LandingWidgetGrid.keyFor(section),
+                    section: section,
+                    active: _interaction.isActive(section),
+                    focused: _interaction.isFocused(section),
+                    onHover: (value) => _interaction.setHovered(
+                      section,
+                      isHovered: value,
+                    ),
+                    onFocusChange: (value) => _interaction.setFocused(
+                      section,
+                      isFocused: value,
+                    ),
+                    onTap: (origin) => widget.onOpen(section, origin),
+                  ),
+                ),
               ),
             );
           },
@@ -69,43 +105,52 @@ class LandingWidgetGrid extends StatelessWidget {
   }
 }
 
-class _LandingTile extends StatefulWidget {
+class _LandingTile extends StatelessWidget {
   const _LandingTile({
     required this.section,
+    required this.active,
+    required this.focused,
+    required this.onHover,
+    required this.onFocusChange,
     required this.onTap,
     super.key,
   });
 
   final SiteSection section;
+  final bool active;
+  final bool focused;
+  final ValueChanged<bool> onHover;
+  final ValueChanged<bool> onFocusChange;
   final ValueChanged<Rect> onTap;
 
-  @override
-  State<_LandingTile> createState() => _LandingTileState();
-}
-
-class _LandingTileState extends State<_LandingTile> {
-  bool _active = false;
-
-  void _open() {
+  void _open(BuildContext context) {
     final box = context.findRenderObject()! as RenderBox;
-    widget.onTap(box.localToGlobal(Offset.zero) & box.size);
+    onTap(
+      MatrixUtils.transformRect(
+        box.getTransformTo(null),
+        Offset.zero & box.size,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final palette = Theme.of(context).homePalette;
-    final (background, foreground) = _colors(context, widget.section);
+    final (background, foreground) = _colors(context, section);
 
     return RepaintBoundary(
       child: Semantics(
         button: true,
-        label: 'Open ${widget.section.label}',
+        label: 'Open ${section.label}',
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
+          duration: MediaQuery.disableAnimationsOf(context)
+              ? Duration.zero
+              : const Duration(milliseconds: 160),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: _active ? palette.linkActive : Colors.transparent,
+              color: focused
+                  ? foreground.withValues(alpha: 0.85)
+                  : Colors.transparent,
               width: 3,
             ),
           ),
@@ -114,15 +159,17 @@ class _LandingTileState extends State<_LandingTile> {
             child: Material(
               color: background,
               child: InkWell(
-                onTap: _open,
-                onHover: (value) => setState(() => _active = value),
-                onFocusChange: (value) => setState(() => _active = value),
+                onTap: () => _open(context),
+                onHover: onHover,
+                onFocusChange: onFocusChange,
+                hoverColor: Colors.transparent,
+                focusColor: Colors.transparent,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
                     ExcludeSemantics(
                       child: _Preview(
-                        section: widget.section,
+                        section: section,
                         foreground: foreground,
                       ),
                     ),
@@ -130,11 +177,11 @@ class _LandingTileState extends State<_LandingTile> {
                       left: 12,
                       top: 10,
                       child: Text(
-                        widget.section.label.toUpperCase(),
+                        section.label.toUpperCase(),
                         style: SiteText.label(foreground, size: 11),
                       ),
                     ),
-                    if (_active)
+                    if (active)
                       Positioned(
                         right: 10,
                         bottom: 8,
@@ -414,11 +461,11 @@ class _ContactPreview extends StatelessWidget {
     final dotCount = progress < 0.72 ? 0 : 1 + ((progress * 12).floor() % 3);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 44, 14, 18),
+      padding: const EdgeInsets.fromLTRB(10, 44, 10, 18),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.12),
             border: Border.all(color: color.withValues(alpha: 0.42)),
