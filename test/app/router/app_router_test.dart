@@ -4,9 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_page.dart';
 import 'package:my_portfolio/app/router/app_router.dart';
-import 'package:my_portfolio/app/router/site_transition_page.dart';
 import 'package:my_portfolio/core/resources/styles/theme.dart';
-import 'package:my_portfolio/features/landing/presentation/views/landing_page.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
 
 import '../../helpers/site_test_harness.dart';
@@ -56,37 +54,29 @@ void main() {
     );
   });
 
-  testWidgets('widget route grows from its origin and reverses on back', (
+  testWidgets('widget navigation and back have no page transition', (
     tester,
   ) async {
     final router = await pumpAt(tester, '/');
     await tester.pump(const Duration(seconds: 2));
 
-    await tester.tap(
-      find.byKey(LandingWidgetGrid.keyFor(SiteSection.work)),
-    );
+    final tile = find.byKey(LandingWidgetGrid.keyFor(SiteSection.work));
+    await tester.tap(tile);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1));
-    expect(find.byKey(SiteRouteTransition.expandKey), findsOneWidget);
-    final transition = tester.widget<ClipPath>(
-      find.byKey(SiteRouteTransition.expandKey),
-    );
-    expect(transition.child, isA<RepaintBoundary>());
-    expect(
-      tester.widget<TickerMode>(find.byKey(LandingPage.tickerModeKey)).enabled,
-      isFalse,
-    );
-
-    await tester.pump(const Duration(milliseconds: 500));
     expect(pageTitle(tester), 'WORK');
+    final route = ModalRoute.of(tester.element(find.byKey(SitePage.titleKey)))!;
+    expect(route.settings, isA<NoTransitionPage<void>>());
+    expect(route.transitionDuration, Duration.zero);
+    expect(route.reverseTransitionDuration, Duration.zero);
+    expect(route.animation!.isCompleted, isTrue);
 
     router.pop();
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
     expect(find.bySemanticsLabel('AABHASH RAI'), findsOneWidget);
+    expect(find.byKey(SitePage.titleKey), findsNothing);
   });
 
-  testWidgets('ordinary landing link uses the fallback transition', (
+  testWidgets('ordinary landing link also opens without a transition', (
     tester,
   ) async {
     await pumpAt(tester, '/');
@@ -97,8 +87,9 @@ void main() {
     await tester.pump();
     await tester.tap(link);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1));
-
-    expect(find.byKey(SiteRouteTransition.fallbackKey), findsOneWidget);
+    expect(pageTitle(tester), 'WORK');
+    final route = ModalRoute.of(tester.element(find.byKey(SitePage.titleKey)))!;
+    expect(route.transitionDuration, Duration.zero);
+    expect(route.animation!.isCompleted, isTrue);
   });
 }

@@ -7,8 +7,6 @@ import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_preview_controller.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_tile_interaction_controller.dart';
 
-typedef LandingWidgetOpen = void Function(SiteSection section, Rect origin);
-
 /// The four live previews used both inside the desktop phone and as the
 /// full-width mobile landing surface.
 class LandingWidgetGrid extends StatefulWidget {
@@ -18,7 +16,7 @@ class LandingWidgetGrid extends StatefulWidget {
     super.key,
   });
 
-  final LandingWidgetOpen onOpen;
+  final ValueChanged<SiteSection> onOpen;
   final Animation<double>? entrance;
 
   static Key keyFor(SiteSection section) =>
@@ -93,7 +91,7 @@ class _LandingWidgetGridState extends State<LandingWidgetGrid> {
                       section,
                       isFocused: value,
                     ),
-                    onTap: (origin) => widget.onOpen(section, origin),
+                    onTap: () => widget.onOpen(section),
                   ),
                 ),
               ),
@@ -121,17 +119,7 @@ class _LandingTile extends StatelessWidget {
   final bool focused;
   final ValueChanged<bool> onHover;
   final ValueChanged<bool> onFocusChange;
-  final ValueChanged<Rect> onTap;
-
-  void _open(BuildContext context) {
-    final box = context.findRenderObject()! as RenderBox;
-    onTap(
-      MatrixUtils.transformRect(
-        box.getTransformTo(null),
-        Offset.zero & box.size,
-      ),
-    );
-  }
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +147,7 @@ class _LandingTile extends StatelessWidget {
             child: Material(
               color: background,
               child: InkWell(
-                onTap: () => _open(context),
+                onTap: onTap,
                 onHover: onHover,
                 onFocusChange: onFocusChange,
                 hoverColor: Colors.transparent,

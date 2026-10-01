@@ -24,7 +24,7 @@ class LandingView extends StatelessWidget {
 
   final Animation<double> entrance;
   final LandingPhoneMotionController phoneMotion;
-  final LandingWidgetOpen onOpenWidget;
+  final ValueChanged<SiteSection> onOpenWidget;
   final ValueChanged<SiteSection> onOpenLink;
 
   @override

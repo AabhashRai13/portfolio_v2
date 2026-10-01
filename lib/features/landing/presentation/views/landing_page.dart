@@ -22,11 +22,7 @@ class LandingPage extends StatelessWidget {
         builder: (context, entrance, {required phoneMotion}) => LandingView(
           entrance: entrance,
           phoneMotion: phoneMotion,
-          onOpenWidget: (section, origin) => openSiteSection(
-            context,
-            section,
-            origin: origin,
-          ),
+          onOpenWidget: (section) => openSiteSection(context, section),
           onOpenLink: (section) => openSiteSection(context, section),
         ),
       ),
