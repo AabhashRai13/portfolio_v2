@@ -22,13 +22,13 @@ import 'package:my_portfolio/features/blog_list/presentation/controllers/blog_li
 import 'package:my_portfolio/features/contact/data/repositories/email_js_contact_repository.dart';
 import 'package:my_portfolio/features/contact/domain/repositories/contact_repository.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
-import 'package:my_portfolio/features/home/presentation/controllers/home_controller.dart';
 import 'package:my_portfolio/features/newsletter/data/datasources/newsletter_remote_data_source.dart';
 import 'package:my_portfolio/features/newsletter/data/repositories/buttondown_newsletter_repository.dart';
 import 'package:my_portfolio/features/newsletter/domain/repositories/newsletter_repository.dart';
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 import 'package:my_portfolio/features/projects/data/repositories/static_projects_repository.dart';
 import 'package:my_portfolio/features/projects/domain/repositories/projects_repository.dart';
+import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -126,7 +126,7 @@ void setupDependencies() {
       ),
     )
     ..registerFactory(
-      () => HomeController(
+      () => WorkController(
         launchService: getIt.get<AppLaunchService>(),
         projectsRepository: getIt.get<ProjectsRepository>(),
       ),

@@ -22,6 +22,8 @@ class ContactController {
 
   final Command<String?> submitCommand = Command<String?>(data: null);
 
+  bool _isDisposed = false;
+
   ContactMessage get contactMessage => ContactMessage(
     name: nameController.text.trim(),
     email: emailController.text.trim(),
@@ -43,9 +45,11 @@ class ContactController {
 
     try {
       await _contactRepository.submitContactMessage(message);
+      if (_isDisposed) return;
       clearForm();
       submitCommand.setData('Form submitted successfully');
     } on Exception {
+      if (_isDisposed) return;
       submitCommand.setError(
         'Failed to submit form, please try again later.',
       );
@@ -68,6 +72,7 @@ class ContactController {
   }
 
   void dispose() {
+    _isDisposed = true;
     nameController.dispose();
     emailController.dispose();
     messageController.dispose();

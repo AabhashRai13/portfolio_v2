@@ -39,13 +39,10 @@ dependencies:
   google_fonts: ^6.3.2
   font_awesome_flutter: ^11.0.0
   mockito: ^5.6.4
-  carousel_slider: ^5.1.2
   emailjs: ^4.0.0
   youtube_player_iframe: ^5.2.2
-  flutter_3d_controller: ^2.3.0
   flutter_bloc: ^9.1.1
   equatable: ^2.0.8
-  flame: ^1.35.1
   go_router: ^16.2.1
   get_it: ^8.2.0
   firebase_core: ^4.6.0
@@ -88,8 +85,20 @@ flutter:
   assets:
     - assets/images/
     - assets/projects/
-    - assets/3d_models/flutter_dash.glb
-   
+
+  fonts:
+    - family: ArchivoExtraCondensed
+      fonts:
+        - asset: assets/fonts/ArchivoExtraCondensed-Black.ttf
+          weight: 900
+    - family: ArchivoCondensed
+      fonts:
+        - asset: assets/fonts/ArchivoCondensed-ExtraBold.ttf
+          weight: 800
+    - family: IBMPlexMono
+      fonts:
+        - asset: assets/fonts/IBMPlexMono-Medium.ttf
+          weight: 500
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

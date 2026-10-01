@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
 import 'package:my_portfolio/features/contact/domain/models/contact_message.dart';
@@ -50,16 +52,50 @@ void main() {
         'Failed to submit form, please try again later.',
       );
     });
+
+    for (final fails in [false, true]) {
+      test(
+        'submitMessage finishing after dispose is a no-op '
+        '(${fails ? 'failure' : 'success'})',
+        () async {
+          final gate = Completer<void>();
+          final controller = ContactController(
+            contactRepository: _FakeContactRepository(
+              shouldThrow: fails,
+              gate: gate.future,
+            ),
+            launchService: const _FakeLaunchService(),
+          );
+
+          final submit = controller.submitMessage(
+            const ContactMessage(
+              name: 'Aabhash',
+              email: 'aabhash@example.com',
+              phone: '123',
+              message: 'Hello',
+            ),
+          );
+          controller.dispose();
+          gate.complete();
+
+          await expectLater(submit, completes);
+        },
+      );
+    }
   });
 }
 
 class _FakeContactRepository implements ContactRepository {
-  _FakeContactRepository({this.shouldThrow = false});
+  _FakeContactRepository({this.shouldThrow = false, this.gate});
 
   final bool shouldThrow;
 
+  /// When set, the submit stays pending until this future completes.
+  final Future<void>? gate;
+
   @override
   Future<void> submitContactMessage(ContactMessage message) async {
+    await gate;
     if (shouldThrow) {
       throw Exception('boom');
     }

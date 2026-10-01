@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_portfolio/app/navigation/site_top_bar.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
-import 'package:my_portfolio/core/presentation/widgets/blog_top_navigation_bar.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/services/smooth_wheel_scroll_controller.dart';
 import 'package:my_portfolio/features/blog_list/domain/usecases/get_blog_posts_use_case.dart';
@@ -69,11 +69,7 @@ class _BlogListPageState extends State<BlogListPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      BlogTopNavigationBar(
-                        onOpenHome: () => context.go(AppRoutes.home),
-                        onOpenNewsletter: () =>
-                            context.go(AppRoutes.newsletter),
-                      ),
+                      const SiteTopBar(),
                       const SizedBox(height: 24),
                       Expanded(
                         child: ListenableBuilder(
