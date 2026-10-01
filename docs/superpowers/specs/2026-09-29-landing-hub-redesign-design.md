@@ -38,7 +38,7 @@ Turn aabhashrai.com from one long scrolling page into a landing page that works 
 
 Navigation:
 
-- On the landing, the four phone widgets are the primary way in. A text-link row under the tagline (`WORK · ABOUT · WRITING · CONTACT · RÉSUMÉ`) serves skimmers, keyboard users and screen readers.
+- On the landing, the four phone widgets are the only way in. Each is a focusable button with a semantic label ("Open Work"), so keyboard and screen-reader users are covered. A separate text-link row was removed: it duplicated the tiles, and its Contact link opened the side panel over the phone's own contact flow.
 - Inner pages get a slim top bar. At 1000 px and wider: name (links home), the four links, theme toggle and résumé. Below 1000 px: name, theme toggle and a menu button that opens the links in a bottom sheet.
 - Contact is a panel over the current page, reachable from every page. `/contact` opens it on top of the landing so it can be shared.
 - Browser back and the iOS edge swipe pop the route with the reverse transition.
@@ -53,7 +53,7 @@ Desktop (width ≥ 1000):
 2. `AABHASH RAI`, the dominant element.
 3. One large phone, tilted slightly. Its screen is a home screen with four live widgets in a 2×2 grid: Work, About, Writing, Contact.
 4. `I HELP FOUNDERS & TECH TEAMS BUILD MOBILE APPS` in two lines.
-5. Caption `live flutter widgets, not video. drag one.` followed by the text-link row.
+5. Caption `EXPLORE THE TILES`.
 
 The theme toggle sits in the top-right corner on every width.
 
@@ -101,7 +101,7 @@ The Work preview is an invented screen and never shows employer apps.
 
 - Tapping a widget pushes its route with the widget's global rect as the transition origin. The page grows from that rect to full screen while the corner radius goes from the widget's radius to 0. The widget's content cross-fades into the page header. About 450 ms, with `Curves.easeInOutCubicEmphasized`.
 - Pop reverses to the origin rect when it is known.
-- With no origin (deep link, refresh, text link, top bar), the page fades in with a 12 px rise instead.
+- With no origin (deep link, refresh, top bar), the page fades in with a 12 px rise instead.
 - Contact panel: on desktop it slides in from the right, 420 px wide; on mobile it is a bottom sheet. The page behind is dimmed. Esc, a tap outside, or the close button dismisses it. The form stays usable with the mobile keyboard open.
 
 ## Inner pages
@@ -163,7 +163,7 @@ Each removal is verified with a usage search before deletion.
 ## Testing and verification
 
 - Widget tests:
-  - The landing renders name, tagline, the four widgets and the text links.
+  - The landing renders name, tagline and the four widgets.
   - It switches to the grid layout below 1000 px.
   - It builds with reduced motion on.
   - Activating each widget navigates to its route.
@@ -198,7 +198,7 @@ Each phase is a PR into `development`, and the site stays usable after each one.
    - [x] Activating the Contact widget on desktop replaces the phone's 2×2 widget grid with the usable contact form inside the phone screen instead of opening the global panel.
    - [x] Add an obvious close/back action that restores the widget grid without losing the landing page.
    - [x] Make the embedded form scroll and resize safely inside the phone, including when the software keyboard is open.
-   - [x] Keep the existing contact panel as the fallback for mobile, text-link navigation, inner pages and the shareable `/contact` route unless a later design decision replaces those entry points.
+   - [x] Keep the existing contact panel as the fallback for mobile, inner pages and the shareable `/contact` route unless a later design decision replaces those entry points.
 5. **Work content.**
    - The content session for Babe, Get This and Sadaqa (Aabhash provides assets), then the flagship layout.
 

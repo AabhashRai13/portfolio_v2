@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
-import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/features/landing/presentation/views/contact_landing_page.dart';
 import 'package:my_portfolio/features/landing/presentation/views/landing_page.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_phone.dart';
@@ -26,26 +25,17 @@ void main() {
     Size(1024, 768),
     Size(1440, 900),
   ]) {
-    testWidgets('shows name, tagline and every link at $size', (tester) async {
+    testWidgets('shows name, tagline and the tiles at $size', (tester) async {
       setViewSize(tester, size);
       await pumpRouted(tester, const LandingPage(), settle: false);
 
       expect(find.bySemanticsLabel('AABHASH RAI'), findsOneWidget);
       expect(find.bySemanticsLabel(tagline), findsOneWidget);
       expect(find.byType(LandingWidgetGrid), findsOneWidget);
+      expect(find.text('EXPLORE THE TILES'), findsOneWidget);
+      // The tiles are the only way in; no separate text-link row.
+      expect(find.text('RÉSUMÉ'), findsNothing);
       expect(tester.takeException(), isNull);
-      final resume = find.text('RÉSUMÉ');
-      if (size.width >= kSiteDesktopBreakpoint) {
-        await tester.ensureVisible(resume);
-        await tester.pump();
-      }
-      expect(
-        tester.getBottomRight(resume).dy,
-        lessThanOrEqualTo(size.height),
-      );
-      for (final label in ['WORK', 'ABOUT', 'WRITING', 'CONTACT', 'RÉSUMÉ']) {
-        expect(find.text(label), findsWidgets);
-      }
     });
   }
 
@@ -70,19 +60,6 @@ void main() {
       );
     });
   }
-
-  testWidgets('work link navigates to /work', (tester) async {
-    setViewSize(tester, const Size(1440, 900));
-    await pumpRouted(tester, const LandingPage(), settle: false);
-    await tester.pump(const Duration(seconds: 2));
-
-    final link = find.text('WORK').last;
-    await tester.ensureVisible(link);
-    await tester.pump();
-    await tester.tap(link);
-    await tester.pumpAndSettle();
-    expect(find.text('page /work'), findsOneWidget);
-  });
 
   testWidgets('desktop frames the grid in a draggable phone', (tester) async {
     setViewSize(tester, const Size(1440, 900));
@@ -348,23 +325,6 @@ void main() {
       await tester.pump(const Duration(milliseconds: 600));
       expect(find.byType(LandingWidgetGrid), findsOneWidget);
       expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('desktop contact text link still opens the panel', (
-      tester,
-    ) async {
-      setViewSize(tester, const Size(1440, 900));
-      await pumpRouted(tester, const LandingPage(), settle: false);
-      await tester.pump(const Duration(seconds: 2));
-
-      final link = find.text('CONTACT').last;
-      await tester.ensureVisible(link);
-      await tester.pump();
-      await tester.tap(link);
-      await tester.pump(const Duration(milliseconds: 600));
-      expect(find.text('Send message'), findsOneWidget);
-      expect(inPhone(find.text('Send message')), findsNothing);
-      expect(find.byType(LandingWidgetGrid), findsOneWidget);
     });
   });
 

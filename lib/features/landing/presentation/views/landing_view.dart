@@ -18,14 +18,12 @@ class LandingView extends StatelessWidget {
     required this.entrance,
     required this.phoneMotion,
     required this.onOpenWidget,
-    required this.onOpenLink,
     super.key,
   });
 
   final Animation<double> entrance;
   final LandingPhoneMotionController phoneMotion;
   final ValueChanged<SiteSection> onOpenWidget;
-  final ValueChanged<SiteSection> onOpenLink;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +48,6 @@ class LandingView extends StatelessWidget {
     final headlineInstructionGap = isDesktop
         ? (isRoomyDesktop ? 24.0 : 18.0)
         : 20.0;
-    final instructionNavigationGap = isDesktop
-        ? (isRoomyDesktop ? 24.0 : 16.0)
-        : 8.0;
     final glow = Color.lerp(
       palette.sectionBackground,
       palette.primaryAccent,
@@ -169,11 +164,6 @@ class LandingView extends StatelessWidget {
                                   size: 10,
                                 ),
                               ),
-                            ),
-                            SizedBox(height: instructionNavigationGap),
-                            ScaleTransition(
-                              scale: phoneMotion.textScale,
-                              child: _NavigationLinks(onOpen: onOpenLink),
                             ),
                           ],
                         ),
@@ -308,31 +298,6 @@ class _AnimatedWords extends StatelessWidget {
         scaleY: value,
         child: Text(word, style: style, textAlign: TextAlign.center),
       ),
-    );
-  }
-}
-
-class _NavigationLinks extends StatelessWidget {
-  const _NavigationLinks({required this.onOpen});
-
-  final ValueChanged<SiteSection> onOpen;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: 12,
-      children: [
-        for (final section in SiteSection.values)
-          SiteTextLink(
-            label: section.label,
-            onTap: () => onOpen(section),
-          ),
-        SiteTextLink(
-          label: 'Résumé',
-          onTap: () => unawaited(openResume()),
-        ),
-      ],
     );
   }
 }
