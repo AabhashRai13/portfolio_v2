@@ -48,6 +48,28 @@ void main() {
     });
   }
 
+  // The phone keeps its size, so the name and tagline shrink on shorter
+  // desktop viewports to keep the whole tagline on the first screen.
+  for (final size in const [
+    Size(1920, 1080),
+    Size(1835, 1058),
+    Size(1728, 994),
+    Size(1536, 940),
+  ]) {
+    testWidgets('tagline is fully visible on first load at $size', (
+      tester,
+    ) async {
+      setViewSize(tester, size);
+      await pumpRouted(tester, const LandingPage(), settle: false);
+      await tester.pump(const Duration(seconds: 2));
+
+      expect(
+        tester.getBottomLeft(find.text('APPS')).dy,
+        lessThanOrEqualTo(size.height),
+      );
+    });
+  }
+
   testWidgets('work link navigates to /work', (tester) async {
     setViewSize(tester, const Size(1440, 900));
     await pumpRouted(tester, const LandingPage(), settle: false);

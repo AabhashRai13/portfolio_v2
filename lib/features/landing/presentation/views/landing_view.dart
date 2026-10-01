@@ -34,7 +34,16 @@ class LandingView extends StatelessWidget {
     final viewport = MediaQuery.sizeOf(context);
     final isDesktop = viewport.width >= kSiteDesktopBreakpoint;
     final isRoomyDesktop = viewport.width >= 1280;
-    final metadataNameGap = isDesktop ? (isRoomyDesktop ? 32.0 : 24.0) : 14.0;
+    // The phone keeps its size, so on shorter desktop viewports the name,
+    // tagline and top gap shrink to keep the whole tagline on the first
+    // screen. The tagline cap keeps it on one line.
+    final nameSize = isDesktop
+        ? (viewport.height * 0.1).clamp(80.0, 128.0)
+        : 88.0;
+    final taglineSize = (viewport.height * 0.038).clamp(30.0, 40.0);
+    final metadataNameGap = isDesktop
+        ? (viewport.height * 0.024).clamp(16.0, isRoomyDesktop ? 32.0 : 24.0)
+        : 14.0;
     // Reserve the enlarged phone's paint bounds without moving hover targets.
     final namePhoneGap = isRoomyDesktop ? 68.0 : 60.0;
     final phoneHeadlineGap = isRoomyDesktop ? 84.0 : 76.0;
@@ -97,7 +106,7 @@ class LandingView extends StatelessWidget {
                                 animation: entrance,
                                 style: SiteText.display(
                                   palette.textStrong,
-                                  size: isDesktop ? 128 : 88,
+                                  size: nameSize,
                                 ),
                                 header: true,
                                 fit: true,
@@ -147,7 +156,7 @@ class LandingView extends StatelessWidget {
                                 child: _Tagline(
                                   animation: entrance,
                                   palette: palette,
-                                  fontSize: 52,
+                                  fontSize: taglineSize,
                                 ),
                               ),
                             ],
