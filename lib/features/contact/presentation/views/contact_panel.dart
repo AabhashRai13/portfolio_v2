@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/di/service_locator.dart';
 import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
-import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 import 'package:my_portfolio/features/contact/presentation/views/contact_section_view.dart';
+import 'package:my_portfolio/features/contact/presentation/widgets/contact_chat_header.dart';
 
 const double _panelWidth = 420;
 
@@ -15,17 +15,25 @@ Future<void> showContactPanel(BuildContext context) async {
   final isDesktop = MediaQuery.sizeOf(context).width >= kSiteDesktopBreakpoint;
 
   if (isDesktop) {
+    // Pages apply the light/dark theme below MaterialApp, and unlike the
+    // bottom sheet a general dialog does not carry it over, so capture it.
+    final themes = InheritedTheme.capture(
+      from: context,
+      to: Navigator.of(context).context,
+    );
     await showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Close contact',
       transitionDuration: const Duration(milliseconds: 280),
-      pageBuilder: (context, _, _) => const Align(
-        alignment: Alignment.centerRight,
-        child: SizedBox(
-          width: _panelWidth,
-          height: double.infinity,
-          child: _ContactPanelBody(),
+      pageBuilder: (context, _, _) => themes.wrap(
+        const Align(
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            width: _panelWidth,
+            height: double.infinity,
+            child: _ContactPanelBody(),
+          ),
         ),
       ),
       transitionBuilder: (context, animation, _, child) => SlideTransition(
@@ -84,34 +92,13 @@ class _ContactPanelBodyState extends State<_ContactPanelBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 8, 0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'CONTACT',
-                        style: SiteText.display(palette.textStrong, size: 44),
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: 'Close',
-                      icon: Icon(
-                        Icons.close_rounded,
-                        color: palette.textSecondary,
-                      ),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
+              ContactChatHeader(
+                onClose: () => Navigator.of(context).pop(),
               ),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(bottom: 24),
-                  child: ContactSection(
-                    controller: _controller,
-                    embedded: true,
-                  ),
+                  child: ContactSection(controller: _controller),
                 ),
               ),
             ],

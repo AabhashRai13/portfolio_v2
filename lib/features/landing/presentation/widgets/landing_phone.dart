@@ -4,10 +4,19 @@ import 'package:my_portfolio/features/landing/presentation/controllers/landing_p
 
 /// Desktop hardware and live screen, rendered from shared motion state.
 class LandingPhone extends StatelessWidget {
-  const LandingPhone({required this.child, required this.motion, super.key});
+  const LandingPhone({
+    required this.child,
+    required this.motion,
+    this.interactive = true,
+    super.key,
+  });
 
   final Widget child;
   final LandingPhoneMotionController motion;
+
+  /// False while the screen is in use (e.g. the contact form): the phone
+  /// drops its drag recognizer so it cannot steal scrolling or text selection.
+  final bool interactive;
 
   static const Key motionKey = ValueKey<String>('landing-phone-motion');
 
@@ -44,9 +53,9 @@ class LandingPhone extends StatelessWidget {
         onExit: (_) => motion.setHovered(isHovered: false),
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onPanStart: motion.onPanStart,
-          onPanUpdate: motion.onPanUpdate,
-          onPanEnd: motion.onPanEnd,
+          onPanStart: interactive ? motion.onPanStart : null,
+          onPanUpdate: interactive ? motion.onPanUpdate : null,
+          onPanEnd: interactive ? motion.onPanEnd : null,
           child: SizedBox(
             width: 300,
             height: 550,

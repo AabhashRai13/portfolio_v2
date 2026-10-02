@@ -47,11 +47,15 @@ class LandingPhoneMotionController extends ChangeNotifier {
   late final Animation<double> textScale;
 
   bool _enabled = true;
+  bool _locked = false;
   bool _hovered = false;
   bool _dragging = false;
   Offset _lastDragPosition = Offset.zero;
 
   bool get enabled => _enabled;
+
+  /// True while the phone holds its forward-facing pose for in-screen use.
+  bool get locked => _locked;
   bool get hovered => _hovered;
   bool get dragging => _dragging;
 
@@ -83,7 +87,7 @@ class LandingPhoneMotionController extends ChangeNotifier {
     if (_enabled == isEnabled) return;
     _enabled = isEnabled;
     if (isEnabled) {
-      _float.repeat();
+      start();
     } else {
       _hovered = false;
       _dragging = false;
@@ -94,9 +98,11 @@ class LandingPhoneMotionController extends ChangeNotifier {
       _y
         ..stop()
         ..value = 0;
+      // Motion also switches off while a menu or page covers the landing, so
+      // a locked phone keeps facing forward.
       _hover
         ..stop()
-        ..value = 0;
+        ..value = _locked ? 1 : 0;
       _dragRotation
         ..stop()
         ..value = 0;
@@ -105,13 +111,44 @@ class LandingPhoneMotionController extends ChangeNotifier {
   }
 
   void start() {
-    if (_enabled && !_float.isAnimating) _float.repeat();
+    if (_enabled && !_locked && !_float.isAnimating) _float.repeat();
+  }
+
+  /// Holds the forward-facing hover pose and ignores drag, so the phone stays
+  /// still while its screen is used, e.g. for the contact form. The pose
+  /// applies even while motion is off (reduced motion, covered route).
+  /// Unlocking only starts animations, which notify on later frames, so it is
+  /// safe to call from a widget's dispose.
+  void setLocked({required bool isLocked}) {
+    if (_locked == isLocked) return;
+    _locked = isLocked;
+    if (isLocked && _enabled) {
+      _dragging = false;
+      _float.stop();
+      for (final controller in [_x, _y, _dragRotation]) {
+        unawaited(
+          controller.animateTo(
+            0,
+            duration: const Duration(milliseconds: 320),
+            curve: Curves.easeOutCubic,
+          ),
+        );
+      }
+    }
+    unawaited(
+      _hover.animateTo(
+        isLocked || (_enabled && _hovered) ? 1 : 0,
+        duration: Duration(milliseconds: isLocked ? 420 : 320),
+        curve: Curves.easeOutCubic,
+      ),
+    );
+    if (!isLocked) start();
   }
 
   void setHovered({required bool isHovered}) {
     if (_hovered == isHovered) return;
     _hovered = isHovered;
-    if (!_enabled) return;
+    if (!_enabled || _locked) return;
     unawaited(
       _hover.animateTo(
         isHovered ? 1 : 0,
@@ -122,7 +159,7 @@ class LandingPhoneMotionController extends ChangeNotifier {
   }
 
   void onPanStart(DragStartDetails details) {
-    if (!_enabled) return;
+    if (!_enabled || _locked) return;
     _x.stop();
     _y.stop();
     _lastDragPosition = details.globalPosition;
@@ -131,7 +168,7 @@ class LandingPhoneMotionController extends ChangeNotifier {
   }
 
   void onPanUpdate(DragUpdateDetails details) {
-    if (!_enabled) return;
+    if (!_enabled || _locked) return;
     // Global movement keeps the phone attached to the pointer as it scales.
     final delta = details.globalPosition - _lastDragPosition;
     _lastDragPosition = details.globalPosition;
@@ -151,7 +188,7 @@ class LandingPhoneMotionController extends ChangeNotifier {
   }
 
   void onPanEnd(DragEndDetails details) {
-    if (!_enabled) return;
+    if (!_enabled || _locked) return;
     _dragging = false;
     unawaited(
       _dragRotation.animateTo(

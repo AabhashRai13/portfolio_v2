@@ -23,7 +23,6 @@ class LandingPage extends StatelessWidget {
           entrance: entrance,
           phoneMotion: phoneMotion,
           onOpenWidget: (section) => openSiteSection(context, section),
-          onOpenLink: (section) => openSiteSection(context, section),
         ),
       ),
     );

@@ -47,7 +47,7 @@ void main() {
 
   testWidgets('/contact opens the panel over the landing', (tester) async {
     await pumpAt(tester, '/contact');
-    expect(find.text('Send Message'), findsOneWidget);
+    expect(find.text('Send message'), findsOneWidget);
     expect(
       find.bySemanticsLabel('I HELP FOUNDERS & TECH TEAMS BUILD MOBILE APPS'),
       findsOneWidget,
@@ -76,10 +76,8 @@ void main() {
     expect(find.byKey(SitePage.titleKey), findsNothing);
   });
 
-  testWidgets('ordinary landing link also opens without a transition', (
-    tester,
-  ) async {
-    await pumpAt(tester, '/');
+  testWidgets('top bar link opens without a transition', (tester) async {
+    await pumpAt(tester, '/about');
     await tester.pump(const Duration(seconds: 2));
 
     final link = find.text('WORK').last;

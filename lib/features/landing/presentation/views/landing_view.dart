@@ -9,7 +9,7 @@ import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart'
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_phone_motion_controller.dart';
-import 'package:my_portfolio/features/landing/presentation/widgets/landing_phone.dart';
+import 'package:my_portfolio/features/landing/presentation/widgets/landing_phone_stage.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
 
 /// Stateless renderer for the landing hub.
@@ -18,14 +18,12 @@ class LandingView extends StatelessWidget {
     required this.entrance,
     required this.phoneMotion,
     required this.onOpenWidget,
-    required this.onOpenLink,
     super.key,
   });
 
   final Animation<double> entrance;
   final LandingPhoneMotionController phoneMotion;
   final ValueChanged<SiteSection> onOpenWidget;
-  final ValueChanged<SiteSection> onOpenLink;
 
   @override
   Widget build(BuildContext context) {
@@ -34,16 +32,22 @@ class LandingView extends StatelessWidget {
     final viewport = MediaQuery.sizeOf(context);
     final isDesktop = viewport.width >= kSiteDesktopBreakpoint;
     final isRoomyDesktop = viewport.width >= 1280;
-    final metadataNameGap = isDesktop ? (isRoomyDesktop ? 32.0 : 24.0) : 14.0;
+    // The phone keeps its size, so on shorter desktop viewports the name,
+    // tagline and top gap shrink to keep the whole tagline on the first
+    // screen. The tagline cap keeps it on one line.
+    final nameSize = isDesktop
+        ? (viewport.height * 0.1).clamp(80.0, 128.0)
+        : 88.0;
+    final taglineSize = (viewport.height * 0.038).clamp(30.0, 40.0);
+    final metadataNameGap = isDesktop
+        ? (viewport.height * 0.024).clamp(16.0, isRoomyDesktop ? 32.0 : 24.0)
+        : 14.0;
     // Reserve the enlarged phone's paint bounds without moving hover targets.
     final namePhoneGap = isRoomyDesktop ? 68.0 : 60.0;
     final phoneHeadlineGap = isRoomyDesktop ? 84.0 : 76.0;
     final headlineInstructionGap = isDesktop
         ? (isRoomyDesktop ? 24.0 : 18.0)
         : 20.0;
-    final instructionNavigationGap = isDesktop
-        ? (isRoomyDesktop ? 24.0 : 16.0)
-        : 8.0;
     final glow = Color.lerp(
       palette.sectionBackground,
       palette.primaryAccent,
@@ -97,7 +101,7 @@ class LandingView extends StatelessWidget {
                                 animation: entrance,
                                 style: SiteText.display(
                                   palette.textStrong,
-                                  size: isDesktop ? 128 : 88,
+                                  size: nameSize,
                                 ),
                                 header: true,
                                 fit: true,
@@ -132,12 +136,10 @@ class LandingView extends StatelessWidget {
                                     curve: Curves.elasticOut,
                                   ),
                                 ),
-                                child: LandingPhone(
+                                child: LandingPhoneStage(
                                   motion: phoneMotion,
-                                  child: LandingWidgetGrid(
-                                    entrance: entrance,
-                                    onOpen: onOpenWidget,
-                                  ),
+                                  entrance: entrance,
+                                  onOpenWidget: onOpenWidget,
                                 ),
                               ),
                               SizedBox(height: phoneHeadlineGap),
@@ -147,7 +149,7 @@ class LandingView extends StatelessWidget {
                                 child: _Tagline(
                                   animation: entrance,
                                   palette: palette,
-                                  fontSize: 52,
+                                  fontSize: taglineSize,
                                 ),
                               ),
                             ],
@@ -162,11 +164,6 @@ class LandingView extends StatelessWidget {
                                   size: 10,
                                 ),
                               ),
-                            ),
-                            SizedBox(height: instructionNavigationGap),
-                            ScaleTransition(
-                              scale: phoneMotion.textScale,
-                              child: _NavigationLinks(onOpen: onOpenLink),
                             ),
                           ],
                         ),
@@ -301,31 +298,6 @@ class _AnimatedWords extends StatelessWidget {
         scaleY: value,
         child: Text(word, style: style, textAlign: TextAlign.center),
       ),
-    );
-  }
-}
-
-class _NavigationLinks extends StatelessWidget {
-  const _NavigationLinks({required this.onOpen});
-
-  final ValueChanged<SiteSection> onOpen;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: 12,
-      children: [
-        for (final section in SiteSection.values)
-          SiteTextLink(
-            label: section.label,
-            onTap: () => onOpen(section),
-          ),
-        SiteTextLink(
-          label: 'Résumé',
-          onTap: () => unawaited(openResume()),
-        ),
-      ],
     );
   }
 }

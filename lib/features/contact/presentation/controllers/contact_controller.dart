@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/core/commands/command.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
 import 'package:my_portfolio/features/contact/domain/models/contact_message.dart';
+import 'package:my_portfolio/features/contact/domain/models/contact_topic.dart';
 import 'package:my_portfolio/features/contact/domain/repositories/contact_repository.dart';
 
 class ContactController {
@@ -18,18 +19,33 @@ class ContactController {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final messageController = TextEditingController();
-  final phoneController = TextEditingController();
+
+  /// The optional quick-start topic; it leads the sent message.
+  final ValueNotifier<ContactTopic?> topic = ValueNotifier<ContactTopic?>(
+    null,
+  );
+
+  /// The reply address of the last message sent; non-null shows the
+  /// success state until [startNewMessage].
+  final ValueNotifier<String?> sentTo = ValueNotifier<String?>(null);
 
   final Command<String?> submitCommand = Command<String?>(data: null);
 
   bool _isDisposed = false;
 
-  ContactMessage get contactMessage => ContactMessage(
-    name: nameController.text.trim(),
-    email: emailController.text.trim(),
-    phone: phoneController.text.trim(),
-    message: messageController.text.trim(),
-  );
+  ContactMessage get contactMessage {
+    final text = messageController.text.trim();
+    final chosen = topic.value;
+    return ContactMessage(
+      name: nameController.text.trim(),
+      email: emailController.text.trim(),
+      message: chosen == null ? text : 'Topic: ${chosen.label}\n\n$text',
+    );
+  }
+
+  void toggleTopic(ContactTopic value) {
+    topic.value = topic.value == value ? null : value;
+  }
 
   Future<void> submit() async {
     final isValid = formKey.currentState?.validate() ?? false;
@@ -46,6 +62,7 @@ class ContactController {
     try {
       await _contactRepository.submitContactMessage(message);
       if (_isDisposed) return;
+      sentTo.value = message.email;
       clearForm();
       submitCommand.setData('Form submitted successfully');
     } on Exception {
@@ -54,6 +71,10 @@ class ContactController {
         'Failed to submit form, please try again later.',
       );
     }
+  }
+
+  void startNewMessage() {
+    sentTo.value = null;
   }
 
   Future<void> openSocialLink(String url) {
@@ -68,7 +89,7 @@ class ContactController {
     nameController.clear();
     emailController.clear();
     messageController.clear();
-    phoneController.clear();
+    topic.value = null;
   }
 
   void dispose() {
@@ -76,7 +97,8 @@ class ContactController {
     nameController.dispose();
     emailController.dispose();
     messageController.dispose();
-    phoneController.dispose();
+    topic.dispose();
+    sentTo.dispose();
     submitCommand.dispose();
   }
 }

@@ -38,7 +38,7 @@ void main() {
 
     await tester.tap(find.text('CONTACT'));
     await tester.pumpAndSettle();
-    expect(find.text('Send Message'), findsOneWidget);
+    expect(find.text('Send message'), findsOneWidget);
   });
 
   testWidgets('mobile moves links into a menu sheet', (tester) async {
