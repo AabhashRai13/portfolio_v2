@@ -7,6 +7,7 @@ import 'package:my_portfolio/app/navigation/site_page.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
+import 'package:my_portfolio/features/projects/presentation/views/project_detail.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/project_carousel.dart';
 
 /// Flagship projects one at a time; the full list lives on /work/all.
@@ -27,7 +28,12 @@ class WorkPage extends StatelessWidget {
         children: [
           ProjectCarousel(
             projects: controller.flagships,
-            onOpen: controller.openProject,
+            onOpen: (project, origin) => showProjectDetail(
+              context,
+              project: project,
+              origin: origin,
+              onOpenStore: () => unawaited(controller.openProject(project)),
+            ),
           ),
           const SizedBox(height: 32),
           SiteTextLink(

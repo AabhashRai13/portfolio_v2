@@ -23,9 +23,10 @@ class ProjectCarousel extends StatefulWidget {
 
   final List<ProjectSummary> projects;
 
-  /// Called when the middle card is tapped. The carousel stays paused until
+  /// Called when the middle card is tapped, with the card's global rect so
+  /// the project view can grow out of it. The carousel stays paused until
   /// the returned future completes (the project view closes).
-  final Future<void> Function(ProjectSummary project) onOpen;
+  final Future<void> Function(ProjectSummary project, Rect origin) onOpen;
 
   @override
   State<ProjectCarousel> createState() => _ProjectCarouselState();
@@ -106,9 +107,10 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     _restartAutoplay();
   }
 
-  Future<void> _openCurrent(ProjectSummary project) async {
+  Future<void> _openCurrent(BuildContext card, ProjectSummary project) async {
+    final box = card.findRenderObject()! as RenderBox;
     setState(() => _open = true);
-    await widget.onOpen(project);
+    await widget.onOpen(project, box.localToGlobal(Offset.zero) & box.size);
     if (!mounted) return;
     setState(() => _open = false);
     _restartAutoplay();
@@ -249,13 +251,15 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
                 ? 'Open ${project.title}'
                 : 'Show ${project.title}',
             excludeSemantics: true,
-            child: GestureDetector(
-              onTap: isCurrent
-                  ? () => unawaited(_openCurrent(project))
-                  : () => _go(index),
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ProjectPoster(project: project),
+            child: Builder(
+              builder: (card) => GestureDetector(
+                onTap: isCurrent
+                    ? () => unawaited(_openCurrent(card, project))
+                    : () => _go(index),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: ProjectPoster(project: project),
+                ),
               ),
             ),
           ),

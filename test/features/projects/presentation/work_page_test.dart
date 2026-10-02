@@ -13,7 +13,8 @@ import 'package:my_portfolio/features/projects/presentation/widgets/project_caro
 import '../../../helpers/site_test_harness.dart';
 
 void main() {
-  setUp(registerSiteFakes);
+  late FakeLaunchService launch;
+  setUp(() async => launch = await registerSiteFakes());
 
   final flagships = staticProjectSummaries.where((p) => p.flagship).toList();
 
@@ -109,6 +110,38 @@ void main() {
     }
     await tester.pumpAndSettle();
     expect(current(1), findsOneWidget);
+  });
+
+  testWidgets('tapping the middle card opens its details', (tester) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(tester, page());
+
+    await tester.tap(current(0));
+    await tester.pumpAndSettle();
+    final sadaqa = flagships.first;
+    expect(find.text(sadaqa.title.toUpperCase()), findsOneWidget);
+    expect(find.text(sadaqa.summary), findsOneWidget);
+
+    await tester.tap(find.text('VIEW ON THE APP STORE ↗'));
+    expect(launch.opened, [sadaqa.link]);
+
+    await tester.tap(find.byTooltip('Close'));
+    await tester.pumpAndSettle();
+    expect(find.text(sadaqa.summary), findsNothing);
+    expect(current(0), findsOneWidget);
+  });
+
+  testWidgets('Esc closes the details on a phone', (tester) async {
+    setViewSize(tester, const Size(375, 812));
+    await pumpRouted(tester, page());
+
+    await tester.tap(current(0));
+    await tester.pumpAndSettle();
+    expect(find.text(flagships.first.summary), findsOneWidget);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.text(flagships.first.summary), findsNothing);
   });
 
   testWidgets('see all projects opens /work/all', (tester) async {
