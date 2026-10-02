@@ -5,6 +5,7 @@ import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
+import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 /// Thumbnail first; the YouTube iframe (a platform view) is created only when
@@ -15,6 +16,7 @@ class IntroVideo extends StatefulWidget {
 
   static const String videoId = 'jRT0dsBE3Tg';
   static const String thumbnail = 'assets/images/intro_video_thumb.jpg';
+  static const String duration = '1:02';
 
   @override
   State<IntroVideo> createState() => _IntroVideoState();
@@ -56,7 +58,7 @@ class _IntroVideoState extends State<IntroVideo> {
   @override
   Widget build(BuildContext context) {
     final controller = _controller;
-    final mediaForeground = Theme.of(context).homePalette.mediaForeground;
+    final palette = Theme.of(context).homePalette;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,16 +71,39 @@ class _IntroVideoState extends State<IntroVideo> {
                 ? Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.asset(IntroVideo.thumbnail, fit: BoxFit.cover),
-                      Center(
-                        child: IconButton(
-                          tooltip: 'Play intro video',
-                          iconSize: 72,
-                          icon: Icon(
-                            Icons.play_circle_fill_rounded,
-                            color: mediaForeground,
+                      // The whole thumbnail plays; the pill is the labelled,
+                      // focusable control and keeps the face uncovered.
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: _play,
+                          child: Image.asset(
+                            IntroVideo.thumbnail,
+                            fit: BoxFit.cover,
                           ),
-                          onPressed: _play,
+                        ),
+                      ),
+                      Positioned(
+                        left: 16,
+                        bottom: 16,
+                        child: Tooltip(
+                          message: 'Play intro video',
+                          child: FilledButton.icon(
+                            onPressed: _play,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: palette.mediaForeground,
+                              foregroundColor: palette.shadowColor,
+                              minimumSize: const Size(0, 48),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                              ),
+                            ),
+                            icon: const Icon(Icons.play_arrow_rounded),
+                            label: Text(
+                              'PLAY INTRO · ${IntroVideo.duration}',
+                              style: SiteText.label(palette.shadowColor),
+                            ),
+                          ),
                         ),
                       ),
                     ],

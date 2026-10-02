@@ -26,6 +26,39 @@ abstract final class FaIcons {
     fontFamily: _brands,
     fontPackage: _pkg,
   );
+  static const apple = IconData(0xf179, fontFamily: _brands, fontPackage: _pkg);
+  static const android = IconData(
+    0xf17b,
+    fontFamily: _brands,
+    fontPackage: _pkg,
+  );
+  static const stripe = IconData(
+    0xf42a,
+    fontFamily: _brands,
+    fontPackage: _pkg,
+  );
+  static const applePay = IconData(
+    0xf415,
+    fontFamily: _brands,
+    fontPackage: _pkg,
+  );
+  static const googlePay = IconData(
+    0xe079,
+    fontFamily: _brands,
+    fontPackage: _pkg,
+  );
+  static const nodeJs = IconData(
+    0xf3d3,
+    fontFamily: _brands,
+    fontPackage: _pkg,
+  );
+  static const vial = IconData(0xf492, fontFamily: _solid, fontPackage: _pkg);
+  static const codeBranch = IconData(
+    0xf126,
+    fontFamily: _solid,
+    fontPackage: _pkg,
+  );
   static const _brands = 'FontAwesomeBrands';
+  static const _solid = 'FontAwesomeSolid';
   static const _pkg = 'font_awesome_flutter';
 }

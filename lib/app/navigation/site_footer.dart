@@ -14,7 +14,7 @@ class SiteFooter extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 24),
       decoration: BoxDecoration(
-        color: palette.surfaceMuted,
+        color: palette.sectionBackground,
         border: Border(
           top: BorderSide(
             color: palette.primaryAccent.withValues(alpha: 0.12),
@@ -71,16 +71,6 @@ class SiteFooter extends StatelessWidget {
                 size: 18,
               ),
             ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Built with Flutter 3.47',
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              color: palette.textSecondary,
-              fontSize: 14,
-              letterSpacing: 0.2,
-            ),
           ),
         ],
       ),
