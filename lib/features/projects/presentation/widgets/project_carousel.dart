@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui' show lerpDouble;
+import 'dart:ui' show ImageFilter, lerpDouble;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,8 @@ const _Layout _desktop = (
 const _Layout _phone = (fraction: 0.74, centerScale: 1, sideScale: 0.85);
 
 /// Posters only, one project in the middle with smaller neighbours either
-/// side. Loops endlessly and rotates on its own until someone hovers, drags
+/// side, on a frosted glass stage lit by a blurred glow of the middle
+/// poster. Loops endlessly and rotates on its own until someone hovers, drags
 /// or opens a project. Every transform
 /// reads the live page value, so motion follows a drag.
 class ProjectCarousel extends StatefulWidget {
@@ -184,6 +185,10 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     // Desktop arrows sit centred on the side cards' outer edges; inset the
     // cards by half an arrow so the arrows stay inside and tappable.
     final inset = isNarrow ? 0.0 : _arrowSize / 2;
+    // Room inside the glass so card shadows fade out before its edge.
+    final pad = isNarrow
+        ? const EdgeInsets.symmetric(horizontal: 10, vertical: 32)
+        : const EdgeInsets.symmetric(horizontal: 20, vertical: 48);
 
     return CallbackShortcuts(
       bindings: {
@@ -216,56 +221,78 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final pageWidth =
-                          (constraints.maxWidth - inset * 2) * _layout.fraction;
-                      return SizedBox(
-                        height: pageWidth * _layout.centerScale / kPosterAspect,
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              left: inset,
-                              right: inset,
-                              child: PageView.builder(
-                                controller: controller,
-                                itemCount: _count > 1 ? null : 1,
-                                itemBuilder: (context, index) =>
-                                    _buildSlide(index, pageWidth),
+                          (constraints.maxWidth - pad.horizontal - inset * 2) *
+                          _layout.fraction;
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned.fill(
+                            left: -48,
+                            right: -48,
+                            top: -32,
+                            bottom: -32,
+                            child: _glow(context),
+                          ),
+                          _GlassStage(
+                            padding: pad,
+                            child: SizedBox(
+                              height:
+                                  pageWidth *
+                                  _layout.centerScale /
+                                  kPosterAspect,
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    left: inset,
+                                    right: inset,
+                                    child: PageView.builder(
+                                      controller: controller,
+                                      // The glass clips instead, past the
+                                      // card shadows.
+                                      clipBehavior: Clip.none,
+                                      itemCount: _count > 1 ? null : 1,
+                                      itemBuilder: (context, index) =>
+                                          _buildSlide(index, pageWidth),
+                                    ),
+                                  ),
+                                  // Above the PageView so it claims wheel
+                                  // events first; the PageView ignores its
+                                  // children while it animates.
+                                  Positioned.fill(
+                                    child: Listener(
+                                      behavior: HitTestBehavior.translucent,
+                                      onPointerSignal: _onPointerSignal,
+                                    ),
+                                  ),
+                                  // Phones swipe; arrows there would sit on the
+                                  // poster.
+                                  if (!isNarrow) ...[
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: _Arrow(
+                                        key: ProjectCarousel.previousKey,
+                                        size: _arrowSize,
+                                        icon: Icons.chevron_left_rounded,
+                                        tooltip: 'Previous project',
+                                        onPressed: () => _go(_index - 1),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: _Arrow(
+                                        key: ProjectCarousel.nextKey,
+                                        size: _arrowSize,
+                                        icon: Icons.chevron_right_rounded,
+                                        tooltip: 'Next project',
+                                        onPressed: () => _go(_index + 1),
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
                             ),
-                            // Above the PageView so it claims wheel events
-                            // first; the PageView ignores its children while
-                            // it animates.
-                            Positioned.fill(
-                              child: Listener(
-                                behavior: HitTestBehavior.translucent,
-                                onPointerSignal: _onPointerSignal,
-                              ),
-                            ),
-                            // Phones swipe; arrows there would sit on the
-                            // poster.
-                            if (!isNarrow) ...[
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: _Arrow(
-                                  key: ProjectCarousel.previousKey,
-                                  size: _arrowSize,
-                                  icon: Icons.chevron_left_rounded,
-                                  tooltip: 'Previous project',
-                                  onPressed: () => _go(_index - 1),
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: _Arrow(
-                                  key: ProjectCarousel.nextKey,
-                                  size: _arrowSize,
-                                  icon: Icons.chevron_right_rounded,
-                                  tooltip: 'Next project',
-                                  onPressed: () => _go(_index + 1),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -275,6 +302,40 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  /// The two posters nearest the middle, cross-faded by how close each is
+  /// and blurred together into one soft wash of colour.
+  Widget _glow(BuildContext context) {
+    final page = _page;
+    final strength = Theme.of(context).brightness == Brightness.dark
+        ? 0.35
+        : 0.55;
+    return IgnorePointer(
+      child: ImageFiltered(
+        imageFilter: ImageFilter.blur(
+          sigmaX: 60,
+          sigmaY: 60,
+          tileMode: TileMode.decal,
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            for (final i in [page.floor(), page.floor() + 1])
+              if (widget.projects[i % _count].banner case final banner?)
+                Opacity(
+                  opacity: (1 - (i - page).abs()).clamp(0.0, 1.0) * strength,
+                  // A small decode is plenty for a blur this wide.
+                  child: Image.asset(
+                    banner,
+                    fit: BoxFit.cover,
+                    cacheWidth: 160,
+                  ),
+                ),
+          ],
         ),
       ),
     );
@@ -365,6 +426,40 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// Frosted panel from the first version of the site: a faint white sheen,
+/// a hairline border and rounded corners that clip what slides past them.
+class _GlassStage extends StatelessWidget {
+  const _GlassStage({required this.padding, required this.child});
+
+  final EdgeInsets padding;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
+    final radius = BorderRadius.circular(36);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            palette.glassHighlightStrong,
+            palette.glassFill,
+            palette.glassHighlightSoft,
+          ],
+        ),
+        border: Border.all(color: palette.glassBorder, width: 1.2),
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: Padding(padding: padding, child: child),
+      ),
     );
   }
 }

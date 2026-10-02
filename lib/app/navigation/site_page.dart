@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/app/navigation/site_footer.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_top_bar.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 
-/// Shared scaffold for inner pages: top bar, big title, content, footer.
+/// Shared scaffold for inner pages: top bar, big title, content.
 class SitePage extends StatelessWidget {
   const SitePage({
     required this.title,
@@ -13,6 +12,7 @@ class SitePage extends StatelessWidget {
     this.intro,
     this.section,
     this.showTitle = true,
+    this.background,
     super.key,
   });
 
@@ -29,6 +29,9 @@ class SitePage extends StatelessWidget {
   /// then serves as the page heading for screen readers.
   final bool showTitle;
 
+  /// Painted behind the whole viewport instead of the flat page colour.
+  final Gradient? background;
+
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
@@ -36,51 +39,53 @@ class SitePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: palette.sectionBackground,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1080),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 12, 24, 64),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SiteTopBar(current: section),
-                        SizedBox(height: isNarrow ? 32 : 56),
-                        if (showTitle) ...[
-                          Semantics(
-                            header: true,
-                            child: Text(
-                              title.toUpperCase(),
-                              key: titleKey,
-                              style: SiteText.display(
-                                palette.textStrong,
-                                size: isNarrow ? 64 : 104,
+      body: DecoratedBox(
+        decoration: BoxDecoration(gradient: background),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1080),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 12, 24, 64),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SiteTopBar(current: section),
+                          SizedBox(height: isNarrow ? 32 : 56),
+                          if (showTitle) ...[
+                            Semantics(
+                              header: true,
+                              child: Text(
+                                title.toUpperCase(),
+                                key: titleKey,
+                                style: SiteText.display(
+                                  palette.textStrong,
+                                  size: isNarrow ? 64 : 104,
+                                ),
                               ),
                             ),
-                          ),
-                          if (intro != null) const SizedBox(height: 16),
-                        ],
-                        if (intro != null)
-                          Semantics(
-                            header: !showTitle,
-                            child: Text(
-                              intro!,
-                              style: SiteText.body(palette.textSecondary),
+                            if (intro != null) const SizedBox(height: 16),
+                          ],
+                          if (intro != null)
+                            Semantics(
+                              header: !showTitle,
+                              child: Text(
+                                intro!,
+                                style: SiteText.body(palette.textSecondary),
+                              ),
                             ),
-                          ),
-                        SizedBox(height: isNarrow ? 32 : 48),
-                        child,
-                      ],
+                          SizedBox(height: isNarrow ? 32 : 48),
+                          child,
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SiteFooter(),
-            ],
+              ],
+            ),
           ),
         ),
       ),
