@@ -10,6 +10,7 @@ class SitePage extends StatelessWidget {
     required this.title,
     required this.child,
     this.intro,
+    this.contentMaxWidth,
     super.key,
   });
 
@@ -19,10 +20,36 @@ class SitePage extends StatelessWidget {
   final String? intro;
   final Widget child;
 
+  /// Narrows the title and content into a centred column under the
+  /// full-width top bar; null keeps them at the top bar's width.
+  final double? contentMaxWidth;
+
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
     final isNarrow = MediaQuery.sizeOf(context).width < 600;
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(
+          header: true,
+          child: Text(
+            title.toUpperCase(),
+            key: titleKey,
+            style: SiteText.display(
+              palette.textStrong,
+              size: isNarrow ? 64 : 104,
+            ),
+          ),
+        ),
+        if (intro != null) ...[
+          const SizedBox(height: 16),
+          Text(intro!, style: SiteText.body(palette.textSecondary)),
+        ],
+        SizedBox(height: isNarrow ? 32 : 48),
+        child,
+      ],
+    );
 
     return Scaffold(
       backgroundColor: palette.sectionBackground,
@@ -40,26 +67,18 @@ class SitePage extends StatelessWidget {
                       children: [
                         const SiteTopBar(),
                         SizedBox(height: isNarrow ? 32 : 56),
-                        Semantics(
-                          header: true,
-                          child: Text(
-                            title.toUpperCase(),
-                            key: titleKey,
-                            style: SiteText.display(
-                              palette.textStrong,
-                              size: isNarrow ? 64 : 104,
+                        if (contentMaxWidth case final maxWidth?)
+                          Center(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: maxWidth),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: content,
+                              ),
                             ),
-                          ),
-                        ),
-                        if (intro != null) ...[
-                          const SizedBox(height: 16),
-                          Text(
-                            intro!,
-                            style: SiteText.body(palette.textSecondary),
-                          ),
-                        ],
-                        SizedBox(height: isNarrow ? 32 : 48),
-                        child,
+                          )
+                        else
+                          content,
                       ],
                     ),
                   ),
