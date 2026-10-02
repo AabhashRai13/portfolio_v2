@@ -86,7 +86,7 @@ void main() {
     await pumpAt(tester, '/about');
     await tester.pump(const Duration(seconds: 2));
 
-    final link = find.text('WORK').last;
+    final link = find.text('Work').last;
     await tester.ensureVisible(link);
     await tester.pump();
     await tester.tap(link);

@@ -58,34 +58,52 @@ class _ProjectDetail extends StatelessWidget {
     final size = MediaQuery.sizeOf(context);
     final safe = MediaQuery.paddingOf(context);
     final isNarrow = size.width < 720;
-    const inset = 20.0;
+    const inset = 24.0;
 
-    // Final layout: full screen on phones, a centred panel elsewhere.
-    final panel = isNarrow
-        ? Offset.zero & size
-        : Rect.fromCenter(
-            center: size.center(Offset.zero),
-            width: math.min(880, size.width - 64),
-            height: math.min(860, size.height - 64),
-          );
-    final posterSpace = panel.width - inset * 2;
-    final posterHeight = math.min(
-      posterSpace / (isNarrow ? 1.6 : 1.9),
-      panel.height * 0.5,
-    );
-    final posterWidth = posterHeight * (isNarrow ? 1.6 : 1.9);
-    final poster = Rect.fromLTWH(
-      panel.left + (panel.width - posterWidth) / 2,
-      panel.top + inset + (isNarrow ? safe.top : 0),
-      posterWidth,
-      posterHeight,
-    );
-    final details = Rect.fromLTRB(
-      panel.left + inset,
-      poster.bottom + 24,
-      panel.right - inset,
-      panel.bottom - (isNarrow ? safe.bottom : inset),
-    );
+    // Final layout. Phones: full screen, poster on top, details below.
+    // Elsewhere: a centred panel, poster on the left, details beside it.
+    // The poster keeps the card's shape so it simply grows into place.
+    final Rect panel;
+    final Rect poster;
+    final Rect details;
+    if (isNarrow) {
+      panel = Offset.zero & size;
+      final height = math.min(
+        size.height * 0.45,
+        (size.width - inset * 2) / kPosterAspect,
+      );
+      poster = Rect.fromLTWH(
+        (size.width - height * kPosterAspect) / 2,
+        safe.top + inset,
+        height * kPosterAspect,
+        height,
+      );
+      details = Rect.fromLTRB(
+        inset,
+        poster.bottom + 24,
+        size.width - inset,
+        size.height - safe.bottom,
+      );
+    } else {
+      panel = Rect.fromCenter(
+        center: size.center(Offset.zero),
+        width: math.min(980, size.width - 64),
+        height: math.min(640, size.height - 64),
+      );
+      final height = panel.height - inset * 2;
+      poster = Rect.fromLTWH(
+        panel.left + inset,
+        panel.top + inset,
+        height * kPosterAspect,
+        height,
+      );
+      details = Rect.fromLTRB(
+        poster.right + 36,
+        panel.top + inset + 8,
+        panel.right - inset,
+        panel.bottom - inset,
+      );
+    }
 
     final move = CurvedAnimation(
       parent: animation,
@@ -140,8 +158,10 @@ class _ProjectDetail extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: poster.top + 10,
-                right: size.width - poster.right + 10,
+                // Over the poster on phones, the panel's corner elsewhere.
+                top: (isNarrow ? poster.top : panel.top) + 10,
+                right:
+                    size.width - (isNarrow ? poster.right : panel.right) + 10,
                 child: Opacity(
                   opacity: reveal.value,
                   child: PressScale(

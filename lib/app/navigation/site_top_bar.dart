@@ -60,6 +60,8 @@ class SiteTopBar extends StatelessWidget {
               padding: const EdgeInsets.only(left: 12),
               child: SiteTextLink(
                 label: section.label,
+                plain: true,
+                fontSize: 16,
                 selected: section == current,
                 onTap: () => openSiteSection(context, section),
               ),
@@ -68,6 +70,8 @@ class SiteTopBar extends StatelessWidget {
             padding: const EdgeInsets.only(left: 12, right: 8),
             child: SiteTextLink(
               label: 'Résumé',
+              plain: true,
+              fontSize: 16,
               onTap: () => unawaited(openResume()),
             ),
           ),
@@ -99,13 +103,15 @@ class SiteTopBar extends StatelessWidget {
               for (final section in SiteSection.values)
                 SiteTextLink(
                   label: section.label,
-                  fontSize: 16,
+                  plain: true,
+                  fontSize: 18,
                   selected: section == current,
                   onTap: () => Navigator.of(sheetContext).pop(section),
                 ),
               SiteTextLink(
                 label: 'Résumé',
-                fontSize: 16,
+                plain: true,
+                fontSize: 18,
                 onTap: () => Navigator.of(sheetContext).pop(_resumeChoice),
               ),
             ],

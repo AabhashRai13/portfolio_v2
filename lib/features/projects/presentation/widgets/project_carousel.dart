@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui' show ImageFilter;
+import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +9,28 @@ import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/services/tap_feedback.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
 
+/// Width / height of every poster card. Posters are drawn for this shape.
+const double kPosterAspect = 0.78;
+
+/// Page width as a share of the carousel, and card scale in the middle and
+/// at the sides. On desktop these fit all three cards edge to edge with a
+/// small gap; on phones the neighbours only peek.
+typedef _Layout = ({double fraction, double centerScale, double sideScale});
+
+const _Layout _desktop = (
+  fraction: 0.356,
+  centerScale: 1.075,
+  sideScale: 0.806,
+);
+const _Layout _phone = (fraction: 0.74, centerScale: 1, sideScale: 0.85);
+
 /// Posters only, one project in the middle with smaller neighbours either
-/// side. Loops endlessly and rotates on its own until someone hovers, drags
-/// or opens a project. Every transform reads the live page value, so motion
-/// follows a drag.
+/// side, under a "title · 01 / 03" header. Loops endlessly and rotates on
+/// its own until someone hovers, drags or opens a project. Every transform
+/// reads the live page value, so motion follows a drag.
 class ProjectCarousel extends StatefulWidget {
   const ProjectCarousel({
+    required this.title,
     required this.projects,
     required this.onOpen,
     super.key,
@@ -24,6 +40,7 @@ class ProjectCarousel extends StatefulWidget {
   static const Key nextKey = ValueKey<String>('project-carousel-next');
   static const Duration autoplayInterval = Duration(seconds: 5);
 
+  final String title;
   final List<ProjectSummary> projects;
 
   /// Called when the middle card is tapped, with the card's global rect so
@@ -36,11 +53,11 @@ class ProjectCarousel extends StatefulWidget {
 }
 
 class _ProjectCarouselState extends State<ProjectCarousel> {
-  static const _sideScale = 0.82;
+  static const double _arrowSize = 56;
 
   final FocusNode _focus = FocusNode(skipTraversal: true);
   PageController? _controller;
-  double? _fraction;
+  _Layout _layout = _desktop;
 
   Timer? _autoplay;
   bool _hovering = false;
@@ -72,15 +89,15 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     super.didChangeDependencies();
     // viewportFraction is fixed per controller, so swap it at the breakpoint
     // and keep the current page.
-    final fraction = MediaQuery.sizeOf(context).width < 720 ? 0.82 : 0.6;
-    if (fraction != _fraction) {
+    final layout = MediaQuery.sizeOf(context).width < 720 ? _phone : _desktop;
+    if (_controller == null || layout != _layout) {
       final old = _controller;
       _controller = PageController(
-        viewportFraction: fraction,
+        viewportFraction: layout.fraction,
         // Start deep in the endless list so there is room to go back.
         initialPage: old == null ? _count * 1000 : _index,
       );
-      _fraction = fraction;
+      _layout = layout;
       if (old != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
       }
@@ -97,10 +114,10 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     });
   }
 
-  void _animateTo(int index) {
+  void _animateTo(int page) {
     unawaited(
       _controller?.animateToPage(
-        index,
+        page,
         duration: const Duration(milliseconds: 600),
         curve: Curves.easeInOutCubic,
       ),
@@ -164,8 +181,11 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final isNarrow = MediaQuery.sizeOf(context).width < 720;
+    final isNarrow = _layout == _phone;
     final controller = _controller!;
+    // Desktop arrows sit centred on the side cards' outer edges; inset the
+    // cards by half an arrow so the arrows stay inside and tappable.
+    final inset = isNarrow ? 0.0 : _arrowSize / 2;
 
     return CallbackShortcuts(
       bindings: {
@@ -193,55 +213,67 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
             child: AnimatedBuilder(
               animation: controller,
               builder: (context, _) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  _header(context, isNarrow: isNarrow),
+                  SizedBox(height: isNarrow ? 20 : 28),
                   LayoutBuilder(
-                    builder: (context, constraints) => SizedBox(
-                      height:
-                          constraints.maxWidth *
-                          _fraction! /
-                          (isNarrow ? 1.6 : 1.9),
-                      child: Stack(
-                        children: [
-                          PageView.builder(
-                            controller: controller,
-                            itemCount: _count > 1 ? null : 1,
-                            itemBuilder: _buildSlide,
-                          ),
-                          // Above the PageView so it claims wheel events
-                          // first; the PageView ignores its children while
-                          // it animates.
-                          Positioned.fill(
-                            child: Listener(
-                              behavior: HitTestBehavior.translucent,
-                              onPointerSignal: _onPointerSignal,
-                            ),
-                          ),
-                          // Phones swipe; arrows there would sit on the poster.
-                          if (!isNarrow) ...[
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: _Arrow(
-                                key: ProjectCarousel.previousKey,
-                                icon: Icons.chevron_left_rounded,
-                                tooltip: 'Previous project',
-                                onPressed: () => _go(_index - 1),
+                    builder: (context, constraints) {
+                      final pageWidth =
+                          (constraints.maxWidth - inset * 2) * _layout.fraction;
+                      return SizedBox(
+                        height: pageWidth * _layout.centerScale / kPosterAspect,
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              left: inset,
+                              right: inset,
+                              child: PageView.builder(
+                                controller: controller,
+                                itemCount: _count > 1 ? null : 1,
+                                itemBuilder: (context, index) =>
+                                    _buildSlide(index, pageWidth),
                               ),
                             ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: _Arrow(
-                                key: ProjectCarousel.nextKey,
-                                icon: Icons.chevron_right_rounded,
-                                tooltip: 'Next project',
-                                onPressed: () => _go(_index + 1),
+                            // Above the PageView so it claims wheel events
+                            // first; the PageView ignores its children while
+                            // it animates.
+                            Positioned.fill(
+                              child: Listener(
+                                behavior: HitTestBehavior.translucent,
+                                onPointerSignal: _onPointerSignal,
                               ),
                             ),
+                            // Phones swipe; arrows there would sit on the
+                            // poster.
+                            if (!isNarrow) ...[
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: _Arrow(
+                                  key: ProjectCarousel.previousKey,
+                                  size: _arrowSize,
+                                  icon: Icons.chevron_left_rounded,
+                                  tooltip: 'Previous project',
+                                  onPressed: () => _go(_index - 1),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: _Arrow(
+                                  key: ProjectCarousel.nextKey,
+                                  size: _arrowSize,
+                                  icon: Icons.chevron_right_rounded,
+                                  tooltip: 'Next project',
+                                  onPressed: () => _go(_index + 1),
+                                ),
+                              ),
+                            ],
                           ],
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: isNarrow ? 16 : 24),
                   _pills(context),
                 ],
               ),
@@ -252,17 +284,70 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     );
   }
 
-  Widget _buildSlide(BuildContext context, int index) {
+  /// "Work ······ 01 / 03" over a hairline.
+  Widget _header(BuildContext context, {required bool isNarrow}) {
+    final palette = Theme.of(context).homePalette;
+    final size = isNarrow ? 26.0 : 36.0;
+    String pad(int n) => n.toString().padLeft(2, '0');
+
+    return Container(
+      padding: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: palette.textSecondary.withValues(alpha: 0.35),
+          ),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          Semantics(
+            header: true,
+            child: Text(
+              widget.title,
+              style: TextStyle(fontSize: size, color: palette.textStrong),
+            ),
+          ),
+          const Spacer(),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: pad(_selected + 1),
+                  style: TextStyle(color: palette.textStrong),
+                ),
+                TextSpan(
+                  text: ' / ${pad(_count)}',
+                  style: TextStyle(
+                    color: palette.textSecondary.withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
+            ),
+            style: TextStyle(fontSize: size * 0.8),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSlide(int index, double pageWidth) {
     final project = widget.projects[index % _count];
     final distance = (index - _page).abs().clamp(0.0, 1.0);
     final isCurrent = index == _index;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Transform.scale(
-        scale: 1 - distance * (1 - _sideScale),
-        child: Opacity(
-          opacity: 1 - distance * 0.1,
+    return Center(
+      child: SizedBox(
+        width: pageWidth,
+        height: pageWidth / kPosterAspect,
+        child: Transform.scale(
+          scale: lerpDouble(
+            _layout.centerScale,
+            _layout.sideScale,
+            distance,
+          ),
           child: Semantics(
             button: true,
             label: isCurrent
@@ -313,19 +398,19 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
                 cursor: SystemMouseCursors.click,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
+                    horizontal: 5,
                     vertical: 12,
                   ),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeOutCubic,
-                    width: i == _selected ? 32 : 14,
-                    height: 4,
+                    width: i == _selected ? 44 : 26,
+                    height: 6,
                     decoration: BoxDecoration(
                       color: i == _selected
                           ? palette.textStrong
-                          : palette.textSecondary.withValues(alpha: 0.35),
-                      borderRadius: BorderRadius.circular(2),
+                          : palette.textSecondary.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(3),
                     ),
                   ),
                 ),
@@ -339,12 +424,14 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
 
 class _Arrow extends StatelessWidget {
   const _Arrow({
+    required this.size,
     required this.icon,
     required this.tooltip,
     required this.onPressed,
     super.key,
   });
 
+  final double size;
   final IconData icon;
   final String tooltip;
   final VoidCallback onPressed;
@@ -352,31 +439,28 @@ class _Arrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: PressScale(
-        child: IconButton(
-          tooltip: tooltip,
-          onPressed: () {
-            tapFeedback();
-            onPressed();
-          },
-          icon: Icon(icon, size: 28),
-          style: IconButton.styleFrom(
-            fixedSize: const Size.square(48),
-            foregroundColor: palette.textStrong,
-            backgroundColor: palette.surfaceCard.withValues(alpha: 0.75),
-            elevation: 2,
-            shadowColor: palette.shadowColor.withValues(alpha: 0.3),
-          ),
+    return PressScale(
+      child: IconButton(
+        tooltip: tooltip,
+        onPressed: () {
+          tapFeedback();
+          onPressed();
+        },
+        icon: Icon(icon, size: 30),
+        style: IconButton.styleFrom(
+          fixedSize: Size.square(size),
+          foregroundColor: palette.textStrong,
+          backgroundColor: palette.surfaceCard,
+          elevation: 3,
+          shadowColor: palette.shadowColor.withValues(alpha: 0.35),
         ),
       ),
     );
   }
 }
 
-/// The store poster shown whole, over a blurred copy of itself, so posters
-/// of any shape fill the card without cropping their screens.
+/// A project's poster filling a rounded card. Posters are drawn at
+/// [kPosterAspect]; other shapes are cropped to the centre.
 class ProjectPoster extends StatelessWidget {
   const ProjectPoster({required this.project, super.key});
 
@@ -389,32 +473,22 @@ class ProjectPoster extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: palette.shadowColor.withValues(alpha: 0.25),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            color: palette.shadowColor.withValues(alpha: 0.22),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(28),
         child: ColoredBox(
           color: palette.surfaceMuted,
           child: image == null
               ? const SizedBox.expand()
-              : Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ImageFiltered(
-                      imageFilter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
-                      child: Image.asset(image, fit: BoxFit.cover),
-                    ),
-                    ColoredBox(color: Colors.black.withValues(alpha: 0.12)),
-                    Image.asset(image, fit: BoxFit.contain),
-                  ],
-                ),
+              : Image.asset(image, fit: BoxFit.cover),
         ),
       ),
     );
