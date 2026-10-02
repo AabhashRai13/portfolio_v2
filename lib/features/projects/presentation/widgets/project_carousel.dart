@@ -216,24 +216,27 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
                               onPointerSignal: _onPointerSignal,
                             ),
                           ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: _Arrow(
-                              key: ProjectCarousel.previousKey,
-                              icon: Icons.chevron_left_rounded,
-                              tooltip: 'Previous project',
-                              onPressed: () => _go(_index - 1),
+                          // Phones swipe; arrows there would sit on the poster.
+                          if (!isNarrow) ...[
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: _Arrow(
+                                key: ProjectCarousel.previousKey,
+                                icon: Icons.chevron_left_rounded,
+                                tooltip: 'Previous project',
+                                onPressed: () => _go(_index - 1),
+                              ),
                             ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: _Arrow(
-                              key: ProjectCarousel.nextKey,
-                              icon: Icons.chevron_right_rounded,
-                              tooltip: 'Next project',
-                              onPressed: () => _go(_index + 1),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: _Arrow(
+                                key: ProjectCarousel.nextKey,
+                                icon: Icons.chevron_right_rounded,
+                                tooltip: 'Next project',
+                                onPressed: () => _go(_index + 1),
+                              ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ),
