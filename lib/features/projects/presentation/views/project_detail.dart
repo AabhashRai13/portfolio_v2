@@ -3,8 +3,10 @@ import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
+import 'package:my_portfolio/core/presentation/widgets/press_scale.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
+import 'package:my_portfolio/core/services/tap_feedback.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/project_carousel.dart';
 
@@ -142,14 +144,19 @@ class _ProjectDetail extends StatelessWidget {
                 right: size.width - poster.right + 10,
                 child: Opacity(
                   opacity: reveal.value,
-                  child: IconButton(
-                    tooltip: 'Close',
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close_rounded),
-                    style: IconButton.styleFrom(
-                      foregroundColor: palette.textStrong,
-                      backgroundColor: palette.surfaceCard.withValues(
-                        alpha: 0.8,
+                  child: PressScale(
+                    child: IconButton(
+                      tooltip: 'Close',
+                      onPressed: () {
+                        tapFeedback();
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.close_rounded),
+                      style: IconButton.styleFrom(
+                        foregroundColor: palette.textStrong,
+                        backgroundColor: palette.surfaceCard.withValues(
+                          alpha: 0.8,
+                        ),
                       ),
                     ),
                   ),

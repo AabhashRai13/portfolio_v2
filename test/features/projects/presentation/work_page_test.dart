@@ -72,6 +72,30 @@ void main() {
     expect(current(2), findsOneWidget);
   });
 
+  testWidgets('tapping an arrow gives a light haptic tick', (tester) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(tester, page());
+
+    final calls = <MethodCall>[];
+    final messenger = tester.binding.defaultBinaryMessenger
+      ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        calls.add(call);
+        return null;
+      });
+    addTearDown(
+      () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+    );
+
+    await tester.tap(find.byKey(ProjectCarousel.nextKey));
+    await tester.pumpAndSettle();
+    expect(
+      calls
+          .where((call) => call.method == 'HapticFeedback.vibrate')
+          .map((call) => call.arguments),
+      ['HapticFeedbackType.selectionClick'],
+    );
+  });
+
   testWidgets('a pill jumps to its project', (tester) async {
     setViewSize(tester, const Size(1440, 900));
     await pumpRouted(tester, page());

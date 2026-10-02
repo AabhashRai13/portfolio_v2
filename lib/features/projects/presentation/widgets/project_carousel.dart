@@ -4,7 +4,9 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:my_portfolio/core/presentation/widgets/press_scale.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
+import 'package:my_portfolio/core/services/tap_feedback.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
 
 /// Posters only, one project in the middle with smaller neighbours either
@@ -253,12 +255,18 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
             excludeSemantics: true,
             child: Builder(
               builder: (card) => GestureDetector(
-                onTap: isCurrent
-                    ? () => unawaited(_openCurrent(card, project))
-                    : () => _go(index),
+                onTap: () {
+                  tapFeedback();
+                  isCurrent
+                      ? unawaited(_openCurrent(card, project))
+                      : _go(index);
+                },
                 child: MouseRegion(
                   cursor: SystemMouseCursors.click,
-                  child: ProjectPoster(project: project),
+                  child: PressScale(
+                    pressedScale: 0.97,
+                    child: ProjectPoster(project: project),
+                  ),
                 ),
               ),
             ),
@@ -281,7 +289,10 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
             excludeSemantics: true,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () => _go(i),
+              onTap: () {
+                tapFeedback();
+                _go(i);
+              },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: Padding(
@@ -327,16 +338,21 @@ class _Arrow extends StatelessWidget {
     final palette = Theme.of(context).homePalette;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: IconButton(
-        tooltip: tooltip,
-        onPressed: onPressed,
-        icon: Icon(icon, size: 28),
-        style: IconButton.styleFrom(
-          fixedSize: const Size.square(48),
-          foregroundColor: palette.textStrong,
-          backgroundColor: palette.surfaceCard.withValues(alpha: 0.75),
-          elevation: 2,
-          shadowColor: palette.shadowColor.withValues(alpha: 0.3),
+      child: PressScale(
+        child: IconButton(
+          tooltip: tooltip,
+          onPressed: () {
+            tapFeedback();
+            onPressed();
+          },
+          icon: Icon(icon, size: 28),
+          style: IconButton.styleFrom(
+            fixedSize: const Size.square(48),
+            foregroundColor: palette.textStrong,
+            backgroundColor: palette.surfaceCard.withValues(alpha: 0.75),
+            elevation: 2,
+            shadowColor: palette.shadowColor.withValues(alpha: 0.3),
+          ),
         ),
       ),
     );
