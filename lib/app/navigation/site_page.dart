@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_footer.dart';
+import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_top_bar.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
@@ -10,6 +11,8 @@ class SitePage extends StatelessWidget {
     required this.title,
     required this.child,
     this.intro,
+    this.section,
+    this.showTitle = true,
     super.key,
   });
 
@@ -18,6 +21,13 @@ class SitePage extends StatelessWidget {
   final String title;
   final String? intro;
   final Widget child;
+
+  /// Highlighted in the top bar.
+  final SiteSection? section;
+
+  /// False when the top bar highlight already says where you are. The intro
+  /// then serves as the page heading for screen readers.
+  final bool showTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -38,26 +48,30 @@ class SitePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SiteTopBar(),
+                        SiteTopBar(current: section),
                         SizedBox(height: isNarrow ? 32 : 56),
-                        Semantics(
-                          header: true,
-                          child: Text(
-                            title.toUpperCase(),
-                            key: titleKey,
-                            style: SiteText.display(
-                              palette.textStrong,
-                              size: isNarrow ? 64 : 104,
+                        if (showTitle) ...[
+                          Semantics(
+                            header: true,
+                            child: Text(
+                              title.toUpperCase(),
+                              key: titleKey,
+                              style: SiteText.display(
+                                palette.textStrong,
+                                size: isNarrow ? 64 : 104,
+                              ),
                             ),
                           ),
-                        ),
-                        if (intro != null) ...[
-                          const SizedBox(height: 16),
-                          Text(
-                            intro!,
-                            style: SiteText.body(palette.textSecondary),
-                          ),
+                          if (intro != null) const SizedBox(height: 16),
                         ],
+                        if (intro != null)
+                          Semantics(
+                            header: !showTitle,
+                            child: Text(
+                              intro!,
+                              style: SiteText.body(palette.textSecondary),
+                            ),
+                          ),
                         SizedBox(height: isNarrow ? 32 : 48),
                         child,
                       ],

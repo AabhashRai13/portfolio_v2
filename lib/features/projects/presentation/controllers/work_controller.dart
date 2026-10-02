@@ -16,6 +16,10 @@ class WorkController {
   late final List<ProjectSummary> projects = _projectsRepository
       .getFeaturedProjects();
 
+  late final List<ProjectSummary> flagships = projects
+      .where((project) => project.flagship)
+      .toList();
+
   Future<void> openProject(ProjectSummary project) =>
       _launchService.openExternalUrl(project.link);
 

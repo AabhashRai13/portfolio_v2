@@ -4,6 +4,7 @@ import 'package:my_portfolio/features/projects/domain/models/project_summary.dar
 const staticProjectSummaries = <ProjectSummary>[
   ProjectSummary(
     title: 'Sadaqa',
+    flagship: true,
     summary:
         'Donation and event-ticketing app for a Sydney charity, with Stripe, '
         'Apple Pay and Google Pay.',
@@ -25,6 +26,7 @@ const staticProjectSummaries = <ProjectSummary>[
   ),
   ProjectSummary(
     title: 'National Cardiac Centre',
+    flagship: true,
     summary:
         'Patient app for a national heart hospital that connects '
         'patients directly with their doctors.',
@@ -37,6 +39,7 @@ const staticProjectSummaries = <ProjectSummary>[
   ),
   ProjectSummary(
     title: 'Our Rights',
+    flagship: true,
     summary:
         'Cambodian labour-law guide that helps workers understand '
         'their rights in plain language.',
@@ -59,7 +62,8 @@ const staticProjectSummaries = <ProjectSummary>[
   ),
   ProjectSummary(
     title: 'Fight On Mentality',
-    summary: 'Mindset coaching app that helps users stay motivated and '
+    summary:
+        'Mindset coaching app that helps users stay motivated and '
         'track their achievements.',
     banner: 'assets/projects/fom_poster.jpg',
     icon: 'assets/projects/fom_icon.png',

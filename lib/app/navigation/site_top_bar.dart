@@ -13,7 +13,10 @@ import 'package:my_portfolio/core/resources/styles/site_text.dart';
 /// Slim bar for inner pages: name (home), destinations, résumé, theme.
 /// Below [kSiteDesktopBreakpoint] the links move into a bottom-sheet menu.
 class SiteTopBar extends StatelessWidget {
-  const SiteTopBar({super.key});
+  const SiteTopBar({this.current, super.key});
+
+  /// Highlighted as the page you are on.
+  final SiteSection? current;
 
   static const String _resumeChoice = 'resume';
 
@@ -57,6 +60,7 @@ class SiteTopBar extends StatelessWidget {
               padding: const EdgeInsets.only(left: 12),
               child: SiteTextLink(
                 label: section.label,
+                selected: section == current,
                 onTap: () => openSiteSection(context, section),
               ),
             ),
@@ -96,6 +100,7 @@ class SiteTopBar extends StatelessWidget {
                 SiteTextLink(
                   label: section.label,
                   fontSize: 16,
+                  selected: section == current,
                   onTap: () => Navigator.of(sheetContext).pop(section),
                 ),
               SiteTextLink(

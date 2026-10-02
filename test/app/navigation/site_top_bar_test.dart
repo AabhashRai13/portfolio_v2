@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:my_portfolio/app/navigation/site_navigation.dart';
+import 'package:my_portfolio/app/navigation/site_text_link.dart';
 import 'package:my_portfolio/app/navigation/site_top_bar.dart';
 
 import '../../helpers/site_test_harness.dart';
@@ -22,6 +24,20 @@ void main() {
     await tester.tap(find.text('ABOUT'));
     await tester.pumpAndSettle();
     expect(find.text('page /about'), findsOneWidget);
+  });
+
+  testWidgets('marks only the current section as selected', (tester) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(
+      tester,
+      const Scaffold(body: SiteTopBar(current: SiteSection.work)),
+    );
+
+    final selected = tester
+        .widgetList<SiteTextLink>(find.byType(SiteTextLink))
+        .where((link) => link.selected)
+        .map((link) => link.label);
+    expect(selected, ['Work']);
   });
 
   testWidgets('résumé opens the hosted PDF', (tester) async {

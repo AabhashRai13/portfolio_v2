@@ -8,10 +8,9 @@ import 'package:my_portfolio/core/resources/configs/app.dart';
 import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/project_card.dart';
 
-/// Interim Work page: the existing project cards. Phase 4 replaces this with
-/// the flagship layout for Babe, Get This and Sadaqa.
-class WorkPage extends StatelessWidget {
-  const WorkPage({required this.controller, super.key});
+/// Every project as a card grid, reached from "See all projects" on /work.
+class AllProjectsPage extends StatelessWidget {
+  const AllProjectsPage({required this.controller, super.key});
 
   final WorkController controller;
 
@@ -21,10 +20,10 @@ class WorkPage extends StatelessWidget {
     App.init(context);
 
     return SitePage(
-      title: 'Work',
+      title: 'All projects',
       section: SiteSection.work,
       showTitle: false,
-      intro: 'Apps I have helped design, build and ship.',
+      intro: 'Every app I have helped design, build and ship.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

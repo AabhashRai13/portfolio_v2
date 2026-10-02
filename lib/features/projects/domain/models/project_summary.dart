@@ -7,6 +7,7 @@ class ProjectSummary {
     this.result,
     this.banner,
     this.icon,
+    this.flagship = false,
   });
 
   final String title;
@@ -20,4 +21,7 @@ class ProjectSummary {
   final String? result;
   final String? banner;
   final String? icon;
+
+  /// Shown in the Work page carousel; everything appears on /work/all.
+  final bool flagship;
 }

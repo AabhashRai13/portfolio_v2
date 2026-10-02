@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_top_bar.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
@@ -69,7 +70,7 @@ class _BlogListPageState extends State<BlogListPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      const SiteTopBar(),
+                      const SiteTopBar(current: SiteSection.writing),
                       const SizedBox(height: 24),
                       Expanded(
                         child: ListenableBuilder(

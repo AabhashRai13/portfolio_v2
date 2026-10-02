@@ -18,6 +18,7 @@ class AboutPage extends StatelessWidget {
 
     return SitePage(
       title: 'About',
+      section: SiteSection.about,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

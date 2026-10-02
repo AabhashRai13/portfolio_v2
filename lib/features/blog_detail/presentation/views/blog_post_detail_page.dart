@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_top_bar.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/core/services/smooth_wheel_scroll_controller.dart';
@@ -189,7 +190,7 @@ class _BlogPostContentState extends State<_BlogPostContent> {
     final contentColumn = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const SiteTopBar(),
+        const SiteTopBar(current: SiteSection.writing),
         const SizedBox(height: 20),
         BlogPostHeader(post: _post),
         const SizedBox(height: 32),
