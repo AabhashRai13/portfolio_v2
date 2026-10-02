@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:my_portfolio/core/resources/styles/dark_theme.dart';
 import 'package:my_portfolio/core/resources/styles/theme.dart';
 import 'package:my_portfolio/features/contact/presentation/views/contact_panel.dart';
 
@@ -11,15 +12,20 @@ import '../../../helpers/site_test_harness.dart';
 void main() {
   setUp(registerSiteFakes);
 
-  Future<void> openPanel(WidgetTester tester) async {
+  // Pages theme themselves below a light MaterialApp, so [pageTheme] mirrors
+  // a dark-mode route.
+  Future<void> openPanel(WidgetTester tester, {ThemeData? pageTheme}) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: kLightTheme,
-        home: Scaffold(
-          body: Builder(
-            builder: (context) => TextButton(
-              onPressed: () => unawaited(showContactPanel(context)),
-              child: const Text('open'),
+        home: Theme(
+          data: pageTheme ?? kLightTheme,
+          child: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => unawaited(showContactPanel(context)),
+                child: const Text('open'),
+              ),
             ),
           ),
         ),
@@ -62,6 +68,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Send message'), findsNothing);
   });
+
+  for (final (label, size) in const [
+    ('desktop', Size(1440, 900)),
+    ('mobile', Size(390, 844)),
+  ]) {
+    testWidgets('$label panel follows the page theme', (tester) async {
+      setViewSize(tester, size);
+      await openPanel(tester, pageTheme: kDarkTheme);
+
+      final panelTheme = Theme.of(tester.element(find.text('Send message')));
+      expect(panelTheme.brightness, Brightness.dark);
+    });
+  }
 
   testWidgets('mobile opens a bottom sheet with the form', (tester) async {
     setViewSize(tester, const Size(390, 844));

@@ -15,17 +15,25 @@ Future<void> showContactPanel(BuildContext context) async {
   final isDesktop = MediaQuery.sizeOf(context).width >= kSiteDesktopBreakpoint;
 
   if (isDesktop) {
+    // Pages apply the light/dark theme below MaterialApp, and unlike the
+    // bottom sheet a general dialog does not carry it over, so capture it.
+    final themes = InheritedTheme.capture(
+      from: context,
+      to: Navigator.of(context).context,
+    );
     await showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Close contact',
       transitionDuration: const Duration(milliseconds: 280),
-      pageBuilder: (context, _, _) => const Align(
-        alignment: Alignment.centerRight,
-        child: SizedBox(
-          width: _panelWidth,
-          height: double.infinity,
-          child: _ContactPanelBody(),
+      pageBuilder: (context, _, _) => themes.wrap(
+        const Align(
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            width: _panelWidth,
+            height: double.infinity,
+            child: _ContactPanelBody(),
+          ),
         ),
       ),
       transitionBuilder: (context, animation, _, child) => SlideTransition(
