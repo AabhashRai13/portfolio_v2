@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_page.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
-import 'package:my_portfolio/core/resources/configs/app.dart';
+import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
-import 'package:my_portfolio/features/projects/presentation/widgets/project_card.dart';
+import 'package:my_portfolio/features/projects/presentation/widgets/project_carousel.dart';
 
-/// Interim Work page: the existing project cards. Phase 4 replaces this with
-/// the flagship layout for Babe, Get This and Sadaqa.
+/// Flagship projects one at a time; the full list lives on /work/all.
 class WorkPage extends StatelessWidget {
   const WorkPage({required this.controller, super.key});
 
@@ -17,9 +17,6 @@ class WorkPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ProjectCard sizes itself from the legacy App/AppDimensions config.
-    App.init(context);
-
     return SitePage(
       title: 'Work',
       section: SiteSection.work,
@@ -28,21 +25,15 @@ class WorkPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Wrap(
-            spacing: 16,
-            runSpacing: 24,
-            children: [
-              for (final project in controller.projects)
-                ProjectCard(
-                  project: project,
-                  onTap: () => unawaited(controller.openProject(project)),
-                ),
-            ],
+          ProjectCarousel(
+            projects: controller.flagships,
+            onOpen: controller.openProject,
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
           SiteTextLink(
-            label: 'Source code on GitHub ↗',
-            onTap: () => unawaited(controller.openSource()),
+            label: 'See all projects →',
+            fontSize: 15,
+            onTap: () => unawaited(context.push<void>(AppRoutes.allWork)),
           ),
         ],
       ),
