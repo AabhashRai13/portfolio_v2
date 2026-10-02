@@ -40,21 +40,6 @@ void main() {
     });
   }
 
-  testWidgets('the header counts which project is in the middle', (
-    tester,
-  ) async {
-    setViewSize(tester, const Size(1440, 900));
-    await pumpRouted(tester, page());
-
-    Finder counter(String text) => find.text(text, findRichText: true);
-    expect(find.text('Work'), findsWidgets);
-    expect(counter('01 / 03'), findsOneWidget);
-
-    await tester.tap(find.byKey(ProjectCarousel.nextKey));
-    await tester.pumpAndSettle();
-    expect(counter('02 / 03'), findsOneWidget);
-  });
-
   testWidgets('the top bar marks Work as the current page', (tester) async {
     setViewSize(tester, const Size(1440, 900));
     await pumpRouted(tester, page());

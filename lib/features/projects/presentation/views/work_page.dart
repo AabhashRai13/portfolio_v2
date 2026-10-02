@@ -10,8 +10,7 @@ import 'package:my_portfolio/features/projects/presentation/controllers/work_con
 import 'package:my_portfolio/features/projects/presentation/views/project_detail.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/project_carousel.dart';
 
-/// Flagship projects one at a time; the full list lives on /work/all. The
-/// carousel's own "Work · 01 / 03" header is the page heading.
+/// Flagship projects one at a time; the full list lives on /work/all.
 class WorkPage extends StatelessWidget {
   const WorkPage({required this.controller, super.key});
 
@@ -26,7 +25,6 @@ class WorkPage extends StatelessWidget {
       child: Column(
         children: [
           ProjectCarousel(
-            title: 'Work',
             projects: controller.flagships,
             onOpen: (project, origin) => showProjectDetail(
               context,

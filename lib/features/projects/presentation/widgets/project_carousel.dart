@@ -25,12 +25,11 @@ const _Layout _desktop = (
 const _Layout _phone = (fraction: 0.74, centerScale: 1, sideScale: 0.85);
 
 /// Posters only, one project in the middle with smaller neighbours either
-/// side, under a "title · 01 / 03" header. Loops endlessly and rotates on
-/// its own until someone hovers, drags or opens a project. Every transform
+/// side. Loops endlessly and rotates on its own until someone hovers, drags
+/// or opens a project. Every transform
 /// reads the live page value, so motion follows a drag.
 class ProjectCarousel extends StatefulWidget {
   const ProjectCarousel({
-    required this.title,
     required this.projects,
     required this.onOpen,
     super.key,
@@ -40,7 +39,6 @@ class ProjectCarousel extends StatefulWidget {
   static const Key nextKey = ValueKey<String>('project-carousel-next');
   static const Duration autoplayInterval = Duration(seconds: 5);
 
-  final String title;
   final List<ProjectSummary> projects;
 
   /// Called when the middle card is tapped, with the card's global rect so
@@ -215,8 +213,6 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
               builder: (context, _) => Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _header(context, isNarrow: isNarrow),
-                  SizedBox(height: isNarrow ? 20 : 28),
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final pageWidth =
@@ -280,55 +276,6 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  /// "Work ······ 01 / 03" over a hairline.
-  Widget _header(BuildContext context, {required bool isNarrow}) {
-    final palette = Theme.of(context).homePalette;
-    final size = isNarrow ? 26.0 : 36.0;
-    String pad(int n) => n.toString().padLeft(2, '0');
-
-    return Container(
-      padding: const EdgeInsets.only(bottom: 14),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: palette.textSecondary.withValues(alpha: 0.35),
-          ),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
-        children: [
-          Semantics(
-            header: true,
-            child: Text(
-              widget.title,
-              style: TextStyle(fontSize: size, color: palette.textStrong),
-            ),
-          ),
-          const Spacer(),
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: pad(_selected + 1),
-                  style: TextStyle(color: palette.textStrong),
-                ),
-                TextSpan(
-                  text: ' / ${pad(_count)}',
-                  style: TextStyle(
-                    color: palette.textSecondary.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
-            ),
-            style: TextStyle(fontSize: size * 0.8),
-          ),
-        ],
       ),
     );
   }
