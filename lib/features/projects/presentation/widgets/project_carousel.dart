@@ -10,8 +10,9 @@ import 'package:my_portfolio/core/services/tap_feedback.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
 
 /// Posters only, one project in the middle with smaller neighbours either
-/// side. Rotates on its own until someone hovers, drags or opens a project.
-/// Every transform reads the live page value, so motion follows a drag.
+/// side. Loops endlessly and rotates on its own until someone hovers, drags
+/// or opens a project. Every transform reads the live page value, so motion
+/// follows a drag.
 class ProjectCarousel extends StatefulWidget {
   const ProjectCarousel({
     required this.projects,
@@ -58,10 +59,13 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
             controller.hasClients &&
             controller.position.hasContentDimensions
         ? controller.page ?? 0
-        : 0;
+        : controller?.initialPage.toDouble() ?? 0;
   }
 
+  /// Raw page: the PageView is endless, so pages repeat the projects.
   int get _index => _page.round();
+
+  int get _selected => _index % _count;
 
   @override
   void didChangeDependencies() {
@@ -73,7 +77,8 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
       final old = _controller;
       _controller = PageController(
         viewportFraction: fraction,
-        initialPage: old == null ? 0 : _index,
+        // Start deep in the endless list so there is room to go back.
+        initialPage: old == null ? _count * 1000 : _index,
       );
       _fraction = fraction;
       if (old != null) {
@@ -88,7 +93,7 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     if (MediaQuery.disableAnimationsOf(context) || _count < 2) return;
     _autoplay = Timer.periodic(ProjectCarousel.autoplayInterval, (_) {
       if (_hovering || _pressed || _open) return;
-      _animateTo((_index + 1) % _count);
+      _animateTo(_index + 1);
     });
   }
 
@@ -102,11 +107,19 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     );
   }
 
-  /// User navigation wraps around, like the auto-rotation, and resets the
-  /// auto-rotate clock so it never jumps right after a tap.
-  void _go(int index) {
-    _animateTo(index % _count);
+  /// Moves to a raw page and resets the auto-rotate clock so it never jumps
+  /// right after a tap.
+  void _go(int page) {
+    _animateTo(page);
     _restartAutoplay();
+  }
+
+  /// The nearest page showing project [i], going whichever way is shorter.
+  void _goToProject(int i) {
+    var delta = i - _selected;
+    if (delta > _count / 2) delta -= _count;
+    if (delta < -_count / 2) delta += _count;
+    _go(_index + delta);
   }
 
   Future<void> _openCurrent(BuildContext card, ProjectSummary project) async {
@@ -191,7 +204,7 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
                         children: [
                           PageView.builder(
                             controller: controller,
-                            itemCount: _count,
+                            itemCount: _count > 1 ? null : 1,
                             itemBuilder: _buildSlide,
                           ),
                           // Above the PageView so it claims wheel events
@@ -237,7 +250,7 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
   }
 
   Widget _buildSlide(BuildContext context, int index) {
-    final project = widget.projects[index];
+    final project = widget.projects[index % _count];
     final distance = (index - _page).abs().clamp(0.0, 1.0);
     final isCurrent = index == _index;
 
@@ -246,7 +259,7 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
       child: Transform.scale(
         scale: 1 - distance * (1 - _sideScale),
         child: Opacity(
-          opacity: 1 - distance * 0.25,
+          opacity: 1 - distance * 0.1,
           child: Semantics(
             button: true,
             label: isCurrent
@@ -284,14 +297,14 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
         for (var i = 0; i < _count; i++)
           Semantics(
             button: true,
-            selected: i == _index,
+            selected: i == _selected,
             label: 'Show ${widget.projects[i].title}',
             excludeSemantics: true,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
                 tapFeedback();
-                _go(i);
+                _goToProject(i);
               },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -303,10 +316,10 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeOutCubic,
-                    width: i == _index ? 32 : 14,
+                    width: i == _selected ? 32 : 14,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: i == _index
+                      color: i == _selected
                           ? palette.textStrong
                           : palette.textSecondary.withValues(alpha: 0.35),
                       borderRadius: BorderRadius.circular(2),

@@ -30,7 +30,7 @@ void main() {
 
       expect(find.byKey(SitePage.titleKey), findsNothing);
       expect(flagships, hasLength(3));
-      expect(find.byType(ProjectPoster), findsNWidgets(2));
+      expect(find.byType(ProjectPoster), findsNWidgets(3));
       expect(current(0), findsOneWidget);
       // No project text on the carousel itself.
       for (final project in staticProjectSummaries) {
