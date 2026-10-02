@@ -41,50 +41,54 @@ class SitePage extends StatelessWidget {
       backgroundColor: palette.sectionBackground,
       body: DecoratedBox(
         decoration: BoxDecoration(gradient: background),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1080),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 12, 24, 64),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SiteTopBar(current: section),
-                          SizedBox(height: isNarrow ? 32 : 56),
-                          if (showTitle) ...[
-                            Semantics(
-                              header: true,
-                              child: Text(
-                                title.toUpperCase(),
-                                key: titleKey,
-                                style: SiteText.display(
-                                  palette.textStrong,
-                                  size: isNarrow ? 64 : 104,
+        // Fill the screen: the scroll view alone shrinks to short content,
+        // which would end the gradient mid-screen.
+        child: SizedBox.expand(
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1080),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 12, 24, 64),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SiteTopBar(current: section),
+                            SizedBox(height: isNarrow ? 32 : 56),
+                            if (showTitle) ...[
+                              Semantics(
+                                header: true,
+                                child: Text(
+                                  title.toUpperCase(),
+                                  key: titleKey,
+                                  style: SiteText.display(
+                                    palette.textStrong,
+                                    size: isNarrow ? 64 : 104,
+                                  ),
                                 ),
                               ),
-                            ),
-                            if (intro != null) const SizedBox(height: 16),
-                          ],
-                          if (intro != null)
-                            Semantics(
-                              header: !showTitle,
-                              child: Text(
-                                intro!,
-                                style: SiteText.body(palette.textSecondary),
+                              if (intro != null) const SizedBox(height: 16),
+                            ],
+                            if (intro != null)
+                              Semantics(
+                                header: !showTitle,
+                                child: Text(
+                                  intro!,
+                                  style: SiteText.body(palette.textSecondary),
+                                ),
                               ),
-                            ),
-                          SizedBox(height: isNarrow ? 32 : 48),
-                          child,
-                        ],
+                            SizedBox(height: isNarrow ? 32 : 48),
+                            child,
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
