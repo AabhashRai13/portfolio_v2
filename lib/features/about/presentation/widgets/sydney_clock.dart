@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-/// Sydney wall-clock time for [utc], e.g. `3:42 PM AEDT`. Daylight saving
+/// Sydney wall-clock time for [utc], e.g. `3:42:07 PM AEDT`. Daylight saving
 /// (UTC+11) runs from 2am on the first Sunday of October to 3am on the first
 /// Sunday of April; both switches fall at 16:00 UTC the Saturday before.
 // ponytail: hard-coded NSW rule, add the timezone package if it ever changes.
@@ -18,12 +18,14 @@ String sydneyClockLabel(DateTime utc) {
   final dst = utc.isBefore(switchAt(4)) || !utc.isBefore(switchAt(10));
   final local = utc.add(Duration(hours: dst ? 11 : 10));
   final hour = local.hour % 12 == 0 ? 12 : local.hour % 12;
-  final minute = local.minute.toString().padLeft(2, '0');
+  String twoDigits(int value) => value.toString().padLeft(2, '0');
   final period = local.hour < 12 ? 'AM' : 'PM';
-  return '$hour:$minute $period ${dst ? 'AEDT' : 'AEST'}';
+  return '$hour:${twoDigits(local.minute)}:${twoDigits(local.second)} '
+      '$period ${dst ? 'AEDT' : 'AEST'}';
 }
 
-/// Live `SYDNEY · 3:42 PM AEDT` label, refreshed every few seconds.
+/// Live `SYDNEY · 3:42:07 PM AEDT` label. Ticks twice a second so the
+/// seconds never visibly skip.
 class SydneyClock extends StatefulWidget {
   const SydneyClock({required this.style, super.key});
 
@@ -40,7 +42,7 @@ class _SydneyClockState extends State<SydneyClock> {
   void initState() {
     super.initState();
     _timer = Timer.periodic(
-      const Duration(seconds: 15),
+      const Duration(milliseconds: 500),
       (_) => setState(() {}),
     );
   }

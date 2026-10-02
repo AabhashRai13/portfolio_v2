@@ -51,30 +51,29 @@ class AboutPage extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 32),
-          Wrap(
-            spacing: 32,
-            runSpacing: 10,
-            crossAxisAlignment: WrapCrossAlignment.center,
+          SydneyClock(style: meta),
+          const SizedBox(height: 10),
+          Row(
             children: [
-              SydneyClock(style: meta),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: palette.primaryAccent,
+              // Status-light green reads as "online" in both themes.
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _onlineGreen,
+                  boxShadow: [
+                    BoxShadow(
+                      color: _onlineGreen.withValues(alpha: 0.5),
+                      blurRadius: 6,
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: Text(availability.toUpperCase(), style: meta),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              Text(nowBuilding.toUpperCase(), style: meta),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(availability.toUpperCase(), style: meta),
+              ),
             ],
           ),
           sectionGap,
@@ -192,6 +191,8 @@ class AboutPage extends StatelessWidget {
     );
   }
 }
+
+const Color _onlineGreen = Color(0xFF22C55E);
 
 class _Heading extends StatelessWidget {
   const _Heading(this.text, {required this.isNarrow});

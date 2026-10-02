@@ -12,7 +12,6 @@ const String _statementOwnership =
     'after, so you can stay focused on the business.';
 
 const String availability = 'Open to freelance projects and full-time roles';
-const String nowBuilding = 'Now building Babe, Get This';
 
 /// Qualifies visitors: who works well with Aabhash.
 const List<String> goodFit = [
