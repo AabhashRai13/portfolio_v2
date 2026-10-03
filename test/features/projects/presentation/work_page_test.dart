@@ -29,7 +29,7 @@ void main() {
       await pumpRouted(tester, page());
 
       expect(find.byKey(SitePage.titleKey), findsNothing);
-      expect(flagships, hasLength(3));
+      expect(flagships, hasLength(4));
       expect(find.byType(ProjectPoster), findsNWidgets(3));
       expect(current(0), findsOneWidget);
       // No project text on the carousel itself.
@@ -63,13 +63,21 @@ void main() {
     await tester.pumpAndSettle();
     expect(current(2), findsOneWidget);
 
-    await tester.tap(find.byKey(ProjectCarousel.nextKey));
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.pumpAndSettle();
+    expect(current(1), findsOneWidget);
+
+    await tester.tap(find.byKey(ProjectCarousel.previousKey));
     await tester.pumpAndSettle();
     expect(current(0), findsOneWidget);
 
     await tester.tap(find.byKey(ProjectCarousel.previousKey));
     await tester.pumpAndSettle();
-    expect(current(2), findsOneWidget);
+    expect(current(flagships.length - 1), findsOneWidget);
+
+    await tester.tap(find.byKey(ProjectCarousel.nextKey));
+    await tester.pumpAndSettle();
+    expect(current(0), findsOneWidget);
   });
 
   testWidgets('tapping an arrow gives a light haptic tick', (tester) async {
@@ -142,16 +150,16 @@ void main() {
 
     await tester.tap(current(0));
     await tester.pumpAndSettle();
-    final sadaqa = flagships.first;
-    expect(find.text(sadaqa.title.toUpperCase()), findsOneWidget);
-    expect(find.text(sadaqa.summary), findsOneWidget);
+    final first = flagships.first;
+    expect(find.text(first.title.toUpperCase()), findsOneWidget);
+    expect(find.text(first.summary), findsOneWidget);
 
-    await tester.tap(find.text('VIEW ON THE APP STORE ↗'));
-    expect(launch.opened, [sadaqa.link]);
+    await tester.tap(find.text('VIEW ON GOOGLE PLAY ↗'));
+    expect(launch.opened, [first.link]);
 
     await tester.tap(find.byTooltip('Close'));
     await tester.pumpAndSettle();
-    expect(find.text(sadaqa.summary), findsNothing);
+    expect(find.text(first.summary), findsNothing);
     expect(current(0), findsOneWidget);
   });
 

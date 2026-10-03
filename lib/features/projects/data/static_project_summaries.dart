@@ -3,6 +3,17 @@ import 'package:my_portfolio/features/projects/domain/models/project_summary.dar
 // Ordered strongest-first: the first cards are what visitors actually see.
 const staticProjectSummaries = <ProjectSummary>[
   ProjectSummary(
+    title: 'Babe, Get This',
+    flagship: true,
+    summary:
+        'Shared shopping list for couples, grouped by store, with quantities, '
+        'notes and pick-up progress.',
+    role: 'Solo developer · native Android in Kotlin and Jetpack Compose',
+    banner: 'assets/projects/babe_get_this_poster.jpg',
+    link:
+        'https://play.google.com/store/apps/details?id=com.babegetthis.android',
+  ),
+  ProjectSummary(
     title: 'Sadaqa',
     flagship: true,
     summary:
