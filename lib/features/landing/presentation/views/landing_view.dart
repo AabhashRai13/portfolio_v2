@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
@@ -28,7 +29,6 @@ class LandingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final viewport = MediaQuery.sizeOf(context);
     final isDesktop = viewport.width >= kSiteDesktopBreakpoint;
     final isRoomyDesktop = viewport.width >= 1280;
@@ -48,14 +48,71 @@ class LandingView extends StatelessWidget {
     final headlineInstructionGap = isDesktop
         ? (isRoomyDesktop ? 24.0 : 18.0)
         : 20.0;
-    final glow = Color.lerp(
-      palette.sectionBackground,
-      palette.primaryAccent,
-      isDark ? 0.13 : 0.14,
-    )!;
-    final edge = Color.alphaBlend(
-      palette.shadowColor.withValues(alpha: isDark ? 0.48 : 0.08),
-      palette.sectionBackground,
+    // Read above the Scaffold, which hides the inset from its body.
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+
+    final hub = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ScaleTransition(
+          scale: phoneMotion.textScale,
+          child: _LocationLine(palette: palette),
+        ),
+        SizedBox(height: metadataNameGap),
+        ScaleTransition(
+          scale: phoneMotion.textScale,
+          alignment: Alignment.topCenter,
+          child: _AnimatedWords(
+            text: 'AABHASH RAI',
+            animation: entrance,
+            style: SiteText.display(palette.textStrong, size: nameSize),
+            header: true,
+            fit: true,
+          ),
+        ),
+        if (!isDesktop) ...[
+          const SizedBox(height: 16),
+          _Tagline(animation: entrance, palette: palette, fontSize: 30),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: 560,
+            height: viewport.width < 500 ? 254 : 360,
+            child: LandingWidgetGrid(entrance: entrance, onOpen: onOpenWidget),
+          ),
+        ] else ...[
+          SizedBox(height: namePhoneGap),
+          ScaleTransition(
+            scale: CurvedAnimation(
+              parent: entrance,
+              curve: const Interval(0.2, 0.76, curve: Curves.elasticOut),
+            ),
+            child: LandingPhoneStage(
+              motion: phoneMotion,
+              entrance: entrance,
+              onOpenWidget: onOpenWidget,
+            ),
+          ),
+          SizedBox(height: phoneHeadlineGap),
+          ScaleTransition(
+            scale: phoneMotion.textScale,
+            alignment: Alignment.bottomCenter,
+            child: _Tagline(
+              animation: entrance,
+              palette: palette,
+              fontSize: taglineSize,
+            ),
+          ),
+        ],
+        SizedBox(height: headlineInstructionGap),
+        ScaleTransition(
+          scale: phoneMotion.textScale,
+          child: Text(
+            'EXPLORE THE TILES',
+            textAlign: TextAlign.center,
+            style: SiteText.label(palette.textSecondary, size: 10),
+          ),
+        ),
+      ],
     );
 
     return Scaffold(
@@ -63,123 +120,120 @@ class LandingView extends StatelessWidget {
       body: DecoratedBox(
         decoration: BoxDecoration(
           gradient: RadialGradient(
-            center: const Alignment(0, -0.18),
-            radius: 1.02,
-            colors: [glow, palette.sectionBackground, edge],
-            stops: const [0, 0.6, 1],
+            center: Alignment.topLeft,
+            radius: 2,
+            colors: palette.heroGradient,
+            stops: const [0.1, 0.4, 0.7, 1],
           ),
         ),
         child: SafeArea(
-          child: Stack(
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isDesktop ? 32 : 16,
-                    vertical: isDesktop ? 12 : 20,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight - (isDesktop ? 24 : 40),
-                    ),
-                    child: Center(
+          minimum: EdgeInsets.all(isDesktop ? 24 : 10),
+          child: _GlassPanel(
+            palette: palette,
+            child: Stack(
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (isDesktop) {
+                      // Short windows scale the whole hub down so it fits the
+                      // first screen. The fit ignores an on-screen keyboard,
+                      // so the phone's contact form scrolls instead of
+                      // shrinking while someone types.
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 12,
+                        ),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: math.max(
+                            0,
+                            constraints.maxHeight + keyboardInset - 24,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: math.min(
+                                  1180,
+                                  constraints.maxWidth - 64,
+                                ),
+                              ),
+                              child: hub,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 20,
+                      ),
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 1180),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ScaleTransition(
-                              scale: phoneMotion.textScale,
-                              child: _LocationLine(palette: palette),
-                            ),
-                            SizedBox(height: metadataNameGap),
-                            ScaleTransition(
-                              scale: phoneMotion.textScale,
-                              alignment: Alignment.topCenter,
-                              child: _AnimatedWords(
-                                text: 'AABHASH RAI',
-                                animation: entrance,
-                                style: SiteText.display(
-                                  palette.textStrong,
-                                  size: nameSize,
-                                ),
-                                header: true,
-                                fit: true,
-                              ),
-                            ),
-                            if (!isDesktop) ...[
-                              const SizedBox(height: 16),
-                              _Tagline(
-                                animation: entrance,
-                                palette: palette,
-                                fontSize: 30,
-                              ),
-                              const SizedBox(height: 24),
-                              SizedBox(
-                                width: 560,
-                                height: MediaQuery.sizeOf(context).width < 500
-                                    ? 254
-                                    : 360,
-                                child: LandingWidgetGrid(
-                                  entrance: entrance,
-                                  onOpen: onOpenWidget,
-                                ),
-                              ),
-                            ] else ...[
-                              SizedBox(height: namePhoneGap),
-                              ScaleTransition(
-                                scale: CurvedAnimation(
-                                  parent: entrance,
-                                  curve: const Interval(
-                                    0.2,
-                                    0.76,
-                                    curve: Curves.elasticOut,
-                                  ),
-                                ),
-                                child: LandingPhoneStage(
-                                  motion: phoneMotion,
-                                  entrance: entrance,
-                                  onOpenWidget: onOpenWidget,
-                                ),
-                              ),
-                              SizedBox(height: phoneHeadlineGap),
-                              ScaleTransition(
-                                scale: phoneMotion.textScale,
-                                alignment: Alignment.bottomCenter,
-                                child: _Tagline(
-                                  animation: entrance,
-                                  palette: palette,
-                                  fontSize: taglineSize,
-                                ),
-                              ),
-                            ],
-                            SizedBox(height: headlineInstructionGap),
-                            ScaleTransition(
-                              scale: phoneMotion.textScale,
-                              child: Text(
-                                'EXPLORE THE TILES',
-                                textAlign: TextAlign.center,
-                                style: SiteText.label(
-                                  palette.textSecondary,
-                                  size: 10,
-                                ),
-                              ),
-                            ),
-                          ],
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight - 40,
+                        ),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 1180),
+                            child: hub,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: ThemeToggleButton(iconColor: palette.textSecondary),
-              ),
-            ],
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: ThemeToggleButton(iconColor: palette.textSecondary),
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Frosted panel that frames the whole landing over the hero gradient.
+///
+/// No BackdropFilter: only a smooth gradient sits behind the panel, so a blur
+/// would look the same while re-blurring the screen on every phone frame.
+class _GlassPanel extends StatelessWidget {
+  const _GlassPanel({required this.palette, required this.child});
+
+  final HomePalette palette;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(20);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: palette.glassFill,
+        borderRadius: radius,
+        border: Border.all(color: palette.glassBorder, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: palette.shadowColor.withValues(alpha: 0.02),
+            blurRadius: 30,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: radius,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [palette.glassHighlightStrong, palette.glassHighlightSoft],
+          ),
+        ),
+        child: SizedBox.expand(child: child),
       ),
     );
   }
@@ -228,7 +282,7 @@ class _Tagline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 900),
+      constraints: const BoxConstraints(maxWidth: 1000),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: _AnimatedWords(

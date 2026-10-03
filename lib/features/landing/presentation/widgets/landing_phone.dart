@@ -20,6 +20,16 @@ class LandingPhone extends StatelessWidget {
 
   static const Key motionKey = ValueKey<String>('landing-phone-motion');
 
+  // Measured outside the motion transform, so only the fit-to-screen scale
+  // counts and a drag keeps the phone under the pointer.
+  static double _screenScale(BuildContext context) {
+    final box = context.findRenderObject()! as RenderBox;
+    final unit =
+        box.localToGlobal(const Offset(100, 0)) -
+        box.localToGlobal(Offset.zero);
+    return unit.distance / 100;
+  }
+
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
@@ -53,7 +63,12 @@ class LandingPhone extends StatelessWidget {
         onExit: (_) => motion.setHovered(isHovered: false),
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onPanStart: interactive ? motion.onPanStart : null,
+          onPanStart: interactive
+              ? (details) => motion.onPanStart(
+                  details,
+                  screenScale: _screenScale(context),
+                )
+              : null,
           onPanUpdate: interactive ? motion.onPanUpdate : null,
           onPanEnd: interactive ? motion.onPanEnd : null,
           child: SizedBox(
