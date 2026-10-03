@@ -17,7 +17,7 @@ Turn aabhashrai.com from one long scrolling page into a landing page that works 
 ## Constraints
 
 - Position Aabhash as a mobile app developer, never as a "Flutter developer". Flutter can appear as a stack detail.
-- The design must not look AI-generated: no eyebrow kickers, availability pills, stat rows, gradient blobs, glass cards or generic value-prop copy.
+- The design must not look AI-generated: no eyebrow kickers, availability pills, stat rows, gradient blobs or generic value-prop copy. The one glass panel that frames the landing is a deliberate exception.
 - Employer apps are never the landing page's focus.
 - Every page must work on mobile. It is verified at 375×812, 390×844, 768 and 1440 widths.
 - Keep the current light and dark palettes in `lib/core/resources/styles/home_palette.dart`.
@@ -41,7 +41,7 @@ Navigation:
 - On the landing, the four phone widgets are the only way in. Each is a focusable button with a semantic label ("Open Work"), so keyboard and screen-reader users are covered. A separate text-link row was removed: it duplicated the tiles, and its Contact link opened the side panel over the phone's own contact flow.
 - Inner pages get a slim top bar. At 1000 px and wider: name (links home), the four links, theme toggle and résumé. Below 1000 px: name, theme toggle and a menu button that opens the links in a bottom sheet.
 - Contact is a panel over the current page, reachable from every page. `/contact` opens it on top of the landing so it can be shared.
-- Browser back and the iOS edge swipe pop the route with the reverse transition.
+- Browser back and the iOS edge swipe pop the route instantly, with no transition.
 
 ## Landing page
 
@@ -52,10 +52,12 @@ Desktop (width ≥ 1000):
 1. `SYDNEY, AUSTRALIA · raiaabhash3@gmail.com` in small mono caps. The email is a `mailto:` link.
 2. `AABHASH RAI`, the dominant element.
 3. One large phone, tilted slightly. Its screen is a home screen with four live widgets in a 2×2 grid: Work, About, Writing, Contact.
-4. `I HELP FOUNDERS & TECH TEAMS BUILD MOBILE APPS` in two lines.
+4. `I HELP FOUNDERS & TECH TEAMS BUILD MOBILE APPS` on one line.
 5. Caption `EXPLORE THE TILES`.
 
 The theme toggle sits in the top-right corner on every width.
+
+On every width the whole landing sits in one frosted glass panel over the warm hero gradient (`HomePalette.heroGradient`), inset 24 px on desktop and 10 px on mobile. The panel is a translucent fill, a thin border and a diagonal sheen, not a blur. On desktop windows too short for the hub, the whole hub scales down to fit, so the caption always sits on the first screen; a drag divides by that scale so the phone stays under the pointer.
 
 Mobile and tablet (width < 1000): no phone mockup. The same four widgets fill the screen as a 2×2 grid, under the name and tagline. The caption drops "drag one." because there is no drag on touch. At 375×812 the whole landing fits without scrolling.
 
@@ -65,7 +67,7 @@ The same widget-grid component is used in both layouts, framed by the phone on d
 
 - Name: Archivo Extra Condensed Black. Tagline: a less condensed Archivo cut, for readability at its smaller size.
 - Small labels, caption and links: IBM Plex Mono Medium, uppercase, tracked.
-- Font files are bundled as assets, not fetched from Google Fonts at runtime.
+- The name, tagline and label fonts are bundled as assets. The base theme's Poppins and the blog's Lora and JetBrains Mono still load through `google_fonts` at runtime.
 
 ### Colour
 
@@ -99,9 +101,7 @@ The Work preview is an invented screen and never shows employer apps.
 
 ## Opening pages
 
-- Tapping a widget pushes its route with the widget's global rect as the transition origin. The page grows from that rect to full screen while the corner radius goes from the widget's radius to 0. The widget's content cross-fades into the page header. About 450 ms, with `Curves.easeInOutCubicEmphasized`.
-- Pop reverses to the origin rect when it is known.
-- With no origin (deep link, refresh, top bar), the page fades in with a 12 px rise instead.
+- Pages open and close instantly, with no route transition, whether from a widget, the top bar, a deep link, browser back or the iOS edge swipe. A widget-to-page expand was built in Phase 3 and removed as unnecessary.
 - Contact panel: on desktop it slides in from the right, 420 px wide; on mobile it is a bottom sheet. The page behind is dimmed. Esc, a tap outside, or the close button dismisses it. The form stays usable with the mobile keyboard open.
 
 ## Inner pages
@@ -154,7 +154,7 @@ Each removal is verified with a usage search before deletion.
 
 ## Performance
 
-- No `BackdropFilter` or platform views on the landing.
+- No `BackdropFilter` or platform views on the landing. The glass panel needs no blur because only a smooth gradient sits behind it.
 - Every animated widget sits in its own `RepaintBoundary`.
 - Landing tickers pause when another route covers it.
 - On desktop, no landing frame exceeds 16 ms at idle or during drag (checked with a Chrome performance trace).
@@ -191,9 +191,7 @@ Each phase is a PR into `development`, and the site stays usable after each one.
    - The phone frame and the widget grid, with the four live previews.
    - The mobile layout.
    - Load-in motion, float, hover, drag and fling, and reduced motion.
-3. **Transitions.**
-   - The widget-to-page expand and collapse, the fallback fade, and the contact panel animation.
-   - Back and swipe behaviour.
+3. **Transitions.** Dropped: pages open without a route transition (see "Opening pages"). Only the contact panel's slide-in from this phase remains.
 4. **Contact inside the phone.**
    - [x] Activating the Contact widget on desktop replaces the phone's 2×2 widget grid with the usable contact form inside the phone screen instead of opening the global panel.
    - [x] Add an obvious close/back action that restores the widget grid without losing the landing page.
