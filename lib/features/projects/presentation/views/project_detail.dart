@@ -226,22 +226,20 @@ class _Details extends StatelessWidget {
               ),
             ),
           ),
-          if (project.role != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              project.role!,
-              style: SiteText.body(palette.textSecondary, size: 15),
-            ),
-          ],
+          const SizedBox(height: 8),
+          Text(
+            project.role,
+            style: SiteText.body(palette.textSecondary, size: 15),
+          ),
           const SizedBox(height: 20),
-          Text(project.summary, style: body),
-          if (project.result != null) ...[
-            const SizedBox(height: 12),
+          _Bullet(Text(project.problem, style: body), style: body),
+          _Bullet(Text(project.built, style: body), style: body),
+          _Bullet(
             Text.rich(
               TextSpan(
                 style: body,
                 children: [
-                  for (final word in project.result!.split(' '))
+                  for (final word in project.result.split(' '))
                     TextSpan(
                       text: '$word ',
                       style: word.startsWith(RegExp('[0-9]'))
@@ -251,7 +249,13 @@ class _Details extends StatelessWidget {
                 ],
               ),
             ),
-          ],
+            style: body,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            project.stack,
+            style: SiteText.body(palette.textSecondary, size: 15),
+          ),
           const SizedBox(height: 16),
           // SiteTextLink pads itself for its focus ring; pull it back so its
           // text lines up with the copy above.
@@ -266,4 +270,23 @@ class _Details extends StatelessWidget {
       ),
     );
   }
+}
+
+class _Bullet extends StatelessWidget {
+  const _Bullet(this.child, {required this.style});
+
+  final Widget child;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('•  ', style: style),
+        Expanded(child: child),
+      ],
+    ),
+  );
 }

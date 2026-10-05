@@ -152,14 +152,18 @@ void main() {
     await tester.pumpAndSettle();
     final first = flagships.first;
     expect(find.text(first.title.toUpperCase()), findsOneWidget);
-    expect(find.text(first.summary), findsOneWidget);
+    expect(find.text(first.problem), findsOneWidget);
 
-    await tester.tap(find.text('VIEW ON GOOGLE PLAY ↗'));
+    // Test fonts are wide, so the details scroll; real fonts fit.
+    final store = find.text('VIEW ON GOOGLE PLAY ↗');
+    await tester.ensureVisible(store);
+    await tester.pumpAndSettle();
+    await tester.tap(store);
     expect(launch.opened, [first.link]);
 
     await tester.tap(find.byTooltip('Close'));
     await tester.pumpAndSettle();
-    expect(find.text(first.summary), findsNothing);
+    expect(find.text(first.problem), findsNothing);
     expect(current(0), findsOneWidget);
   });
 
@@ -169,11 +173,11 @@ void main() {
 
     await tester.tap(current(0));
     await tester.pumpAndSettle();
-    expect(find.text(flagships.first.summary), findsOneWidget);
+    expect(find.text(flagships.first.problem), findsOneWidget);
 
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
-    expect(find.text(flagships.first.summary), findsNothing);
+    expect(find.text(flagships.first.problem), findsNothing);
   });
 
   testWidgets('see all projects opens /work/all', (tester) async {

@@ -92,21 +92,19 @@ class ProjectCardState extends State<ProjectCard> {
                       ),
                     ],
                   ),
-                  if (project.role != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      project.role!,
-                      style: AppText.b2?.copyWith(
-                        fontSize: 12,
-                        color: palette.textSecondary.withValues(alpha: 0.8),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 2),
+                  Text(
+                    project.role,
+                    style: AppText.b2?.copyWith(
+                      fontSize: 12,
+                      color: palette.textSecondary.withValues(alpha: 0.8),
                     ),
-                  ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   const SizedBox(height: 6),
                   Text(
-                    project.summary,
+                    project.problem,
                     style: AppText.b2?.copyWith(
                       fontSize: 13,
                       color: palette.textSecondary,
@@ -115,19 +113,6 @@ class ProjectCardState extends State<ProjectCard> {
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (project.result != null) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      project.result!,
-                      style: AppText.b2?.copyWith(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
-                        color: palette.primaryAccent,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
                 ],
               ),
             ),

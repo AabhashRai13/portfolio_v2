@@ -5,10 +5,17 @@ const staticProjectSummaries = <ProjectSummary>[
   ProjectSummary(
     title: 'Babe, Get This',
     flagship: true,
-    summary:
-        'Shared shopping list for couples, grouped by store, with quantities, '
-        'notes and pick-up progress.',
-    role: 'Solo developer · native Android in Kotlin and Jetpack Compose',
+    role: 'Solo developer · design to release',
+    problem:
+        'Shopping for two gets messy when the list lives in one '
+        "person's head or a lost text thread.",
+    built:
+        'A native Android app with offline-first lists, sign-in, and voice '
+        'notes that AI turns into named shopping lists.',
+    result:
+        'On Google Play, with unit, Compose and end-to-end tests that fail '
+        'the build below 100% logic coverage.',
+    stack: 'Kotlin · Jetpack Compose · Hilt · Room · Supabase',
     banner: 'assets/projects/babe_get_this_poster.jpg',
     link:
         'https://play.google.com/store/apps/details?id=com.babegetthis.android',
@@ -16,10 +23,17 @@ const staticProjectSummaries = <ProjectSummary>[
   ProjectSummary(
     title: 'Sadaqa',
     flagship: true,
-    summary:
-        'Donation and event-ticketing app for a Sydney charity, with Stripe, '
-        'Apple Pay and Google Pay.',
-    role: 'Founding mobile engineer · Sadaqa Welfare Fund',
+    role: 'Founding mobile engineer · first build to release',
+    problem:
+        'A Sydney charity could only take donations and sell event tickets '
+        'through its website.',
+    built:
+        'An iOS and Android app with Stripe, Apple Pay and Google Pay, and '
+        'real-time ticket booking.',
+    result:
+        '60% of donations moved from web to app, and ticket sales beat a 10K '
+        'target with 13K\u2060–\u206014K sold.',
+    stack: 'Flutter · BLoC · Stripe · Firebase',
     icon: 'assets/projects/sadaqa_icon.png',
     link: 'https://apps.apple.com/us/app/sadaqa/id6474403245',
     banner: 'assets/projects/sadaqa_poster.jpg',
@@ -27,10 +41,17 @@ const staticProjectSummaries = <ProjectSummary>[
   ProjectSummary(
     title: 'Public IDPoor',
     flagship: true,
-    summary:
-        "Government app for Cambodia's Ministry of Planning that "
-        'streamlines access to the IDPoor social-support program.',
-    role: 'Mobile engineer · PegoTec',
+    role: 'Solo mobile developer · design to release',
+    problem:
+        'Cambodian households had to visit local offices to ask for an '
+        'IDPoor interview or check their Equity Card.',
+    built:
+        "An app for Cambodia's Ministry of Planning: interview requests, "
+        'objections and feedback, ID-card scanning and Equity Card checks.',
+    result:
+        'Live on the App Store, so families can reach the social-support '
+        'programme from their phone.',
+    stack: 'Flutter',
     banner: 'assets/projects/idpoor_poster.jpg',
     icon: 'assets/projects/public_idpoor_icon.png',
     link:
