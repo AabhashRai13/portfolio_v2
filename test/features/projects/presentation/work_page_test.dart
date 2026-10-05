@@ -29,7 +29,7 @@ void main() {
       await pumpRouted(tester, page());
 
       expect(find.byKey(SitePage.titleKey), findsNothing);
-      expect(flagships, hasLength(4));
+      expect(flagships, hasLength(3));
       expect(find.byType(ProjectPoster), findsNWidgets(3));
       expect(current(0), findsOneWidget);
       // No project text on the carousel itself.
