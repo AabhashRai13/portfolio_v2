@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
-import 'package:my_portfolio/constants/size.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
 import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
@@ -30,8 +30,8 @@ class LandingView extends StatelessWidget {
     final palette = Theme.of(context).homePalette;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final viewport = MediaQuery.sizeOf(context);
-    final isDesktop = viewport.width >= kSiteDesktopBreakpoint;
-    final isRoomyDesktop = viewport.width >= 1280;
+    final isDesktop = viewport.width >= Breakpoints.desktop;
+    final isRoomyDesktop = viewport.width >= Breakpoints.wideDesktop;
     // The phone keeps its size, so on shorter desktop viewports the name,
     // tagline and top gap shrink to keep the whole tagline on the first
     // screen. The tagline cap keeps it on one line.

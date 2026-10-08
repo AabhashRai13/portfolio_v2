@@ -4,7 +4,7 @@ import 'dart:ui' show ImageFilter, lerpDouble;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:my_portfolio/constants/size.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/core/presentation/widgets/press_scale.dart';
 import 'package:my_portfolio/core/presentation/widgets/tappable.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
@@ -88,7 +88,7 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     super.didChangeDependencies();
     // viewportFraction is fixed per controller, so swap it at the breakpoint
     // and keep the current page.
-    final layout = MediaQuery.sizeOf(context).width < kWorkPhoneBreakpoint
+    final layout = MediaQuery.sizeOf(context).width < Breakpoints.tablet
         ? _phone
         : _desktop;
     if (_controller == null || layout != _layout) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_top_bar.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 
@@ -35,7 +36,7 @@ class SitePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
-    final isNarrow = MediaQuery.sizeOf(context).width < 600;
+    final isNarrow = MediaQuery.sizeOf(context).width < Breakpoints.smallTablet;
 
     return Scaffold(
       backgroundColor: palette.sectionBackground,

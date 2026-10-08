@@ -3,7 +3,7 @@ import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
-import 'package:my_portfolio/constants/size.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/core/presentation/widgets/press_scale.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
@@ -57,7 +57,7 @@ class _ProjectDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
     final size = MediaQuery.sizeOf(context);
-    final isNarrow = size.width < kWorkPhoneBreakpoint;
+    final isNarrow = size.width < Breakpoints.tablet;
     final (:panel, :poster, :details) = _finalLayout(
       size,
       MediaQuery.paddingOf(context),

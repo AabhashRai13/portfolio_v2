@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/di/service_locator.dart';
-import 'package:my_portfolio/constants/size.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/contact/presentation/controllers/contact_controller.dart';
 import 'package:my_portfolio/features/contact/presentation/views/contact_section_view.dart';
@@ -9,10 +9,10 @@ import 'package:my_portfolio/features/contact/presentation/widgets/contact_chat_
 const double _panelWidth = 420;
 
 /// Opens the contact form over the current page: a right-hand panel on
-/// desktop, a bottom sheet below [kSiteDesktopBreakpoint]. Completes when it
+/// desktop, a bottom sheet below [Breakpoints.desktop]. Completes when it
 /// closes.
 Future<void> showContactPanel(BuildContext context) async {
-  final isDesktop = MediaQuery.sizeOf(context).width >= kSiteDesktopBreakpoint;
+  final isDesktop = MediaQuery.sizeOf(context).width >= Breakpoints.desktop;
 
   if (isDesktop) {
     // Pages apply the light/dark theme below MaterialApp, and unlike the

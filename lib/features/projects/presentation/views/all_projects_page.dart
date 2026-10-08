@@ -10,11 +10,15 @@ import 'package:my_portfolio/features/projects/domain/models/project_summary.dar
 import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
 import 'package:my_portfolio/features/projects/presentation/views/project_detail.dart';
 
-/// Every project as icon, name and one line: three across on desktop, two
-/// on tablets, one on phones.
+/// Every project as icon, name and one line, in as many columns as fit
+/// (three on desktop, two on tablets, one on phones).
 /// Featured projects open their project view; the rest open their store.
 class AllProjectsPage extends StatelessWidget {
   const AllProjectsPage({required this.controller, super.key});
+
+  /// Narrowest a card gets before the grid drops a column; the longest
+  /// name still fits on one line.
+  static const double _minTileWidth = 290;
 
   final WorkController controller;
 
@@ -34,7 +38,11 @@ class AllProjectsPage extends StatelessWidget {
         builder: (context, constraints) {
           const gap = 16.0;
           final width = constraints.maxWidth;
-          final columns = width >= 900 ? 3 : (width >= 560 ? 2 : 1);
+          // As many columns as fit at _minTileWidth, up to three.
+          final columns = ((width + gap) / (_minTileWidth + gap)).floor().clamp(
+            1,
+            3,
+          );
           // Floored so rounding never pushes the last card onto a new row.
           final tileWidth = ((width - gap * (columns - 1)) / columns)
               .floorToDouble();
