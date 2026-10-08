@@ -78,7 +78,6 @@ Future<void> pumpRouted(
       GoRoute(path: '/', builder: (_, _) => home),
       for (final path in const [
         '/work',
-        '/work/all',
         '/about',
         '/blog',
         '/contact',

@@ -16,20 +16,20 @@ void main() {
   late FakeLaunchService launch;
   setUp(() async => launch = await registerSiteFakes());
 
-  final flagships = staticProjectSummaries.where((p) => p.flagship).toList();
+  const projects = staticProjectSummaries;
 
   Widget page() => WorkPage(controller: getIt<WorkController>());
 
   /// The middle card is the only one labelled "Open …".
-  Finder current(int i) => find.bySemanticsLabel('Open ${flagships[i].title}');
+  Finder current(int i) => find.bySemanticsLabel('Open ${projects[i].title}');
 
   for (final size in const [Size(375, 812), Size(1440, 900)]) {
-    testWidgets('shows only the flagship posters at $size', (tester) async {
+    testWidgets('shows only the posters at $size', (tester) async {
       setViewSize(tester, size);
       await pumpRouted(tester, page());
 
       expect(find.byKey(SitePage.titleKey), findsNothing);
-      expect(flagships, hasLength(3));
+      expect(projects, hasLength(3));
       expect(find.byType(ProjectPoster), findsNWidgets(3));
       expect(current(0), findsOneWidget);
       // No project text on the carousel itself.
@@ -73,7 +73,7 @@ void main() {
 
     await tester.tap(find.byKey(ProjectCarousel.previousKey));
     await tester.pumpAndSettle();
-    expect(current(flagships.length - 1), findsOneWidget);
+    expect(current(projects.length - 1), findsOneWidget);
 
     await tester.tap(find.byKey(ProjectCarousel.nextKey));
     await tester.pumpAndSettle();
@@ -108,7 +108,7 @@ void main() {
     setViewSize(tester, const Size(1440, 900));
     await pumpRouted(tester, page());
 
-    await tester.tap(find.bySemanticsLabel('Show ${flagships[2].title}').last);
+    await tester.tap(find.bySemanticsLabel('Show ${projects[2].title}').last);
     await tester.pumpAndSettle();
     expect(current(2), findsOneWidget);
   });
@@ -150,7 +150,7 @@ void main() {
 
     await tester.tap(current(0));
     await tester.pumpAndSettle();
-    final first = flagships.first;
+    final first = projects.first;
     expect(find.text(first.title.toUpperCase()), findsOneWidget);
     expect(find.text(first.problem), findsOneWidget);
 
@@ -159,7 +159,7 @@ void main() {
     await tester.ensureVisible(store);
     await tester.pumpAndSettle();
     await tester.tap(store);
-    expect(launch.opened, [first.link]);
+    expect(launch.opened, [first.links.single]);
 
     await tester.tap(find.byTooltip('Close'));
     await tester.pumpAndSettle();
@@ -173,22 +173,10 @@ void main() {
 
     await tester.tap(current(0));
     await tester.pumpAndSettle();
-    expect(find.text(flagships.first.problem), findsOneWidget);
+    expect(find.text(projects.first.problem), findsOneWidget);
 
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
-    expect(find.text(flagships.first.problem), findsNothing);
-  });
-
-  testWidgets('see all projects opens /work/all', (tester) async {
-    setViewSize(tester, const Size(1440, 900));
-    await pumpRouted(tester, page());
-
-    final seeAll = find.text('All projects ↗');
-    await tester.ensureVisible(seeAll);
-    await tester.pumpAndSettle();
-    await tester.tap(seeAll);
-    await tester.pumpAndSettle();
-    expect(find.text('page /work/all'), findsOneWidget);
+    expect(find.text(projects.first.problem), findsNothing);
   });
 }

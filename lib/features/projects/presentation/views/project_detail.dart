@@ -18,7 +18,7 @@ Future<void> showProjectDetail(
   BuildContext context, {
   required ProjectSummary project,
   required Rect origin,
-  required VoidCallback onOpenStore,
+  required ValueChanged<String> onOpenStore,
 }) {
   return showGeneralDialog<void>(
     context: context,
@@ -50,7 +50,7 @@ class _ProjectDetail extends StatelessWidget {
   final ProjectSummary project;
   final Rect origin;
   final Animation<double> animation;
-  final VoidCallback onOpenStore;
+  final ValueChanged<String> onOpenStore;
 
   @override
   Widget build(BuildContext context) {
@@ -190,8 +190,8 @@ class _ProjectDetail extends StatelessWidget {
   }
 }
 
-String _storeName(ProjectSummary project) =>
-    project.link.contains('play.google.com') ? 'Google Play' : 'the App Store';
+String _storeName(String link) =>
+    link.contains('play.google.com') ? 'Google Play' : 'the App Store';
 
 /// Two type styles only (display for the name, body for the rest) so the
 /// eye keeps one rhythm; numbers in the result are bold so the proof leads.
@@ -204,7 +204,7 @@ class _Details extends StatelessWidget {
 
   final ProjectSummary project;
   final bool isNarrow;
-  final VoidCallback onOpenStore;
+  final ValueChanged<String> onOpenStore;
 
   @override
   Widget build(BuildContext context) {
@@ -259,13 +259,14 @@ class _Details extends StatelessWidget {
           const SizedBox(height: 16),
           // SiteTextLink pads itself for its focus ring; pull it back so its
           // text lines up with the copy above.
-          Transform.translate(
-            offset: const Offset(-6, 0),
-            child: SiteTextLink(
-              label: 'View on ${_storeName(project)} ↗',
-              onTap: onOpenStore,
+          for (final link in project.links)
+            Transform.translate(
+              offset: const Offset(-6, 0),
+              child: SiteTextLink(
+                label: 'View on ${_storeName(link)} ↗',
+                onTap: () => onOpenStore(link),
+              ),
             ),
-          ),
         ],
       ),
     );

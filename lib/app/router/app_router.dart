@@ -13,7 +13,6 @@ import 'package:my_portfolio/features/landing/presentation/views/landing_page.da
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 import 'package:my_portfolio/features/newsletter/presentation/views/newsletter_page.dart';
 import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
-import 'package:my_portfolio/features/projects/presentation/views/all_projects_page.dart';
 import 'package:my_portfolio/features/projects/presentation/views/work_page.dart';
 
 class AppRouter {
@@ -38,19 +37,6 @@ class AppRouter {
               child: WorkPage(controller: getIt.get<WorkController>()),
             ),
           ),
-          routes: [
-            GoRoute(
-              path: AppRoutes.allWorkSegment,
-              pageBuilder: (context, state) => _sitePage(
-                state,
-                AppThemeScope(
-                  child: AllProjectsPage(
-                    controller: getIt.get<WorkController>(),
-                  ),
-                ),
-              ),
-            ),
-          ],
         ),
         GoRoute(
           path: AppRoutes.about,

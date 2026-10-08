@@ -325,16 +325,15 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
           fit: StackFit.expand,
           children: [
             for (final i in [page.floor(), page.floor() + 1])
-              if (widget.projects[i % _count].banner case final banner?)
-                Opacity(
-                  opacity: (1 - (i - page).abs()).clamp(0.0, 1.0) * strength,
-                  // A small decode is plenty for a blur this wide.
-                  child: Image.asset(
-                    banner,
-                    fit: BoxFit.cover,
-                    cacheWidth: 160,
-                  ),
+              Opacity(
+                opacity: (1 - (i - page).abs()).clamp(0.0, 1.0) * strength,
+                // A small decode is plenty for a blur this wide.
+                child: Image.asset(
+                  widget.projects[i % _count].banner,
+                  fit: BoxFit.cover,
+                  cacheWidth: 160,
                 ),
+              ),
           ],
         ),
       ),
@@ -511,8 +510,6 @@ class ProjectPoster extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
-    final image = project.banner ?? project.icon;
-
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
@@ -528,9 +525,7 @@ class ProjectPoster extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         child: ColoredBox(
           color: palette.surfaceMuted,
-          child: image == null
-              ? const SizedBox.expand()
-              : Image.asset(image, fit: BoxFit.cover),
+          child: Image.asset(project.banner, fit: BoxFit.cover),
         ),
       ),
     );

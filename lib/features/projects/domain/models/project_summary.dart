@@ -6,10 +6,8 @@ class ProjectSummary {
     required this.built,
     required this.result,
     required this.stack,
-    required this.link,
-    this.banner,
-    this.icon,
-    this.flagship = false,
+    required this.links,
+    required this.banner,
   });
 
   final String title;
@@ -26,10 +24,9 @@ class ProjectSummary {
   /// One plain line, e.g. "Kotlin · Jetpack Compose · Room".
   final String stack;
 
-  final String link;
-  final String? banner;
-  final String? icon;
+  /// Store pages, each shown as its own link.
+  final List<String> links;
 
-  /// Shown in the Work page carousel; everything appears on /work/all.
-  final bool flagship;
+  /// Poster drawn at the carousel's 0.78 width / height.
+  final String banner;
 }
