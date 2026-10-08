@@ -16,7 +16,7 @@ void main() {
   late FakeLaunchService launch;
   setUp(() async => launch = await registerSiteFakes());
 
-  const projects = staticProjectSummaries;
+  const projects = featuredProjects;
 
   Widget page() => WorkPage(controller: getIt<WorkController>());
 
@@ -33,7 +33,7 @@ void main() {
       expect(find.byType(ProjectPoster), findsNWidgets(3));
       expect(current(0), findsOneWidget);
       // No project text on the carousel itself.
-      for (final project in staticProjectSummaries) {
+      for (final project in featuredProjects) {
         expect(find.text(project.title), findsNothing);
         expect(find.text(project.title.toUpperCase()), findsNothing);
       }
@@ -178,5 +178,17 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
     expect(find.text(projects.first.problem), findsNothing);
+  });
+
+  testWidgets('all projects opens /work/all', (tester) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(tester, page());
+
+    final seeAll = find.text('All projects ↗');
+    await tester.ensureVisible(seeAll);
+    await tester.pumpAndSettle();
+    await tester.tap(seeAll);
+    await tester.pumpAndSettle();
+    expect(find.text('page /work/all'), findsOneWidget);
   });
 }

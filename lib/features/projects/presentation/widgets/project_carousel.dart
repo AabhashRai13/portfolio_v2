@@ -40,12 +40,12 @@ class ProjectCarousel extends StatefulWidget {
   static const Key nextKey = ValueKey<String>('project-carousel-next');
   static const Duration autoplayInterval = Duration(seconds: 5);
 
-  final List<ProjectSummary> projects;
+  final List<FeaturedProject> projects;
 
   /// Called when the middle card is tapped, with the card's global rect so
   /// the project view can grow out of it. The carousel stays paused until
   /// the returned future completes (the project view closes).
-  final Future<void> Function(ProjectSummary project, Rect origin) onOpen;
+  final Future<void> Function(FeaturedProject project, Rect origin) onOpen;
 
   @override
   State<ProjectCarousel> createState() => _ProjectCarouselState();
@@ -138,7 +138,7 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     _go(_index + delta);
   }
 
-  Future<void> _openCurrent(BuildContext card, ProjectSummary project) async {
+  Future<void> _openCurrent(BuildContext card, FeaturedProject project) async {
     final box = card.findRenderObject()! as RenderBox;
     setState(() => _open = true);
     await widget.onOpen(project, box.localToGlobal(Offset.zero) & box.size);
@@ -505,7 +505,7 @@ class _Arrow extends StatelessWidget {
 class ProjectPoster extends StatelessWidget {
   const ProjectPoster({required this.project, super.key});
 
-  final ProjectSummary project;
+  final FeaturedProject project;
 
   @override
   Widget build(BuildContext context) {

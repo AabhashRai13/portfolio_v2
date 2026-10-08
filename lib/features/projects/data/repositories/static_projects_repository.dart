@@ -4,7 +4,11 @@ import 'package:my_portfolio/features/projects/domain/repositories/projects_repo
 
 class StaticProjectsRepository implements ProjectsRepository {
   @override
-  List<ProjectSummary> getFeaturedProjects() {
-    return staticProjectSummaries;
-  }
+  List<FeaturedProject> getFeaturedProjects() => featuredProjects;
+
+  @override
+  List<ProjectSummary> getAllProjects() => [
+    ...featuredProjects,
+    ...otherProjects,
+  ];
 }

@@ -6,6 +6,7 @@ import 'package:my_portfolio/app/navigation/site_page.dart';
 import 'package:my_portfolio/app/router/app_router.dart';
 import 'package:my_portfolio/core/resources/styles/theme.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
+import 'package:my_portfolio/features/projects/presentation/views/all_projects_page.dart';
 import 'package:my_portfolio/features/projects/presentation/views/work_page.dart';
 
 import '../../helpers/site_test_harness.dart';
@@ -39,6 +40,11 @@ void main() {
   testWidgets('/work shows the work page', (tester) async {
     await pumpAt(tester, '/work');
     expect(find.byType(WorkPage), findsOneWidget);
+  });
+
+  testWidgets('/work/all shows every project', (tester) async {
+    await pumpAt(tester, '/work/all');
+    expect(find.byType(AllProjectsPage), findsOneWidget);
   });
 
   testWidgets('/about shows the about page', (tester) async {

@@ -16,7 +16,7 @@ import 'package:my_portfolio/features/projects/presentation/widgets/project_caro
 /// close button dismisses it. Completes when it closes.
 Future<void> showProjectDetail(
   BuildContext context, {
-  required ProjectSummary project,
+  required FeaturedProject project,
   required Rect origin,
   required ValueChanged<String> onOpenStore,
 }) {
@@ -47,7 +47,7 @@ class _ProjectDetail extends StatelessWidget {
     required this.onOpenStore,
   });
 
-  final ProjectSummary project;
+  final FeaturedProject project;
   final Rect origin;
   final Animation<double> animation;
   final ValueChanged<String> onOpenStore;
@@ -202,7 +202,7 @@ class _Details extends StatelessWidget {
     required this.onOpenStore,
   });
 
-  final ProjectSummary project;
+  final FeaturedProject project;
   final bool isNarrow;
   final ValueChanged<String> onOpenStore;
 

@@ -12,8 +12,10 @@ class WorkController {
   final AppLaunchService _launchService;
   final ProjectsRepository _projectsRepository;
 
-  late final List<ProjectSummary> projects = _projectsRepository
+  late final List<FeaturedProject> featured = _projectsRepository
       .getFeaturedProjects();
+
+  late final List<ProjectSummary> all = _projectsRepository.getAllProjects();
 
   Future<void> openLink(String url) => _launchService.openExternalUrl(url);
 }
