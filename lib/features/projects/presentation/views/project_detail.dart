@@ -3,12 +3,13 @@ import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
+import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/core/presentation/widgets/press_scale.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/core/services/tap_feedback.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
-import 'package:my_portfolio/features/projects/presentation/widgets/project_carousel.dart';
+import 'package:my_portfolio/features/projects/presentation/widgets/project_poster.dart';
 
 /// Opens [project] over the page. The poster grows out of [origin] (the
 /// tapped card's global rect) into a panel, the details fade in after it,
@@ -56,54 +57,12 @@ class _ProjectDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
     final size = MediaQuery.sizeOf(context);
-    final safe = MediaQuery.paddingOf(context);
-    final isNarrow = size.width < 720;
-    const inset = 24.0;
-
-    // Final layout. Phones: full screen, poster on top, details below.
-    // Elsewhere: a centred panel, poster on the left, details beside it.
-    // The poster keeps the card's shape so it simply grows into place.
-    final Rect panel;
-    final Rect poster;
-    final Rect details;
-    if (isNarrow) {
-      panel = Offset.zero & size;
-      final height = math.min(
-        size.height * 0.45,
-        (size.width - inset * 2) / kPosterAspect,
-      );
-      poster = Rect.fromLTWH(
-        (size.width - height * kPosterAspect) / 2,
-        safe.top + inset,
-        height * kPosterAspect,
-        height,
-      );
-      details = Rect.fromLTRB(
-        inset,
-        poster.bottom + 24,
-        size.width - inset,
-        size.height - safe.bottom,
-      );
-    } else {
-      panel = Rect.fromCenter(
-        center: size.center(Offset.zero),
-        width: math.min(980, size.width - 64),
-        height: math.min(640, size.height - 64),
-      );
-      final height = panel.height - inset * 2;
-      poster = Rect.fromLTWH(
-        panel.left + inset,
-        panel.top + inset,
-        height * kPosterAspect,
-        height,
-      );
-      details = Rect.fromLTRB(
-        poster.right + 36,
-        panel.top + inset + 8,
-        panel.right - inset,
-        panel.bottom - inset,
-      );
-    }
+    final isNarrow = size.width < kWorkPhoneBreakpoint;
+    final (:panel, :poster, :details) = _finalLayout(
+      size,
+      MediaQuery.paddingOf(context),
+      isNarrow: isNarrow,
+    );
 
     final move = CurvedAnimation(
       parent: animation,
@@ -190,6 +149,62 @@ class _ProjectDetail extends StatelessWidget {
   }
 }
 
+/// Where the panel, poster and details end up. Phones: full screen, poster
+/// on top, details below. Elsewhere: a centred panel, poster on the left,
+/// details beside it. The poster keeps the card's shape so it simply grows
+/// into place.
+({Rect panel, Rect poster, Rect details}) _finalLayout(
+  Size size,
+  EdgeInsets safe, {
+  required bool isNarrow,
+}) {
+  const inset = 24.0;
+  if (isNarrow) {
+    final height = math.min(
+      size.height * 0.45,
+      (size.width - inset * 2) / kPosterAspect,
+    );
+    final poster = Rect.fromLTWH(
+      (size.width - height * kPosterAspect) / 2,
+      safe.top + inset,
+      height * kPosterAspect,
+      height,
+    );
+    return (
+      panel: Offset.zero & size,
+      poster: poster,
+      details: Rect.fromLTRB(
+        inset,
+        poster.bottom + 24,
+        size.width - inset,
+        size.height - safe.bottom,
+      ),
+    );
+  }
+  final panel = Rect.fromCenter(
+    center: size.center(Offset.zero),
+    width: math.min(980, size.width - 64),
+    height: math.min(640, size.height - 64),
+  );
+  final height = panel.height - inset * 2;
+  final poster = Rect.fromLTWH(
+    panel.left + inset,
+    panel.top + inset,
+    height * kPosterAspect,
+    height,
+  );
+  return (
+    panel: panel,
+    poster: poster,
+    details: Rect.fromLTRB(
+      poster.right + 36,
+      panel.top + inset + 8,
+      panel.right - inset,
+      panel.bottom - inset,
+    ),
+  );
+}
+
 String _storeName(String link) =>
     link.contains('play.google.com') ? 'Google Play' : 'the App Store';
 
@@ -232,25 +247,9 @@ class _Details extends StatelessWidget {
             style: SiteText.body(palette.textSecondary, size: 15),
           ),
           const SizedBox(height: 20),
-          _Bullet(Text(project.problem, style: body), style: body),
-          _Bullet(Text(project.built, style: body), style: body),
-          _Bullet(
-            Text.rich(
-              TextSpan(
-                style: body,
-                children: [
-                  for (final word in project.result.split(' '))
-                    TextSpan(
-                      text: '$word ',
-                      style: word.startsWith(RegExp('[0-9]'))
-                          ? const TextStyle(fontWeight: FontWeight.w700)
-                          : null,
-                    ),
-                ],
-              ),
-            ),
-            style: body,
-          ),
+          _Bullet(TextSpan(text: project.problem), style: body),
+          _Bullet(TextSpan(text: project.built), style: body),
+          _Bullet(_boldNumbers(project.result), style: body),
           const SizedBox(height: 8),
           Text(
             project.stack,
@@ -273,10 +272,25 @@ class _Details extends StatelessWidget {
   }
 }
 
-class _Bullet extends StatelessWidget {
-  const _Bullet(this.child, {required this.style});
+final _startsWithDigit = RegExp('^[0-9]');
 
-  final Widget child;
+/// [text] with every word that starts with a digit in bold, e.g. "60%".
+TextSpan _boldNumbers(String text) => TextSpan(
+  children: [
+    for (final word in text.split(' '))
+      TextSpan(
+        text: '$word ',
+        style: _startsWithDigit.hasMatch(word)
+            ? const TextStyle(fontWeight: FontWeight.w700)
+            : null,
+      ),
+  ],
+);
+
+class _Bullet extends StatelessWidget {
+  const _Bullet(this.text, {required this.style});
+
+  final InlineSpan text;
   final TextStyle style;
 
   @override
@@ -286,7 +300,7 @@ class _Bullet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('•  ', style: style),
-        Expanded(child: child),
+        Expanded(child: Text.rich(text, style: style)),
       ],
     ),
   );

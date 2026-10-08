@@ -4,13 +4,13 @@ import 'dart:ui' show ImageFilter, lerpDouble;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/core/presentation/widgets/press_scale.dart';
+import 'package:my_portfolio/core/presentation/widgets/tappable.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/services/tap_feedback.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
-
-/// Width / height of every poster card. Posters are drawn for this shape.
-const double kPosterAspect = 0.78;
+import 'package:my_portfolio/features/projects/presentation/widgets/project_poster.dart';
 
 /// Page width as a share of the carousel, and card scale in the middle and
 /// at the sides. On desktop these fit all three cards edge to edge with a
@@ -26,9 +26,9 @@ const _Layout _phone = (fraction: 0.74, centerScale: 1, sideScale: 0.85);
 
 /// Posters only, one project in the middle with smaller neighbours either
 /// side, on a frosted glass stage lit by a blurred glow of the middle
-/// poster. Loops endlessly and rotates on its own until someone hovers, drags
-/// or opens a project. Every transform
-/// reads the live page value, so motion follows a drag.
+/// poster. Loops endlessly and rotates on its own until someone hovers,
+/// drags or opens a project. Every transform reads the live page value, so
+/// motion follows a drag.
 class ProjectCarousel extends StatefulWidget {
   const ProjectCarousel({
     required this.projects,
@@ -88,7 +88,9 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
     super.didChangeDependencies();
     // viewportFraction is fixed per controller, so swap it at the breakpoint
     // and keep the current page.
-    final layout = MediaQuery.sizeOf(context).width < 720 ? _phone : _desktop;
+    final layout = MediaQuery.sizeOf(context).width < kWorkPhoneBreakpoint
+        ? _phone
+        : _desktop;
     if (_controller == null || layout != _layout) {
       final old = _controller;
       _controller = PageController(
@@ -114,8 +116,12 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
   }
 
   void _animateTo(int page) {
+    // Unattached while this page sits unbuilt under another route (a direct
+    // visit to /work/all); the auto-rotate timer still fires there.
+    final controller = _controller;
+    if (controller == null || !controller.hasClients) return;
     unawaited(
-      _controller?.animateToPage(
+      controller.animateToPage(
         page,
         duration: const Duration(milliseconds: 600),
         curve: Curves.easeInOutCubic,
@@ -180,16 +186,6 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final isNarrow = _layout == _phone;
-    final controller = _controller!;
-    // Desktop arrows sit centred on the side cards' outer edges; inset the
-    // cards by half an arrow so the arrows stay inside and tappable.
-    final inset = isNarrow ? 0.0 : _arrowSize / 2;
-    // Room inside the glass so card shadows fade out before its edge.
-    final pad = isNarrow
-        ? const EdgeInsets.symmetric(horizontal: 10, vertical: 32)
-        : const EdgeInsets.symmetric(horizontal: 20, vertical: 48);
-
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
@@ -214,89 +210,15 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
             onEnter: (_) => _hovering = true,
             onExit: (_) => _hovering = false,
             child: AnimatedBuilder(
-              animation: controller,
+              animation: _controller!,
               builder: (context, _) => Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   LayoutBuilder(
-                    builder: (context, constraints) {
-                      final pageWidth =
-                          (constraints.maxWidth - pad.horizontal - inset * 2) *
-                          _layout.fraction;
-                      return Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Positioned.fill(
-                            left: -48,
-                            right: -48,
-                            top: -32,
-                            bottom: -32,
-                            child: _glow(context),
-                          ),
-                          _GlassStage(
-                            padding: pad,
-                            child: SizedBox(
-                              height:
-                                  pageWidth *
-                                  _layout.centerScale /
-                                  kPosterAspect,
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    left: inset,
-                                    right: inset,
-                                    child: PageView.builder(
-                                      controller: controller,
-                                      // The glass clips instead, past the
-                                      // card shadows.
-                                      clipBehavior: Clip.none,
-                                      itemCount: _count > 1 ? null : 1,
-                                      itemBuilder: (context, index) =>
-                                          _buildSlide(index, pageWidth),
-                                    ),
-                                  ),
-                                  // Above the PageView so it claims wheel
-                                  // events first; the PageView ignores its
-                                  // children while it animates.
-                                  Positioned.fill(
-                                    child: Listener(
-                                      behavior: HitTestBehavior.translucent,
-                                      onPointerSignal: _onPointerSignal,
-                                    ),
-                                  ),
-                                  // Phones swipe; arrows there would sit on the
-                                  // poster.
-                                  if (!isNarrow) ...[
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: _Arrow(
-                                        key: ProjectCarousel.previousKey,
-                                        size: _arrowSize,
-                                        icon: Icons.chevron_left_rounded,
-                                        tooltip: 'Previous project',
-                                        onPressed: () => _go(_index - 1),
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: _Arrow(
-                                        key: ProjectCarousel.nextKey,
-                                        size: _arrowSize,
-                                        icon: Icons.chevron_right_rounded,
-                                        tooltip: 'Next project',
-                                        onPressed: () => _go(_index + 1),
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                    builder: (context, constraints) =>
+                        _stage(context, constraints.maxWidth),
                   ),
-                  SizedBox(height: isNarrow ? 16 : 24),
+                  SizedBox(height: _layout == _phone ? 16 : 24),
                   _pills(context),
                 ],
               ),
@@ -304,6 +226,86 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
           ),
         ),
       ),
+    );
+  }
+
+  /// The glass panel, the glow behind it, the sliding posters and, on
+  /// desktop, the arrows.
+  Widget _stage(BuildContext context, double width) {
+    final isNarrow = _layout == _phone;
+    // Desktop arrows sit centred on the side cards' outer edges; inset the
+    // cards by half an arrow so the arrows stay inside and tappable.
+    final inset = isNarrow ? 0.0 : _arrowSize / 2;
+    // Room inside the glass so card shadows fade out before its edge.
+    final pad = isNarrow
+        ? const EdgeInsets.symmetric(horizontal: 10, vertical: 32)
+        : const EdgeInsets.symmetric(horizontal: 20, vertical: 48);
+    final pageWidth = (width - pad.horizontal - inset * 2) * _layout.fraction;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned.fill(
+          left: -48,
+          right: -48,
+          top: -32,
+          bottom: -32,
+          child: _glow(context),
+        ),
+        _GlassStage(
+          padding: pad,
+          child: SizedBox(
+            height: pageWidth * _layout.centerScale / kPosterAspect,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  left: inset,
+                  right: inset,
+                  child: PageView.builder(
+                    controller: _controller,
+                    // The glass clips instead, past the card shadows.
+                    clipBehavior: Clip.none,
+                    itemCount: _count > 1 ? null : 1,
+                    itemBuilder: (context, index) =>
+                        _buildSlide(index, pageWidth),
+                  ),
+                ),
+                // Above the PageView so it claims wheel events first; the
+                // PageView ignores its children while it animates.
+                Positioned.fill(
+                  child: Listener(
+                    behavior: HitTestBehavior.translucent,
+                    onPointerSignal: _onPointerSignal,
+                  ),
+                ),
+                // Phones swipe; arrows there would sit on the poster.
+                if (!isNarrow) ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: _Arrow(
+                      key: ProjectCarousel.previousKey,
+                      size: _arrowSize,
+                      icon: Icons.chevron_left_rounded,
+                      tooltip: 'Previous project',
+                      onPressed: () => _go(_index - 1),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: _Arrow(
+                      key: ProjectCarousel.nextKey,
+                      size: _arrowSize,
+                      icon: Icons.chevron_right_rounded,
+                      tooltip: 'Next project',
+                      onPressed: () => _go(_index + 1),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -355,28 +357,15 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
             _layout.sideScale,
             distance,
           ),
-          child: Semantics(
-            button: true,
-            label: isCurrent
-                ? 'Open ${project.title}'
-                : 'Show ${project.title}',
-            excludeSemantics: true,
-            child: Builder(
-              builder: (card) => GestureDetector(
-                onTap: () {
-                  tapFeedback();
-                  isCurrent
-                      ? unawaited(_openCurrent(card, project))
-                      : _go(index);
-                },
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: PressScale(
-                    pressedScale: 0.97,
-                    child: ProjectPoster(project: project),
-                  ),
-                ),
-              ),
+          child: Builder(
+            builder: (card) => Tappable(
+              label: isCurrent
+                  ? 'Open ${project.title}'
+                  : 'Show ${project.title}',
+              onTap: () => isCurrent
+                  ? unawaited(_openCurrent(card, project))
+                  : _go(index),
+              child: ProjectPoster(project: project),
             ),
           ),
         ),
@@ -494,38 +483,6 @@ class _Arrow extends StatelessWidget {
           backgroundColor: palette.surfaceCard,
           elevation: 3,
           shadowColor: palette.shadowColor.withValues(alpha: 0.35),
-        ),
-      ),
-    );
-  }
-}
-
-/// A project's poster filling a rounded card. Posters are drawn at
-/// [kPosterAspect]; other shapes are cropped to the centre.
-class ProjectPoster extends StatelessWidget {
-  const ProjectPoster({required this.project, super.key});
-
-  final FeaturedProject project;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = Theme.of(context).homePalette;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: palette.shadowColor.withValues(alpha: 0.22),
-            blurRadius: 28,
-            offset: const Offset(0, 14),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: ColoredBox(
-          color: palette.surfaceMuted,
-          child: Image.asset(project.banner, fit: BoxFit.cover),
         ),
       ),
     );

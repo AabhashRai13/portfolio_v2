@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_page.dart';
-import 'package:my_portfolio/core/presentation/widgets/press_scale.dart';
+import 'package:my_portfolio/core/presentation/widgets/tappable.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
-import 'package:my_portfolio/core/services/tap_feedback.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
 import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
 import 'package:my_portfolio/features/projects/presentation/views/project_detail.dart';
@@ -85,6 +84,9 @@ class _ProjectTile extends StatelessWidget {
     required this.onTap,
   });
 
+  static const double _aboutSize = 14;
+  static const double _aboutLineHeight = 1.45;
+
   final ProjectSummary project;
 
   /// Phones: one row with the icon beside the text, so the list stays
@@ -114,73 +116,56 @@ class _ProjectTile extends StatelessWidget {
       project.about,
       style: SiteText.body(
         palette.textSecondary,
-        size: 14,
-      ).copyWith(height: 1.45),
+        size: _aboutSize,
+      ).copyWith(height: _aboutLineHeight),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
 
-    return Semantics(
-      button: true,
+    // Every card reserves two lines for [about], so cards in a row match.
+    final aboutHeight =
+        2 *
+        MediaQuery.textScalerOf(context).scale(_aboutSize * _aboutLineHeight);
+
+    return Tappable(
       label: 'Open ${project.title}',
-      excludeSemantics: true,
-      child: GestureDetector(
-        onTap: () {
-          tapFeedback();
-          onTap();
-        },
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: PressScale(
-            pressedScale: 0.97,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: palette.surfaceCard.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: palette.textSecondary.withValues(alpha: 0.12),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(compact ? 16 : 20),
-                child: compact
-                    ? Row(
-                        children: [
-                          icon,
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [title, about],
-                            ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [icon, const Spacer(), arrow],
-                          ),
-                          const SizedBox(height: 16),
-                          title,
-                          const SizedBox(height: 4),
-                          // Always two lines tall, so every card in a row
-                          // matches.
-                          SizedBox(
-                            height:
-                                MediaQuery.textScalerOf(
-                                  context,
-                                ).scale(14 * 1.45) *
-                                2,
-                            child: about,
-                          ),
-                        ],
-                      ),
-              ),
-            ),
+      onTap: onTap,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: palette.surfaceCard.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: palette.textSecondary.withValues(alpha: 0.12),
           ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(compact ? 16 : 20),
+          child: compact
+              ? Row(
+                  children: [
+                    icon,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [title, about],
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [icon, const Spacer(), arrow],
+                    ),
+                    const SizedBox(height: 16),
+                    title,
+                    const SizedBox(height: 4),
+                    SizedBox(height: aboutHeight, child: about),
+                  ],
+                ),
         ),
       ),
     );

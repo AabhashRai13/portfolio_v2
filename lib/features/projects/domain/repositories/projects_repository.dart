@@ -1,4 +1,3 @@
-// ignore_for_file: document_ignores
 // This repository stays abstract on purpose so project data can evolve from
 // static mocks to another source without touching the home/project UI.
 

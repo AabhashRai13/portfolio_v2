@@ -8,6 +8,7 @@ import 'package:my_portfolio/core/resources/styles/theme.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
 import 'package:my_portfolio/features/projects/presentation/views/all_projects_page.dart';
 import 'package:my_portfolio/features/projects/presentation/views/work_page.dart';
+import 'package:my_portfolio/features/projects/presentation/widgets/project_carousel.dart';
 
 import '../../helpers/site_test_harness.dart';
 
@@ -45,6 +46,11 @@ void main() {
   testWidgets('/work/all shows every project', (tester) async {
     await pumpAt(tester, '/work/all');
     expect(find.byType(AllProjectsPage), findsOneWidget);
+
+    // The Work page sits unbuilt beneath it; its carousel must not try to
+    // rotate a PageView that does not exist yet.
+    await tester.pump(ProjectCarousel.autoplayInterval * 2);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('/about shows the about page', (tester) async {

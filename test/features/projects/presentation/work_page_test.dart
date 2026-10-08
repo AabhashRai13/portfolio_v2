@@ -9,6 +9,7 @@ import 'package:my_portfolio/features/projects/data/static_project_summaries.dar
 import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
 import 'package:my_portfolio/features/projects/presentation/views/work_page.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/project_carousel.dart';
+import 'package:my_portfolio/features/projects/presentation/widgets/project_poster.dart';
 
 import '../../../helpers/site_test_harness.dart';
 
