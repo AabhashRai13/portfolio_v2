@@ -29,6 +29,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     required this.taglineText,
     required this.linkActive,
     required this.mediaForeground,
+    required this.stageGlow,
   });
 
   /// Hero background gradient stops (4 stops, top-left radial).
@@ -88,6 +89,10 @@ class HomePalette extends ThemeExtension<HomePalette> {
   /// Icons and text drawn over photos or video frames.
   final Color mediaForeground;
 
+  /// Soft peach then dusty lavender: the two washes of light behind the
+  /// Work carousel, on an otherwise plain page.
+  final List<Color> stageGlow;
+
   static const HomePalette light = HomePalette(
     heroGradient: <Color>[
       Color(0xFFFFF1E6),
@@ -119,6 +124,10 @@ class HomePalette extends ThemeExtension<HomePalette> {
     taglineText: Color(0xFFA67B5B),
     linkActive: Color(0xFF9E4F52),
     mediaForeground: Color(0xFFFFFFFF),
+    stageGlow: <Color>[
+      Color(0xFFF9D5BF),
+      Color(0xFFDCCFE8),
+    ],
   );
 
   static const HomePalette dark = HomePalette(
@@ -152,6 +161,10 @@ class HomePalette extends ThemeExtension<HomePalette> {
     taglineText: Color(0xFFD4B896),
     linkActive: Color(0xFFE6A4A4),
     mediaForeground: Color(0xFFFFFFFF),
+    stageGlow: <Color>[
+      Color(0xFF3D2A20),
+      Color(0xFF2E2838),
+    ],
   );
 
   @override
@@ -175,6 +188,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
     Color? taglineText,
     Color? linkActive,
     Color? mediaForeground,
+    List<Color>? stageGlow,
   }) {
     return HomePalette(
       heroGradient: heroGradient ?? this.heroGradient,
@@ -196,6 +210,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       taglineText: taglineText ?? this.taglineText,
       linkActive: linkActive ?? this.linkActive,
       mediaForeground: mediaForeground ?? this.mediaForeground,
+      stageGlow: stageGlow ?? this.stageGlow,
     );
   }
 
@@ -234,6 +249,7 @@ class HomePalette extends ThemeExtension<HomePalette> {
       taglineText: Color.lerp(taglineText, other.taglineText, t)!,
       linkActive: Color.lerp(linkActive, other.linkActive, t)!,
       mediaForeground: Color.lerp(mediaForeground, other.mediaForeground, t)!,
+      stageGlow: _lerpColorList(stageGlow, other.stageGlow, t),
     );
   }
 

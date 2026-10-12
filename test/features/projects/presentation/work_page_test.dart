@@ -8,6 +8,7 @@ import 'package:my_portfolio/app/navigation/site_text_link.dart';
 import 'package:my_portfolio/features/projects/data/static_project_summaries.dart';
 import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
 import 'package:my_portfolio/features/projects/presentation/views/work_page.dart';
+import 'package:my_portfolio/features/projects/presentation/widgets/all_projects_button.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/project_carousel.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/project_poster.dart';
 
@@ -25,18 +26,23 @@ void main() {
   Finder current(int i) => find.bySemanticsLabel('Open ${projects[i].title}');
 
   for (final size in const [Size(375, 812), Size(1440, 900)]) {
-    testWidgets('shows only the posters at $size', (tester) async {
+    testWidgets('heading, posters and the middle project at $size', (
+      tester,
+    ) async {
       setViewSize(tester, size);
       await pumpRouted(tester, page());
 
       expect(find.byKey(SitePage.titleKey), findsNothing);
+      expect(find.text(WorkPage.heading.toUpperCase()), findsOneWidget);
+      expect(find.text(WorkPage.intro), findsOneWidget);
       expect(projects, hasLength(3));
       expect(find.byType(ProjectPoster), findsNWidgets(3));
       expect(current(0), findsOneWidget);
-      // No project text on the carousel itself.
-      for (final project in featuredProjects) {
+      // Only the middle project is named under the stage.
+      expect(find.text(projects[0].title), findsOneWidget);
+      expect(find.text(projects[0].about), findsOneWidget);
+      for (final project in projects.skip(1)) {
         expect(find.text(project.title), findsNothing);
-        expect(find.text(project.title.toUpperCase()), findsNothing);
       }
     });
   }
@@ -185,7 +191,7 @@ void main() {
     setViewSize(tester, const Size(1440, 900));
     await pumpRouted(tester, page());
 
-    final seeAll = find.text('All projects ↗');
+    final seeAll = find.text(AllProjectsButton.label);
     await tester.ensureVisible(seeAll);
     await tester.pumpAndSettle();
     await tester.tap(seeAll);

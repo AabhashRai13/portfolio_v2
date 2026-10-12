@@ -14,6 +14,7 @@ class SitePage extends StatelessWidget {
     this.section,
     this.showTitle = true,
     this.background,
+    this.fillViewport = false,
     super.key,
   });
 
@@ -33,6 +34,12 @@ class SitePage extends StatelessWidget {
   /// Painted behind the whole viewport instead of the flat page colour.
   final Gradient? background;
 
+  /// For a page composed as one screen: the page is at least the window's
+  /// height and [child] sits centred in the space under the top bar, instead
+  /// of leaving the window's bottom empty. Taller content still scrolls.
+  /// The page draws its own heading: [showTitle] and [intro] are ignored.
+  final bool fillViewport;
+
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
@@ -46,49 +53,23 @@ class SitePage extends StatelessWidget {
         // which would end the gradient mid-screen.
         child: SizedBox.expand(
           child: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1080),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 12, 24, 64),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SiteTopBar(current: section),
-                            SizedBox(height: isNarrow ? 32 : 56),
-                            if (showTitle) ...[
-                              Semantics(
-                                header: true,
-                                child: Text(
-                                  title.toUpperCase(),
-                                  key: titleKey,
-                                  style: SiteText.display(
-                                    palette.textStrong,
-                                    size: isNarrow ? 64 : 104,
-                                  ),
-                                ),
-                              ),
-                              if (intro != null) const SizedBox(height: 16),
-                            ],
-                            if (intro != null)
-                              Semantics(
-                                header: !showTitle,
-                                child: Text(
-                                  intro!,
-                                  style: SiteText.body(palette.textSecondary),
-                                ),
-                              ),
-                            SizedBox(height: isNarrow ? 32 : 48),
-                            child,
-                          ],
+            child: LayoutBuilder(
+              builder: (context, viewport) => SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1080),
+                        child: Padding(
+                          padding: _padding,
+                          child: fillViewport
+                              ? _filled(viewport.maxHeight)
+                              : _stacked(palette, isNarrow: isNarrow),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -96,4 +77,59 @@ class SitePage extends StatelessWidget {
       ),
     );
   }
+
+  EdgeInsets get _padding =>
+      EdgeInsets.fromLTRB(24, 12, 24, fillViewport ? 24 : 64);
+
+  /// Top bar at the top, [child] centred in the rest of the window.
+  Widget _filled(double viewportHeight) => ConstrainedBox(
+    constraints: BoxConstraints(
+      minHeight: viewportHeight - _padding.vertical,
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SiteTopBar(current: section),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: child,
+        ),
+        const SizedBox.shrink(),
+      ],
+    ),
+  );
+
+  /// Top bar, optional title and intro, then [child], top to bottom.
+  Widget _stacked(HomePalette palette, {required bool isNarrow}) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SiteTopBar(current: section),
+      SizedBox(height: isNarrow ? 32 : 56),
+      if (showTitle) ...[
+        Semantics(
+          header: true,
+          child: Text(
+            title.toUpperCase(),
+            key: titleKey,
+            style: SiteText.display(
+              palette.textStrong,
+              size: isNarrow ? 64 : 104,
+            ),
+          ),
+        ),
+        if (intro != null) const SizedBox(height: 16),
+      ],
+      if (intro != null)
+        Semantics(
+          header: !showTitle,
+          child: Text(
+            intro!,
+            style: SiteText.body(palette.textSecondary),
+          ),
+        ),
+      SizedBox(height: isNarrow ? 32 : 48),
+      child,
+    ],
+  );
 }

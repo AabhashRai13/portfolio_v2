@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'dart:ui' show ImageFilter, lerpDouble;
+import 'dart:math' as math;
+import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/core/presentation/widgets/press_scale.dart';
 import 'package:my_portfolio/core/presentation/widgets/tappable.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
+import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/core/services/tap_feedback.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
 import 'package:my_portfolio/features/projects/presentation/widgets/project_poster.dart';
@@ -24,15 +26,17 @@ const _Layout _desktop = (
 );
 const _Layout _phone = (fraction: 0.74, centerScale: 1, sideScale: 0.85);
 
-/// Posters only, one project in the middle with smaller neighbours either
-/// side, on a frosted glass stage lit by a blurred glow of the middle
-/// poster. Loops endlessly and rotates on its own until someone hovers,
-/// drags or opens a project. Every transform reads the live page value, so
-/// motion follows a drag.
+/// One poster in the middle, lifted, with smaller, quieter neighbours either
+/// side, on a frosted glass stage over a soft peach and lavender glow. The
+/// middle project's name and one line about it sit under the stage. Loops
+/// endlessly and rotates on its own until someone hovers, drags or opens a
+/// project. Every transform reads the live page value, so motion follows a
+/// drag.
 class ProjectCarousel extends StatefulWidget {
   const ProjectCarousel({
     required this.projects,
     required this.onOpen,
+    this.maxCardHeight = double.infinity,
     super.key,
   });
 
@@ -47,12 +51,18 @@ class ProjectCarousel extends StatefulWidget {
   /// the returned future completes (the project view closes).
   final Future<void> Function(FeaturedProject project, Rect origin) onOpen;
 
+  /// Tallest the middle card may be. On a short window the whole stage
+  /// narrows to keep this, so the cards keep their shape and spacing.
+  final double maxCardHeight;
+
   @override
   State<ProjectCarousel> createState() => _ProjectCarouselState();
 }
 
 class _ProjectCarouselState extends State<ProjectCarousel> {
-  static const double _arrowSize = 56;
+  /// The arrows look 40 px wide but take taps across 48 px.
+  static const double _arrowSize = 40;
+  static const double _arrowTarget = 48;
 
   final FocusNode _focus = FocusNode(skipTraversal: true);
   PageController? _controller;
@@ -218,7 +228,9 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
                     builder: (context, constraints) =>
                         _stage(context, constraints.maxWidth),
                   ),
-                  SizedBox(height: _layout == _phone ? 16 : 24),
+                  SizedBox(height: _layout == _phone ? 20 : 24),
+                  _caption(context),
+                  const SizedBox(height: 12),
                   _pills(context),
                 ],
               ),
@@ -230,133 +242,130 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
   }
 
   /// The glass panel, the glow behind it, the sliding posters and, on
-  /// desktop, the arrows.
+  /// desktop, the arrows on the glass's outer edges.
   Widget _stage(BuildContext context, double width) {
     final isNarrow = _layout == _phone;
-    // Desktop arrows sit centred on the side cards' outer edges; inset the
-    // cards by half an arrow so the arrows stay inside and tappable.
-    final inset = isNarrow ? 0.0 : _arrowSize / 2;
+    // Desktop arrows sit centred on the glass's left and right edges; leave
+    // half a tap target either side so their outer halves stay tappable.
+    final arrowRoom = isNarrow ? 0.0 : _arrowTarget / 2;
     // Room inside the glass so card shadows fade out before its edge.
     final pad = isNarrow
         ? const EdgeInsets.symmetric(horizontal: 10, vertical: 32)
-        : const EdgeInsets.symmetric(horizontal: 20, vertical: 48);
-    final pageWidth = (width - pad.horizontal - inset * 2) * _layout.fraction;
-
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Positioned.fill(
-          left: -48,
-          right: -48,
-          top: -32,
-          bottom: -32,
-          child: _glow(context),
-        ),
-        _GlassStage(
-          padding: pad,
-          child: SizedBox(
-            height: pageWidth * _layout.centerScale / kPosterAspect,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  left: inset,
-                  right: inset,
-                  child: PageView.builder(
-                    controller: _controller,
-                    // The glass clips instead, past the card shadows.
-                    clipBehavior: Clip.none,
-                    itemCount: _count > 1 ? null : 1,
-                    itemBuilder: (context, index) =>
-                        _buildSlide(index, pageWidth),
-                  ),
-                ),
-                // Above the PageView so it claims wheel events first; the
-                // PageView ignores its children while it animates.
-                Positioned.fill(
-                  child: Listener(
-                    behavior: HitTestBehavior.translucent,
-                    onPointerSignal: _onPointerSignal,
-                  ),
-                ),
-                // Phones swipe; arrows there would sit on the poster.
-                if (!isNarrow) ...[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: _Arrow(
-                      key: ProjectCarousel.previousKey,
-                      size: _arrowSize,
-                      icon: Icons.chevron_left_rounded,
-                      tooltip: 'Previous project',
-                      onPressed: () => _go(_index - 1),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: _Arrow(
-                      key: ProjectCarousel.nextKey,
-                      size: _arrowSize,
-                      icon: Icons.chevron_right_rounded,
-                      tooltip: 'Next project',
-                      onPressed: () => _go(_index + 1),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ],
+        : const EdgeInsets.symmetric(horizontal: 20, vertical: 32);
+    final pageWidth = math.min(
+      (width - arrowRoom * 2 - pad.horizontal) * _layout.fraction,
+      widget.maxCardHeight * kPosterAspect / _layout.centerScale,
     );
-  }
+    final stageWidth =
+        pageWidth / _layout.fraction + pad.horizontal + arrowRoom * 2;
 
-  /// The two posters nearest the middle, cross-faded by how close each is
-  /// and blurred together into one soft wash of colour.
-  Widget _glow(BuildContext context) {
-    final page = _page;
-    final strength = Theme.of(context).brightness == Brightness.dark
-        ? 0.35
-        : 0.55;
-    return IgnorePointer(
-      child: ImageFiltered(
-        imageFilter: ImageFilter.blur(
-          sigmaX: 60,
-          sigmaY: 60,
-          tileMode: TileMode.decal,
-        ),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            for (final i in [page.floor(), page.floor() + 1])
-              Opacity(
-                opacity: (1 - (i - page).abs()).clamp(0.0, 1.0) * strength,
-                // A small decode is plenty for a blur this wide.
-                child: Image.asset(
-                  widget.projects[i % _count].banner,
-                  fit: BoxFit.cover,
-                  cacheWidth: 160,
-                ),
-              ),
-          ],
-        ),
+    return Center(
+      child: SizedBox(
+        width: stageWidth,
+        child: _stageLayers(isNarrow, arrowRoom, pad, pageWidth),
       ),
     );
   }
 
-  Widget _buildSlide(int index, double pageWidth) {
+  Widget _stageLayers(
+    bool isNarrow,
+    double arrowRoom,
+    EdgeInsets pad,
+    double pageWidth,
+  ) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        const Positioned.fill(
+          left: -160,
+          right: -160,
+          top: -120,
+          bottom: -120,
+          child: _StageGlow(),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: arrowRoom),
+          child: _GlassStage(
+            padding: pad,
+            child: SizedBox(
+              height: pageWidth * _layout.centerScale / kPosterAspect,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: PageView.builder(
+                      controller: _controller,
+                      // The glass clips instead, past the card shadows.
+                      clipBehavior: Clip.none,
+                      itemCount: _count > 1 ? null : 1,
+                      itemBuilder: (context, index) =>
+                          _buildSlide(context, index, pageWidth),
+                    ),
+                  ),
+                  // Above the PageView so it claims wheel events first; the
+                  // PageView ignores its children while it animates.
+                  Positioned.fill(
+                    child: Listener(
+                      behavior: HitTestBehavior.translucent,
+                      onPointerSignal: _onPointerSignal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // Phones swipe; arrows there would sit on the poster.
+        if (!isNarrow) ...[
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: _Arrow(
+                key: ProjectCarousel.previousKey,
+                size: _arrowSize,
+                icon: Icons.chevron_left_rounded,
+                tooltip: 'Previous project',
+                onPressed: () => _go(_index - 1),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: _Arrow(
+                key: ProjectCarousel.nextKey,
+                size: _arrowSize,
+                icon: Icons.chevron_right_rounded,
+                tooltip: 'Next project',
+                onPressed: () => _go(_index + 1),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildSlide(BuildContext context, int index, double pageWidth) {
+    final palette = Theme.of(context).homePalette;
     final project = widget.projects[index % _count];
     final distance = (index - _page).abs().clamp(0.0, 1.0);
     final isCurrent = index == _index;
+    final scale = lerpDouble(
+      _layout.centerScale,
+      _layout.sideScale,
+      distance,
+    )!;
 
     return Center(
       child: SizedBox(
         width: pageWidth,
         height: pageWidth / kPosterAspect,
         child: Transform.scale(
-          scale: lerpDouble(
-            _layout.centerScale,
-            _layout.sideScale,
-            distance,
-          ),
+          scale: scale,
           child: Builder(
             builder: (card) => Tappable(
               label: isCurrent
@@ -365,10 +374,71 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
               onTap: () => isCurrent
                   ? unawaited(_openCurrent(card, project))
                   : _go(index),
-              child: ProjectPoster(project: project),
+              // Neighbours step back, a little faded and less saturated,
+              // so the middle card holds the eye.
+              child: Opacity(
+                opacity: 1 - 0.15 * distance,
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.matrix(
+                    _saturation(1 - 0.4 * distance),
+                  ),
+                  child: ProjectPoster(
+                    project: project,
+                    // The same corner on screen at every scale.
+                    radius: kPosterRadius / scale,
+                    shadow: BoxShadow.lerp(
+                      BoxShadow(
+                        color: palette.shadowColor.withValues(alpha: 0.3),
+                        blurRadius: 48,
+                        offset: const Offset(0, 24),
+                      ),
+                      BoxShadow(
+                        color: palette.shadowColor.withValues(alpha: 0.1),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                      distance,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// The middle project's name and what it is. Fades out as its card leaves
+  /// the middle and back in as the next arrives, so it follows a drag.
+  Widget _caption(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
+    final isNarrow = _layout == _phone;
+    final page = _page;
+    final project = widget.projects[_selected];
+    return Opacity(
+      opacity: (1 - (page - page.round()).abs() * 2).clamp(0.0, 1.0),
+      child: Column(
+        children: [
+          Text(
+            project.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: SiteText.body(
+              palette.textStrong,
+              size: isNarrow ? 18 : 20,
+            ).copyWith(fontWeight: FontWeight.w600, height: 1.3),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            project.about,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: SiteText.body(palette.textSecondary, size: 15),
+          ),
+        ],
       ),
     );
   }
@@ -416,6 +486,65 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
       ],
     );
   }
+}
+
+/// Colour matrix that keeps [s] of the saturation: 1 leaves colours alone,
+/// 0 is greyscale (Rec. 709 luma weights).
+List<double> _saturation(double s) {
+  const r = 0.2126;
+  const g = 0.7152;
+  const b = 0.0722;
+  final k = 1 - s;
+  return [
+    r * k + s, g * k, b * k, 0, 0, //
+    r * k, g * k + s, b * k, 0, 0, //
+    r * k, g * k, b * k + s, 0, 0, //
+    0, 0, 0, 1, 0, //
+  ];
+}
+
+/// Light gathered behind the stage: soft peach low on the left and dusty
+/// lavender high on the right, both fading out well before the page edge so
+/// the rest of the page stays plain warm cream. Radial gradients rather than
+/// a blur, so it paints once and costs nothing while the carousel moves.
+class _StageGlow extends StatelessWidget {
+  const _StageGlow();
+
+  @override
+  Widget build(BuildContext context) {
+    final [peach, lavender] = Theme.of(context).homePalette.stageGlow;
+    return IgnorePointer(
+      child: RepaintBoundary(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            _wash(peach, const Alignment(-0.7, 0.45)),
+            _wash(lavender, const Alignment(0.7, -0.45)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// A wide, soft oval of [color] centred at [at]. The gradient reaches
+  /// transparent at the box's short edges, so nothing ends in a hard line.
+  static Widget _wash(Color color, Alignment at) => Align(
+    alignment: at,
+    child: FractionallySizedBox(
+      widthFactor: 0.42,
+      heightFactor: 0.9,
+      child: Transform.scale(
+        scaleX: 1.5,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              colors: [color, color.withValues(alpha: 0)],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 /// Frosted panel from the first version of the site: a faint white sheen,
@@ -476,9 +605,11 @@ class _Arrow extends StatelessWidget {
           tapFeedback();
           onPressed();
         },
-        icon: Icon(icon, size: 30),
+        icon: Icon(icon, size: 24),
         style: IconButton.styleFrom(
           fixedSize: Size.square(size),
+          // Drawn at [size] but tappable across 48 px.
+          tapTargetSize: MaterialTapTargetSize.padded,
           foregroundColor: palette.textStrong,
           backgroundColor: palette.surfaceCard,
           elevation: 3,
