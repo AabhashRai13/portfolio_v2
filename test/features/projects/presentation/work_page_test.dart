@@ -111,6 +111,24 @@ void main() {
     );
   });
 
+  testWidgets('resizing across the phone breakpoint keeps the project', (
+    tester,
+  ) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(tester, page());
+    await tester.tap(find.byKey(ProjectCarousel.nextKey));
+    await tester.pumpAndSettle();
+    expect(current(1), findsOneWidget);
+
+    setViewSize(tester, const Size(375, 812));
+    await tester.pumpAndSettle();
+    expect(current(1), findsOneWidget);
+
+    setViewSize(tester, const Size(1440, 900));
+    await tester.pumpAndSettle();
+    expect(current(1), findsOneWidget);
+  });
+
   testWidgets('a pill jumps to its project', (tester) async {
     setViewSize(tester, const Size(1440, 900));
     await pumpRouted(tester, page());

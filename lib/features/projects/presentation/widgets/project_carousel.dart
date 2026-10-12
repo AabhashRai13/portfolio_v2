@@ -293,6 +293,11 @@ class _ProjectCarouselState extends State<ProjectCarousel> {
                 children: [
                   Positioned.fill(
                     child: PageView.builder(
+                      // A fresh scroll position per layout. Reusing the old
+                      // one makes the new controller change its viewport
+                      // fraction mid-build, which notifies the
+                      // AnimatedBuilder above during build.
+                      key: ValueKey(_layout),
                       controller: _controller,
                       // The glass clips instead, past the card shadows.
                       clipBehavior: Clip.none,
