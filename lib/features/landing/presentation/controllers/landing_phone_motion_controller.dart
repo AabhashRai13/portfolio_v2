@@ -51,6 +51,7 @@ class LandingPhoneMotionController extends ChangeNotifier {
   bool _hovered = false;
   bool _dragging = false;
   Offset _lastDragPosition = Offset.zero;
+  double _dragScale = 1;
 
   bool get enabled => _enabled;
 
@@ -158,11 +159,14 @@ class LandingPhoneMotionController extends ChangeNotifier {
     );
   }
 
-  void onPanStart(DragStartDetails details) {
+  /// [screenScale] is how many screen pixels one phone pixel covers; the
+  /// landing scales down on short windows.
+  void onPanStart(DragStartDetails details, {double screenScale = 1}) {
     if (!_enabled || _locked) return;
     _x.stop();
     _y.stop();
     _lastDragPosition = details.globalPosition;
+    _dragScale = screenScale;
     _dragging = true;
     notifyListeners();
   }
@@ -170,7 +174,7 @@ class LandingPhoneMotionController extends ChangeNotifier {
   void onPanUpdate(DragUpdateDetails details) {
     if (!_enabled || _locked) return;
     // Global movement keeps the phone attached to the pointer as it scales.
-    final delta = details.globalPosition - _lastDragPosition;
+    final delta = (details.globalPosition - _lastDragPosition) / _dragScale;
     _lastDragPosition = details.globalPosition;
     _x.value += delta.dx;
     _y.value += delta.dy;

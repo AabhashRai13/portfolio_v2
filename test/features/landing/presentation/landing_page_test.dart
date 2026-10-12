@@ -39,15 +39,18 @@ void main() {
     });
   }
 
-  // The phone keeps its size, so the name and tagline shrink on shorter
-  // desktop viewports to keep the whole tagline on the first screen.
+  // Short desktop windows scale the hub down, so everything down to the hint
+  // line sits inside the glass panel (24 px inset) on the first screen.
   for (final size in const [
     Size(1920, 1080),
     Size(1835, 1058),
     Size(1728, 994),
     Size(1536, 940),
+    Size(1440, 900),
+    Size(1440, 780),
+    Size(1280, 720),
   ]) {
-    testWidgets('tagline is fully visible on first load at $size', (
+    testWidgets('whole hub is visible on first load at $size', (
       tester,
     ) async {
       setViewSize(tester, size);
@@ -55,8 +58,8 @@ void main() {
       await tester.pump(const Duration(seconds: 2));
 
       expect(
-        tester.getBottomLeft(find.text('APPS')).dy,
-        lessThanOrEqualTo(size.height),
+        tester.getBottomLeft(find.text('EXPLORE THE TILES')).dy,
+        lessThanOrEqualTo(size.height - 24),
       );
     });
   }
@@ -211,6 +214,30 @@ void main() {
       tester.widget<Transform>(phone).transform.getTranslation().x,
       closeTo(0, 2),
     );
+  });
+
+  testWidgets('scaled-down phone stays under the pointer while dragged', (
+    tester,
+  ) async {
+    setViewSize(tester, const Size(1280, 720));
+    await pumpRouted(tester, const LandingPage(), settle: false);
+    await tester.pump(const Duration(seconds: 2));
+
+    final screen = find.byKey(LandingWidgetGrid.keyFor(SiteSection.work));
+    final before = tester.getCenter(screen);
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(LandingPhone.motionKey)),
+    );
+    // The drag starts at pointer-down, so all three moves count.
+    await gesture.moveBy(const Offset(0, 30));
+    await tester.pump();
+    await gesture.moveBy(const Offset(0, 30));
+    await tester.pump();
+    await gesture.moveBy(const Offset(0, 30));
+    await tester.pump();
+
+    expect(tester.getCenter(screen).dy - before.dy, closeTo(90, 3));
+    await gesture.up();
   });
 
   group('desktop contact inside the phone', () {

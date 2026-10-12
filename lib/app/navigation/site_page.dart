@@ -15,6 +15,7 @@ class SitePage extends StatelessWidget {
     this.showTitle = true,
     this.background,
     this.fillViewport = false,
+    this.contentMaxWidth,
     super.key,
   });
 
@@ -39,6 +40,10 @@ class SitePage extends StatelessWidget {
   /// of leaving the window's bottom empty. Taller content still scrolls.
   /// The page draws its own heading: [showTitle] and [intro] are ignored.
   final bool fillViewport;
+
+  /// Narrows the title and content into a centred column under the
+  /// full-width top bar; null keeps them at the top bar's width.
+  final double? contentMaxWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -101,35 +106,52 @@ class SitePage extends StatelessWidget {
   );
 
   /// Top bar, optional title and intro, then [child], top to bottom.
-  Widget _stacked(HomePalette palette, {required bool isNarrow}) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      SiteTopBar(current: section),
-      SizedBox(height: isNarrow ? 32 : 56),
-      if (showTitle) ...[
-        Semantics(
-          header: true,
-          child: Text(
-            title.toUpperCase(),
-            key: titleKey,
-            style: SiteText.display(
-              palette.textStrong,
-              size: isNarrow ? 64 : 104,
+  Widget _stacked(HomePalette palette, {required bool isNarrow}) {
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (showTitle) ...[
+          Semantics(
+            header: true,
+            child: Text(
+              title.toUpperCase(),
+              key: titleKey,
+              style: SiteText.display(
+                palette.textStrong,
+                size: isNarrow ? 64 : 104,
+              ),
             ),
           ),
-        ),
-        if (intro != null) const SizedBox(height: 16),
-      ],
-      if (intro != null)
-        Semantics(
-          header: !showTitle,
-          child: Text(
-            intro!,
-            style: SiteText.body(palette.textSecondary),
+          if (intro != null) const SizedBox(height: 16),
+        ],
+        if (intro != null)
+          Semantics(
+            header: !showTitle,
+            child: Text(
+              intro!,
+              style: SiteText.body(palette.textSecondary),
+            ),
           ),
-        ),
-      SizedBox(height: isNarrow ? 32 : 48),
-      child,
-    ],
-  );
+        SizedBox(height: isNarrow ? 32 : 48),
+        child,
+      ],
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SiteTopBar(current: section),
+        SizedBox(height: isNarrow ? 32 : 56),
+        if (contentMaxWidth case final maxWidth?)
+          Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: SizedBox(width: double.infinity, child: content),
+            ),
+          )
+        else
+          content,
+      ],
+    );
+  }
 }
