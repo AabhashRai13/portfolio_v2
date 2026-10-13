@@ -65,6 +65,17 @@ void main() {
     });
   }
 
+  // The browser can lay out a nearly zero-height window for a frame while
+  // it loads, resizes or hides the tab.
+  testWidgets('a window shorter than the padding still lays out', (
+    tester,
+  ) async {
+    setViewSize(tester, const Size(375, 30));
+    await pumpRouted(tester, const LandingPage(), settle: false);
+    await tester.pump(const Duration(seconds: 2));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('desktop frames the grid in a draggable phone', (tester) async {
     setViewSize(tester, const Size(1440, 900));
     await pumpRouted(tester, const LandingPage(), settle: false);

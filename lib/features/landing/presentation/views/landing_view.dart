@@ -172,7 +172,7 @@ class LandingView extends StatelessWidget {
                       ),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight - 40,
+                          minHeight: math.max(0, constraints.maxHeight - 40),
                         ),
                         child: Center(
                           child: ConstrainedBox(
