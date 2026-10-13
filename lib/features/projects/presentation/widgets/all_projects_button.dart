@@ -4,10 +4,6 @@ import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/core/services/tap_feedback.dart';
 
-/// The way from the carousel to every project: a glass pill cut from the
-/// same stuff as the stage above it. The arrow is an icon, not a typed
-/// glyph, so it never falls back to an emoji. On hover or focus the pill
-/// turns rose and the arrow steps forward.
 class AllProjectsButton extends StatefulWidget {
   const AllProjectsButton({required this.onTap, super.key});
 
