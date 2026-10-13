@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'dart:math' as math;
+
+import 'package:flutter/gestures.dart' show kPrimaryButton, kTouchSlop;
 
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
+import 'package:my_portfolio/core/services/tap_feedback.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_preview_controller.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_tile_interaction_controller.dart';
 
@@ -22,16 +26,94 @@ class LandingWidgetGrid extends StatefulWidget {
   static Key keyFor(SiteSection section) =>
       ValueKey<String>('landing-widget-${section.name}');
 
+  /// The beat between a tap and its page: long enough to see the tile
+  /// spring back from the press, short enough to read as instant.
+  static const Duration openDelay = Duration(milliseconds: 120);
+
+  /// Each tile plays the shared tap sound on its own note of a major
+  /// pentatonic scale, rising from Contact (the Work carousel arrows' own
+  /// note) to Work, so the grid sounds like one instrument.
+  static double pitchFor(SiteSection section) {
+    final semitones = switch (section) {
+      SiteSection.work => 7,
+      SiteSection.about => 4,
+      SiteSection.writing => 2,
+      SiteSection.contact => 0,
+    };
+    return math.pow(2, semitones / 12).toDouble();
+  }
+
   @override
   State<LandingWidgetGrid> createState() => _LandingWidgetGridState();
 }
 
 /// Owns controller lifetime; tile interaction policy stays in the controller.
 class _LandingWidgetGridState extends State<LandingWidgetGrid> {
+  /// How far the tile sinks while pressed, and how long a keyboard press
+  /// (which has no pointer down or up) holds it there.
+  static const double _pressedScale = 0.95;
+  static const Duration _keyPress = Duration(milliseconds: 90);
+
   final _interaction = LandingTileInteractionController();
+  Timer? _open;
+  Timer? _keyRelease;
+  Offset? _downAt;
+  bool _pointerPress = false;
+
+  /// Presses on the raw pointer, not the tap gesture: inside the desktop
+  /// phone the drag recogniser holds a tap back until the finger lifts, which
+  /// would hide the squish on a quick click.
+  void _onPointerDown(SiteSection section, PointerDownEvent event) {
+    if (event.buttons != kPrimaryButton) return;
+    _downAt = event.position;
+    _pointerPress = true;
+    _interaction.setPressed(section, isPressed: true);
+  }
+
+  /// A press that moves past the touch slop is dragging the phone, not
+  /// pressing a tile.
+  void _onPointerMove(SiteSection section, PointerMoveEvent event) {
+    final downAt = _downAt;
+    if (downAt != null && (event.position - downAt).distance > kTouchSlop) {
+      _cancelPress(section);
+    }
+  }
+
+  /// The pointer left without a tap (a drag, or the system took it).
+  void _cancelPress(SiteSection section) {
+    _pointerPress = false;
+    _release(section);
+  }
+
+  void _release(SiteSection section) {
+    _downAt = null;
+    _interaction.setPressed(section, isPressed: false);
+  }
+
+  void _activate(SiteSection section) {
+    // One page per tap: ignore taps while the last one is on its way.
+    if (_open?.isActive ?? false) return;
+    tapFeedback(pitch: LandingWidgetGrid.pitchFor(section));
+    if (!_pointerPress) {
+      // Enter or Space: give the key the same squish a finger gets.
+      _interaction.setPressed(section, isPressed: true);
+      _keyRelease?.cancel();
+      _keyRelease = Timer(_keyPress, () => _release(section));
+    }
+    _pointerPress = false;
+    if (MediaQuery.disableAnimationsOf(context)) {
+      widget.onOpen(section);
+      return;
+    }
+    _open = Timer(LandingWidgetGrid.openDelay, () {
+      if (mounted) widget.onOpen(section);
+    });
+  }
 
   @override
   void dispose() {
+    _open?.cancel();
+    _keyRelease?.cancel();
     _interaction.dispose();
     super.dispose();
   }
@@ -72,28 +154,49 @@ class _LandingWidgetGridState extends State<LandingWidgetGrid> {
               scale: scale,
               child: ListenableBuilder(
                 listenable: _interaction,
-                builder: (context, _) => AnimatedScale(
-                  scale: _interaction.scaleFor(section),
-                  duration: MediaQuery.disableAnimationsOf(context)
-                      ? Duration.zero
-                      : const Duration(milliseconds: 200),
-                  curve: Curves.easeOutCubic,
-                  child: _LandingTile(
-                    key: LandingWidgetGrid.keyFor(section),
-                    section: section,
-                    active: _interaction.isActive(section),
-                    focused: _interaction.isFocused(section),
-                    onHover: (value) => _interaction.setHovered(
-                      section,
-                      isHovered: value,
+                builder: (context, _) {
+                  final reduceMotion = MediaQuery.disableAnimationsOf(context);
+                  final pressed = _interaction.isPressed(section);
+                  return AnimatedScale(
+                    scale: _interaction.scaleFor(section),
+                    duration: reduceMotion
+                        ? Duration.zero
+                        : const Duration(milliseconds: 200),
+                    curve: Curves.easeOutCubic,
+                    // Sinks fast on press; springs back with a little
+                    // overshoot on release.
+                    child: AnimatedScale(
+                      scale: pressed ? _pressedScale : 1,
+                      duration: reduceMotion
+                          ? Duration.zero
+                          : Duration(milliseconds: pressed ? 90 : 320),
+                      curve: pressed ? Curves.easeOutCubic : Curves.easeOutBack,
+                      child: Listener(
+                        onPointerDown: (event) =>
+                            _onPointerDown(section, event),
+                        onPointerMove: (event) =>
+                            _onPointerMove(section, event),
+                        onPointerUp: (_) => _release(section),
+                        onPointerCancel: (_) => _cancelPress(section),
+                        child: _LandingTile(
+                          key: LandingWidgetGrid.keyFor(section),
+                          section: section,
+                          active: _interaction.isActive(section),
+                          focused: _interaction.isFocused(section),
+                          onHover: (value) => _interaction.setHovered(
+                            section,
+                            isHovered: value,
+                          ),
+                          onFocusChange: (value) => _interaction.setFocused(
+                            section,
+                            isFocused: value,
+                          ),
+                          onTap: () => _activate(section),
+                        ),
+                      ),
                     ),
-                    onFocusChange: (value) => _interaction.setFocused(
-                      section,
-                      isFocused: value,
-                    ),
-                    onTap: () => widget.onOpen(section),
-                  ),
-                ),
+                  );
+                },
               ),
             );
           },

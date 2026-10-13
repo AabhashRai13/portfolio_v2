@@ -75,6 +75,8 @@ void main() {
 
     final tile = find.byKey(LandingWidgetGrid.keyFor(SiteSection.work));
     await tester.tap(tile);
+    // The tile's beat before its page, then the page is shown in one frame.
+    await tester.pump(LandingWidgetGrid.openDelay);
     await tester.pump();
     final route = ModalRoute.of(tester.element(find.byType(WorkPage)))!;
     expect(route.settings, isA<NoTransitionPage<void>>());

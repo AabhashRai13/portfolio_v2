@@ -35,17 +35,19 @@ const double _seconds = 0.06;
 
 _AudioContext? _context;
 
-/// A short, quiet "tuk": a sine dropping in pitch as it fades out. The
-/// context is created on the first tap, which browsers require for audio.
-void playTapSound() {
+/// A short, quiet "tuk": a sine dropping in pitch as it fades out. [pitch]
+/// shifts the whole tone (2 is an octave up) without changing its shape.
+/// The context is created on the first tap, which browsers require for
+/// audio.
+void playTapSound({double pitch = 1}) {
   try {
     final context = _context ??= _AudioContext();
     final now = context.currentTime;
     final tone = context.createOscillator();
     final level = context.createGain();
     tone.frequency
-      ..setValueAtTime(_startHz, now)
-      ..exponentialRampToValueAtTime(_endHz, now + _seconds * 0.7);
+      ..setValueAtTime(_startHz * pitch, now)
+      ..exponentialRampToValueAtTime(_endHz * pitch, now + _seconds * 0.7);
     level.gain
       ..setValueAtTime(_volume, now)
       ..exponentialRampToValueAtTime(0.0001, now + _seconds);

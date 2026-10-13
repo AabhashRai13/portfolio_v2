@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show LogicalKeyboardKey;
+import 'package:flutter/services.dart'
+    show LogicalKeyboardKey, MethodCall, SystemChannels;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/features/landing/presentation/views/contact_landing_page.dart';
@@ -263,6 +264,7 @@ void main() {
       await tester.ensureVisible(tile);
       await tester.pump();
       await tester.tap(tile);
+      await tester.pump(LandingWidgetGrid.openDelay);
       await settleSwitch(tester);
     }
 
@@ -361,6 +363,131 @@ void main() {
 
     expect(find.byType(LandingPhone), findsNothing);
     expect(find.text('EXPLORE THE TILES'), findsOneWidget);
+  });
+
+  // Same feedback as the Work carousel's arrows: a light haptic tick (and,
+  // on the web, the quiet tap sound played alongside it).
+  for (final size in const [Size(390, 844), Size(1440, 900)]) {
+    testWidgets('tapping a tile gives a light haptic tick at $size', (
+      tester,
+    ) async {
+      setViewSize(tester, size);
+      await pumpRouted(tester, const LandingPage(), settle: false);
+      await tester.pump(const Duration(seconds: 2));
+
+      final calls = <MethodCall>[];
+      final messenger = tester.binding.defaultBinaryMessenger
+        ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
+          calls.add(call);
+          return null;
+        });
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+      );
+
+      await tester.tap(find.byKey(LandingWidgetGrid.keyFor(SiteSection.work)));
+      await tester.pumpAndSettle();
+      expect(
+        calls
+            .where((call) => call.method == 'HapticFeedback.vibrate')
+            .map((call) => call.arguments),
+        ['HapticFeedbackType.selectionClick'],
+      );
+    });
+  }
+
+  /// On-screen length of [finder]'s top edge: every scale above it counts,
+  /// the desktop phone's tilt does not.
+  double shownWidth(WidgetTester tester, Finder finder) {
+    final box = tester.renderObject<RenderBox>(finder);
+    final toScreen = box.getTransformTo(null);
+    return (MatrixUtils.transformPoint(toScreen, Offset(box.size.width, 0)) -
+            MatrixUtils.transformPoint(toScreen, Offset.zero))
+        .distance;
+  }
+
+  for (final size in const [Size(390, 844), Size(1440, 900)]) {
+    testWidgets('a pressed tile squishes and springs back at $size', (
+      tester,
+    ) async {
+      setViewSize(tester, size);
+      await pumpRouted(tester, const LandingPage(), settle: false);
+      await tester.pump(const Duration(seconds: 2));
+
+      final tile = find.byKey(LandingWidgetGrid.keyFor(SiteSection.writing));
+      final rest = shownWidth(tester, tile);
+      final press = await tester.startGesture(tester.getCenter(tile));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(shownWidth(tester, tile), lessThan(rest * 0.97));
+
+      await press.cancel();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(shownWidth(tester, tile), moreOrLessEquals(rest, epsilon: 0.5));
+    });
+  }
+
+  testWidgets('dragging the desktop phone does not keep a tile pressed', (
+    tester,
+  ) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(tester, const LandingPage(), settle: false);
+    await tester.pump(const Duration(seconds: 2));
+
+    final tile = find.byKey(LandingWidgetGrid.keyFor(SiteSection.writing));
+    final rest = shownWidth(tester, tile);
+    final drag = await tester.startGesture(tester.getCenter(tile));
+    await tester.pump(const Duration(milliseconds: 50));
+    await drag.moveBy(const Offset(60, 0));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(shownWidth(tester, tile), moreOrLessEquals(rest, epsilon: 0.5));
+    await drag.up();
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('a tile opens its page a beat after the tap', (tester) async {
+    setViewSize(tester, const Size(390, 844));
+    await pumpRouted(tester, const LandingPage(), settle: false);
+    await tester.pump(const Duration(seconds: 2));
+
+    await tester.tap(find.byKey(LandingWidgetGrid.keyFor(SiteSection.work)));
+    await tester.pump(LandingWidgetGrid.openDelay ~/ 2);
+    expect(find.text('page ${SiteSection.work.route}'), findsNothing);
+
+    await tester.pump(LandingWidgetGrid.openDelay);
+    await tester.pumpAndSettle();
+    expect(find.text('page ${SiteSection.work.route}'), findsOneWidget);
+  });
+
+  testWidgets('with reduced motion a tile opens straight away', (
+    tester,
+  ) async {
+    setViewSize(tester, const Size(390, 844));
+    await pumpRouted(
+      tester,
+      const MediaQuery(
+        data: MediaQueryData(size: Size(390, 844), disableAnimations: true),
+        child: LandingPage(),
+      ),
+    );
+
+    await tester.tap(find.byKey(LandingWidgetGrid.keyFor(SiteSection.work)));
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('page ${SiteSection.work.route}'), findsOneWidget);
+  });
+
+  test('each tile plays its own note, highest at Work', () {
+    final pitches = [
+      for (final section in SiteSection.values)
+        LandingWidgetGrid.pitchFor(section),
+    ];
+    expect(pitches.toSet(), hasLength(SiteSection.values.length));
+    expect(pitches, [...pitches]..sort((a, b) => b.compareTo(a)));
+    // Contact keeps the Work carousel arrows' own note.
+    expect(LandingWidgetGrid.pitchFor(SiteSection.contact), 1);
   });
 
   for (final section in SiteSection.values.where(
