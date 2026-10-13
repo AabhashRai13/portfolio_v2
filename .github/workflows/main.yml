@@ -9,6 +9,9 @@ on:
 
 jobs:
   build-and-deploy:
+    # "closed" also fires when a PR is closed without merging; only a merge
+    # into main may deploy.
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
