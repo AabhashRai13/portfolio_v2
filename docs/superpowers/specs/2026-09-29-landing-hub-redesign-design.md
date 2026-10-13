@@ -1,7 +1,7 @@
 # Landing Hub Redesign
 
 Date: 2026-09-29
-Status: Draft for review
+Status: Implemented. Phases 1, 2, 4 and 5 shipped to `development`; phase 3 was dropped.
 
 ## Goal
 
@@ -108,10 +108,10 @@ The Work preview is an invented screen and never shows employer apps.
 
 ### Work
 
-- Flagship projects: Babe, Get This (personal native Android app) and Sadaqa.
+- Flagship projects: Babe, Get This (personal native Android app), Sadaqa and Public IDPoor, the three apps built end to end.
 - Project data stays hard-coded in Dart with bundled image assets, extending the existing `staticProjectSummaries` and `ProjectsRepository`. It changes a few times a year, and a commit already publishes through CI. Firestore plus Storage would add image CORS setup, loading and error states, and console-only editing for no benefit at this volume. The repository interface keeps a later move cheap.
-- The detailed layout, copy and assets for both flagships are settled in a content session with Aabhash at the start of the Work phase. What happens to the remaining office projects is decided in that session too.
-- Until then, `/work` shows the current project cards.
+- As built: one screen with a "Selected work" heading, a poster carousel of the flagships (the middle poster lifted, its quieter neighbours either side, on a glass stage over a soft peach and lavender glow), the middle project's name and one line, pills, and an "Explore all projects" link. Tapping the middle poster grows it into a project view with problem, built and result bullets and its store links.
+- Every other app, team projects included, is a card in the All projects grid at `/work/all`.
 
 ### About
 
@@ -197,8 +197,7 @@ Each phase is a PR into `development`, and the site stays usable after each one.
    - [x] Add an obvious close/back action that restores the widget grid without losing the landing page.
    - [x] Make the embedded form scroll and resize safely inside the phone, including when the software keyboard is open.
    - [x] Keep the existing contact panel as the fallback for mobile, inner pages and the shareable `/contact` route unless a later design decision replaces those entry points.
-5. **Work content.**
-   - The content session for Babe, Get This and Sadaqa (Aabhash provides assets), then the flagship layout.
+5. **Work content.** Done: the flagship carousel, project view and All projects grid (see "Work" under "Inner pages").
 
 ## Out of scope
 
