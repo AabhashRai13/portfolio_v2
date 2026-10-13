@@ -1,45 +1,87 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_page.dart';
-import 'package:my_portfolio/app/navigation/site_text_link.dart';
-import 'package:my_portfolio/core/resources/configs/app.dart';
+import 'package:my_portfolio/app/router/app_routes.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
+import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
-import 'package:my_portfolio/features/projects/presentation/widgets/project_card.dart';
+import 'package:my_portfolio/features/projects/presentation/views/project_detail.dart';
+import 'package:my_portfolio/features/projects/presentation/widgets/all_projects_button.dart';
+import 'package:my_portfolio/features/projects/presentation/widgets/project_carousel.dart';
 
-/// Interim Work page: the existing project cards. Phase 4 replaces this with
-/// the flagship layout for Babe, Get This and Sadaqa.
+/// The apps built end to end, one at a time; every app is on /work/all.
+/// One screen, top to bottom: heading, carousel with the middle project's
+/// name, pills, then the way to every project.
 class WorkPage extends StatelessWidget {
   const WorkPage({required this.controller, super.key});
+
+  static const String heading = 'Selected work';
+  static const String intro =
+      'Apps I built end to end, from first screen to release.';
+
+  /// Everything on a desktop page but the middle card: top bar, heading,
+  /// stage padding, caption, pills, the link and the gaps between them.
+  static const double _chromeHeight = 490;
+
+  /// Below this the posters lose their detail, so the page scrolls instead.
+  static const double _minCardHeight = 300;
 
   final WorkController controller;
 
   @override
   Widget build(BuildContext context) {
-    // ProjectCard sizes itself from the legacy App/AppDimensions config.
-    App.init(context);
-
+    final palette = Theme.of(context).homePalette;
+    final window = MediaQuery.sizeOf(context);
+    final isNarrow = window.width < Breakpoints.tablet;
+    // Plain warm cream: the carousel brings its own glow.
     return SitePage(
       title: 'Work',
-      intro: 'Apps I have helped design, build and ship.',
+      section: SiteSection.work,
+      fillViewport: true,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Wrap(
-            spacing: 16,
-            runSpacing: 24,
-            children: [
-              for (final project in controller.projects)
-                ProjectCard(
-                  project: project,
-                  onTap: () => unawaited(controller.openProject(project)),
-                ),
-            ],
+          Semantics(
+            header: true,
+            child: Text(
+              heading.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: SiteText.display(
+                palette.textStrong,
+                size: isNarrow ? 44 : 56,
+              ),
+            ),
           ),
-          const SizedBox(height: 40),
-          SiteTextLink(
-            label: 'Source code on GitHub ↗',
-            onTap: () => unawaited(controller.openSource()),
+          const SizedBox(height: 10),
+          Text(
+            intro,
+            textAlign: TextAlign.center,
+            style: SiteText.body(
+              palette.textSecondary,
+              size: isNarrow ? 15 : 17,
+            ),
+          ),
+          SizedBox(height: isNarrow ? 28 : 32),
+          ProjectCarousel(
+            projects: controller.featured,
+            // Desktop fits the whole page in the window; phones scroll.
+            maxCardHeight: isNarrow
+                ? double.infinity
+                : math.max(_minCardHeight, window.height - _chromeHeight),
+            onOpen: (project, origin) => showProjectDetail(
+              context,
+              project: project,
+              origin: origin,
+              onOpenStore: (link) => unawaited(controller.openLink(link)),
+            ),
+          ),
+          SizedBox(height: isNarrow ? 24 : 28),
+          AllProjectsButton(
+            onTap: () => unawaited(context.push<void>(AppRoutes.allWork)),
           ),
         ],
       ),

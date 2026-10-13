@@ -5,23 +5,25 @@ import 'package:go_router/go_router.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
-import 'package:my_portfolio/constants/size.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 
 /// Slim bar for inner pages: name (home), destinations, résumé, theme.
-/// Below [kSiteDesktopBreakpoint] the links move into a bottom-sheet menu.
+/// Below [Breakpoints.desktop] the links move into a bottom-sheet menu.
 class SiteTopBar extends StatelessWidget {
-  const SiteTopBar({super.key});
+  const SiteTopBar({this.current, super.key});
+
+  /// Highlighted as the page you are on.
+  final SiteSection? current;
 
   static const String _resumeChoice = 'resume';
 
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
-    final isDesktop =
-        MediaQuery.sizeOf(context).width >= kSiteDesktopBreakpoint;
+    final isDesktop = MediaQuery.sizeOf(context).width >= Breakpoints.desktop;
 
     return Row(
       children: [
@@ -57,6 +59,9 @@ class SiteTopBar extends StatelessWidget {
               padding: const EdgeInsets.only(left: 12),
               child: SiteTextLink(
                 label: section.label,
+                plain: true,
+                fontSize: 16,
+                selected: section == current,
                 onTap: () => openSiteSection(context, section),
               ),
             ),
@@ -64,6 +69,8 @@ class SiteTopBar extends StatelessWidget {
             padding: const EdgeInsets.only(left: 12, right: 8),
             child: SiteTextLink(
               label: 'Résumé',
+              plain: true,
+              fontSize: 16,
               onTap: () => unawaited(openResume()),
             ),
           ),
@@ -95,12 +102,15 @@ class SiteTopBar extends StatelessWidget {
               for (final section in SiteSection.values)
                 SiteTextLink(
                   label: section.label,
-                  fontSize: 16,
+                  plain: true,
+                  fontSize: 18,
+                  selected: section == current,
                   onTap: () => Navigator.of(sheetContext).pop(section),
                 ),
               SiteTextLink(
                 label: 'Résumé',
-                fontSize: 16,
+                plain: true,
+                fontSize: 18,
                 onTap: () => Navigator.of(sheetContext).pop(_resumeChoice),
               ),
             ],

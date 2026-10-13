@@ -1,4 +1,3 @@
-import 'package:my_portfolio/core/resources/utils/static_utils.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
 import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
 import 'package:my_portfolio/features/projects/domain/repositories/projects_repository.dart';
@@ -13,12 +12,10 @@ class WorkController {
   final AppLaunchService _launchService;
   final ProjectsRepository _projectsRepository;
 
-  late final List<ProjectSummary> projects = _projectsRepository
+  late final List<FeaturedProject> featured = _projectsRepository
       .getFeaturedProjects();
 
-  Future<void> openProject(ProjectSummary project) =>
-      _launchService.openExternalUrl(project.link);
+  late final List<ProjectSummary> all = _projectsRepository.getAllProjects();
 
-  Future<void> openSource() =>
-      _launchService.openExternalUrl(StaticUtils.gitHub);
+  Future<void> openLink(String url) => _launchService.openExternalUrl(url);
 }

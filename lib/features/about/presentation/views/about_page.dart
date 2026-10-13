@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_page.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/about/data/about_content.dart';
@@ -21,7 +22,7 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
-    final isNarrow = MediaQuery.sizeOf(context).width < 600;
+    final isNarrow = MediaQuery.sizeOf(context).width < Breakpoints.smallTablet;
     final sectionGap = SizedBox(height: isNarrow ? 64 : 96);
     final meta = SiteText.label(palette.textSecondary);
     final strong = TextStyle(
@@ -31,6 +32,7 @@ class AboutPage extends StatelessWidget {
 
     return SitePage(
       title: 'About',
+      section: SiteSection.about,
       contentMaxWidth: 880,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -76,7 +76,13 @@ Future<void> pumpRouted(
   final router = GoRouter(
     routes: <RouteBase>[
       GoRoute(path: '/', builder: (_, _) => home),
-      for (final path in const ['/work', '/about', '/blog', '/contact'])
+      for (final path in const [
+        '/work',
+        '/work/all',
+        '/about',
+        '/blog',
+        '/contact',
+      ])
         GoRoute(
           path: path,
           builder: (_, _) => Scaffold(body: Text('page $path')),

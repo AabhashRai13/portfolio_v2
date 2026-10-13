@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/size.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_entrance_controller.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_phone_motion_controller.dart';
 
@@ -57,7 +57,7 @@ class _LandingEntranceState extends State<LandingEntrance>
         isEnabled:
             widget.routeActive &&
             !_reduceMotion &&
-            MediaQuery.sizeOf(context).width >= kSiteDesktopBreakpoint,
+            MediaQuery.sizeOf(context).width >= Breakpoints.desktop,
       )
       ..start();
   }

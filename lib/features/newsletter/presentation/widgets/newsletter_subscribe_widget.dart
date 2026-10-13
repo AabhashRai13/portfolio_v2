@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/constants/size.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 
@@ -27,6 +26,9 @@ class NewsletterSubscribeWidget extends StatefulWidget {
 }
 
 class _NewsletterSubscribeWidgetState extends State<NewsletterSubscribeWidget> {
+  /// The email field and button share a row once the form is this wide.
+  static const double _rowBreakpoint = 600;
+
   late final NewsletterController _controller;
   bool _wasLoading = false;
 
@@ -174,7 +176,7 @@ class _NewsletterSubscribeWidgetState extends State<NewsletterSubscribeWidget> {
                   },
                 );
 
-                if (constraints.maxWidth >= kMinDesktopWidth) {
+                if (constraints.maxWidth >= _rowBreakpoint) {
                   return Row(
                     children: [
                       Expanded(child: emailField),
