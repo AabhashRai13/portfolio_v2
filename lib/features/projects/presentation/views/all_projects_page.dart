@@ -24,15 +24,10 @@ class AllProjectsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = Theme.of(context).homePalette;
+    // Plain warm cream, like the Work page it opens from.
     return SitePage(
       title: 'All projects',
       intro: "Every app I've helped design, build and ship.",
-      background: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: palette.heroGradient.take(3).toList(),
-      ),
       section: SiteSection.work,
       child: LayoutBuilder(
         builder: (context, constraints) {

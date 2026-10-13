@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_phone_motion_controller.dart';
 
-/// Desktop hardware and live screen, rendered from shared motion state.
 class LandingPhone extends StatelessWidget {
   const LandingPhone({
     required this.child,
@@ -13,15 +12,10 @@ class LandingPhone extends StatelessWidget {
 
   final Widget child;
   final LandingPhoneMotionController motion;
-
-  /// False while the screen is in use (e.g. the contact form): the phone
-  /// drops its drag recognizer so it cannot steal scrolling or text selection.
   final bool interactive;
 
   static const Key motionKey = ValueKey<String>('landing-phone-motion');
 
-  // Measured outside the motion transform, so only the fit-to-screen scale
-  // counts and a drag keeps the phone under the pointer.
   static double _screenScale(BuildContext context) {
     final box = context.findRenderObject()! as RenderBox;
     final unit =
@@ -77,8 +71,6 @@ class LandingPhone extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // A narrow rear lip gives the left side depth without changing
-                // the rounded front face or separating the side buttons.
                 Positioned(
                   left: -2.5,
                   right: 0,

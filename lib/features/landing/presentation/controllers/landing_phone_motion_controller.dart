@@ -84,6 +84,17 @@ class LandingPhoneMotionController extends ChangeNotifier {
     );
   }
 
+  /// The phone moves only on desktop, while the landing is the current route
+  /// and the platform has not asked for reduced motion.
+  void sync({
+    required bool routeActive,
+    required bool reduceMotion,
+    required bool isDesktop,
+  }) {
+    setEnabled(isEnabled: routeActive && !reduceMotion && isDesktop);
+    start();
+  }
+
   void setEnabled({required bool isEnabled}) {
     if (_enabled == isEnabled) return;
     _enabled = isEnabled;

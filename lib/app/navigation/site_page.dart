@@ -13,7 +13,6 @@ class SitePage extends StatelessWidget {
     this.intro,
     this.section,
     this.showTitle = true,
-    this.background,
     this.fillViewport = false,
     this.contentMaxWidth,
     super.key,
@@ -32,9 +31,6 @@ class SitePage extends StatelessWidget {
   /// then serves as the page heading for screen readers.
   final bool showTitle;
 
-  /// Painted behind the whole viewport instead of the flat page colour.
-  final Gradient? background;
-
   /// For a page composed as one screen: the page is at least the window's
   /// height and [child] sits centred in the space under the top bar, instead
   /// of leaving the window's bottom empty. Taller content still scrolls.
@@ -52,30 +48,23 @@ class SitePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: palette.sectionBackground,
-      body: DecoratedBox(
-        decoration: BoxDecoration(gradient: background),
-        // Fill the screen: the scroll view alone shrinks to short content,
-        // which would end the gradient mid-screen.
-        child: SizedBox.expand(
-          child: SafeArea(
-            child: LayoutBuilder(
-              builder: (context, viewport) => SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 1080),
-                        child: Padding(
-                          padding: _padding,
-                          child: fillViewport
-                              ? _filled(viewport.maxHeight)
-                              : _stacked(palette, isNarrow: isNarrow),
-                        ),
-                      ),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, viewport) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1080),
+                    child: Padding(
+                      padding: _padding,
+                      child: fillViewport
+                          ? _filled(viewport.maxHeight)
+                          : _stacked(palette, isNarrow: isNarrow),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

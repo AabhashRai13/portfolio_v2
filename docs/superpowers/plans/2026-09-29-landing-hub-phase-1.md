@@ -21,8 +21,7 @@
 - Tap targets are at least 48 px. Nothing may depend on hover alone.
 - Every page must render without overflow at 375×812, 390×844, 768×1024 and 1440×900.
 - Work happens on branch `feat/landing_hub`. The PR targets `development`, never `main`.
-- End every commit message with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
-
+- Never end a commit with claude trailer
 ## File Map
 
 Created:

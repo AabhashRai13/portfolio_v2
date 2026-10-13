@@ -6,6 +6,7 @@ import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_text_link.dart';
 import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/constants/sns_links.dart';
+import 'package:my_portfolio/core/presentation/widgets/glass_panel.dart';
 import 'package:my_portfolio/core/presentation/widgets/theme_toggle_button.dart';
 import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
@@ -13,7 +14,6 @@ import 'package:my_portfolio/features/landing/presentation/controllers/landing_p
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_phone_stage.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
 
-/// Stateless renderer for the landing hub.
 class LandingView extends StatelessWidget {
   const LandingView({
     required this.entrance,
@@ -32,9 +32,6 @@ class LandingView extends StatelessWidget {
     final viewport = MediaQuery.sizeOf(context);
     final isDesktop = viewport.width >= Breakpoints.desktop;
     final isRoomyDesktop = viewport.width >= Breakpoints.wideDesktop;
-    // The phone keeps its size, so on shorter desktop viewports the name,
-    // tagline and top gap shrink to keep the whole tagline on the first
-    // screen. The tagline cap keeps it on one line.
     final nameSize = isDesktop
         ? (viewport.height * 0.1).clamp(80.0, 128.0)
         : 88.0;
@@ -128,112 +125,72 @@ class LandingView extends StatelessWidget {
         ),
         child: SafeArea(
           minimum: EdgeInsets.all(isDesktop ? 24 : 10),
-          child: _GlassPanel(
-            palette: palette,
-            child: Stack(
-              children: [
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (isDesktop) {
-                      // Short windows scale the whole hub down so it fits the
-                      // first screen. The fit ignores an on-screen keyboard,
-                      // so the phone's contact form scrolls instead of
-                      // shrinking while someone types.
+          child: GlassPanel(
+            child: SizedBox.expand(
+              child: Stack(
+                children: [
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (isDesktop) {
+                        // Short windows scale the whole hub down so it fits the
+                        // first screen. The fit ignores an on-screen keyboard,
+                        // so the phone's contact form scrolls instead of
+                        // shrinking while someone types.
+                        return SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 12,
+                          ),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: math.max(
+                              0,
+                              constraints.maxHeight + keyboardInset - 24,
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: math.min(
+                                    1180,
+                                    constraints.maxWidth - 64,
+                                  ),
+                                ),
+                                child: hub,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
                       return SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 12,
+                          horizontal: 16,
+                          vertical: 20,
                         ),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: math.max(
-                            0,
-                            constraints.maxHeight + keyboardInset - 24,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: math.max(0, constraints.maxHeight - 40),
                           ),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
+                          child: Center(
                             child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth: math.min(
-                                  1180,
-                                  constraints.maxWidth - 64,
-                                ),
-                              ),
+                              constraints: const BoxConstraints(maxWidth: 1180),
                               child: hub,
                             ),
                           ),
                         ),
                       );
-                    }
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 20,
-                      ),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight - 40,
-                        ),
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 1180),
-                            child: hub,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: ThemeToggleButton(iconColor: palette.textSecondary),
-                ),
-              ],
+                    },
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: ThemeToggleButton(iconColor: palette.textSecondary),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// Frosted panel that frames the whole landing over the hero gradient.
-///
-/// No BackdropFilter: only a smooth gradient sits behind the panel, so a blur
-/// would look the same while re-blurring the screen on every phone frame.
-class _GlassPanel extends StatelessWidget {
-  const _GlassPanel({required this.palette, required this.child});
-
-  final HomePalette palette;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(20);
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: palette.glassFill,
-        borderRadius: radius,
-        border: Border.all(color: palette.glassBorder, width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: palette.shadowColor.withValues(alpha: 0.02),
-            blurRadius: 30,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: radius,
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [palette.glassHighlightStrong, palette.glassHighlightSoft],
-          ),
-        ),
-        child: SizedBox.expand(child: child),
       ),
     );
   }

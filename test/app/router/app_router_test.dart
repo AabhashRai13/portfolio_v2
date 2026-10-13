@@ -5,6 +5,7 @@ import 'package:my_portfolio/app/navigation/site_navigation.dart';
 import 'package:my_portfolio/app/navigation/site_page.dart';
 import 'package:my_portfolio/app/router/app_router.dart';
 import 'package:my_portfolio/core/resources/styles/theme.dart';
+import 'package:my_portfolio/features/landing/presentation/controllers/landing_grid_view_model.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_widget_grid.dart';
 import 'package:my_portfolio/features/projects/presentation/views/all_projects_page.dart';
 import 'package:my_portfolio/features/projects/presentation/views/work_page.dart';
@@ -75,6 +76,8 @@ void main() {
 
     final tile = find.byKey(LandingWidgetGrid.keyFor(SiteSection.work));
     await tester.tap(tile);
+    // The tile's beat before its page, then the page is shown in one frame.
+    await tester.pump(LandingGridViewModel.openDelay);
     await tester.pump();
     final route = ModalRoute.of(tester.element(find.byType(WorkPage)))!;
     expect(route.settings, isA<NoTransitionPage<void>>());
