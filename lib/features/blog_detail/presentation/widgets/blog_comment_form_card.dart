@@ -46,13 +46,19 @@ class BlogCommentFormCard extends StatelessWidget {
                   size: 28,
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  'Leave a Comment',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 26,
-                    color: primary,
-                    letterSpacing: 1.1,
+                // Shrinks to fit narrow phones instead of overflowing.
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'Leave a Comment',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                        color: primary,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
                   ),
                 ),
               ],
