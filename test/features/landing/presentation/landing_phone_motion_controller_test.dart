@@ -3,6 +3,33 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/features/landing/presentation/controllers/landing_phone_motion_controller.dart';
 
 void main() {
+  testWidgets('moves only on desktop, on the current route, without '
+      'reduced motion', (tester) async {
+    final motion = LandingPhoneMotionController(vsync: const TestVSync());
+    addTearDown(motion.dispose);
+
+    void sync({
+      bool routeActive = true,
+      bool reduceMotion = false,
+      bool isDesktop = true,
+    }) => motion.sync(
+      routeActive: routeActive,
+      reduceMotion: reduceMotion,
+      isDesktop: isDesktop,
+    );
+
+    sync();
+    expect(motion.enabled, isTrue);
+    sync(routeActive: false);
+    expect(motion.enabled, isFalse);
+    sync(reduceMotion: true);
+    expect(motion.enabled, isFalse);
+    sync(isDesktop: false);
+    expect(motion.enabled, isFalse);
+
+    motion.setEnabled(isEnabled: false);
+  });
+
   testWidgets('lock holds the hover pose and ignores drag and hover exit', (
     tester,
   ) async {

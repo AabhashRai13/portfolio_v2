@@ -52,14 +52,11 @@ class _LandingEntranceState extends State<LandingEntrance>
       routeActive: widget.routeActive,
       reduceMotion: _reduceMotion,
     );
-    _phoneMotion
-      ..setEnabled(
-        isEnabled:
-            widget.routeActive &&
-            !_reduceMotion &&
-            MediaQuery.sizeOf(context).width >= Breakpoints.desktop,
-      )
-      ..start();
+    _phoneMotion.sync(
+      routeActive: widget.routeActive,
+      reduceMotion: _reduceMotion,
+      isDesktop: MediaQuery.sizeOf(context).width >= Breakpoints.desktop,
+    );
   }
 
   @override

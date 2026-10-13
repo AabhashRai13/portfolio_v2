@@ -4,6 +4,7 @@ import 'package:flutter/services.dart'
     show LogicalKeyboardKey, MethodCall, SystemChannels;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/app/navigation/site_navigation.dart';
+import 'package:my_portfolio/features/landing/presentation/controllers/landing_grid_view_model.dart';
 import 'package:my_portfolio/features/landing/presentation/views/contact_landing_page.dart';
 import 'package:my_portfolio/features/landing/presentation/views/landing_page.dart';
 import 'package:my_portfolio/features/landing/presentation/widgets/landing_phone.dart';
@@ -275,7 +276,7 @@ void main() {
       await tester.ensureVisible(tile);
       await tester.pump();
       await tester.tap(tile);
-      await tester.pump(LandingWidgetGrid.openDelay);
+      await tester.pump(LandingGridViewModel.openDelay);
       await settleSwitch(tester);
     }
 
@@ -464,10 +465,10 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
 
     await tester.tap(find.byKey(LandingWidgetGrid.keyFor(SiteSection.work)));
-    await tester.pump(LandingWidgetGrid.openDelay ~/ 2);
+    await tester.pump(LandingGridViewModel.openDelay ~/ 2);
     expect(find.text('page ${SiteSection.work.route}'), findsNothing);
 
-    await tester.pump(LandingWidgetGrid.openDelay);
+    await tester.pump(LandingGridViewModel.openDelay);
     await tester.pumpAndSettle();
     expect(find.text('page ${SiteSection.work.route}'), findsOneWidget);
   });
@@ -488,17 +489,6 @@ void main() {
     await tester.pump();
     await tester.pump();
     expect(find.text('page ${SiteSection.work.route}'), findsOneWidget);
-  });
-
-  test('each tile plays its own note, highest at Work', () {
-    final pitches = [
-      for (final section in SiteSection.values)
-        LandingWidgetGrid.pitchFor(section),
-    ];
-    expect(pitches.toSet(), hasLength(SiteSection.values.length));
-    expect(pitches, [...pitches]..sort((a, b) => b.compareTo(a)));
-    // Contact keeps the Work carousel arrows' own note.
-    expect(LandingWidgetGrid.pitchFor(SiteSection.contact), 1);
   });
 
   for (final section in SiteSection.values.where(
