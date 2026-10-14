@@ -1,4 +1,4 @@
-# Biamp Senior Flutter Interview Prep
+# Senior Flutter Interview Prep
 
 Built from a scan of your actual repo (`my_portfolio`). Every example below points at a real file you can re-read on the train. Anything weak is flagged so you can steer the conversation away from it.
 
@@ -603,7 +603,7 @@ These are written as *you talking*, not as definitions. Memorize the beats, not 
 
 If you forget everything else, anchor to these:
 
-- **Architecture:** Feature-first Clean Architecture (data/domain/presentation), domain is pure Dart.
+- **Architecture:** Flutter recommended architecture (data/domain/presentation), domain is pure Dart.
 - **State:** Custom `Command<T> extends ChangeNotifier`, views bind via `ListenableBuilder`.
 - **DI:** `get_it` at the composition root, constructor injection everywhere else.
 - **Errors:** Either<Failure, T> from data layer up, typed Failure subclasses, central mapper to user copy.

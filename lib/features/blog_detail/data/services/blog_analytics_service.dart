@@ -2,10 +2,11 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 
 class BlogAnalyticsService {
   const BlogAnalyticsService({
-    required FirebaseAnalytics analytics,
+    required FirebaseAnalytics Function() analytics,
   }) : _analytics = analytics;
 
-  final FirebaseAnalytics _analytics;
+  // Resolved per call: Firebase may not be up when this is created.
+  final FirebaseAnalytics Function() _analytics;
 
   Future<void> logBlogPostViewed(String slug) async {
     await _safeLog(
@@ -30,7 +31,7 @@ class BlogAnalyticsService {
 
   Future<void> _safeLog(String name, Map<String, Object> parameters) async {
     try {
-      await _analytics.logEvent(
+      await _analytics().logEvent(
         name: name,
         parameters: parameters,
       );

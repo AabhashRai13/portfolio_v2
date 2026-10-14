@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:my_portfolio/app/router/app_routes.dart';
-import 'package:my_portfolio/core/presentation/widgets/blog_top_navigation_bar.dart';
+import 'package:my_portfolio/app/navigation/site_top_bar.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 import 'package:my_portfolio/features/newsletter/presentation/controllers/newsletter_controller.dart';
 import 'package:my_portfolio/features/newsletter/presentation/widgets/newsletter_hero.dart';
@@ -58,10 +56,7 @@ class _NewsletterPageState extends State<NewsletterPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    BlogTopNavigationBar(
-                      onOpenHome: () => context.go(AppRoutes.home),
-                      onOpenBlogList: () => context.go(AppRoutes.blog),
-                    ),
+                    const SiteTopBar(),
                     const SizedBox(height: 64),
                     const NewsletterHero(),
                     const SizedBox(height: 44),

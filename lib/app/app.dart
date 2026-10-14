@@ -15,7 +15,7 @@ class PortfolioApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       scrollBehavior: const PortfolioScrollBehavior(),
       theme: kLightTheme,
-      title: 'Aabhash Rai',
+      title: 'Aabhash Rai | Mobile App Developer',
       routerConfig: AppRouter.router,
     );
   }

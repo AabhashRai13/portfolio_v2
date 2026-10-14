@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 import 'package:my_portfolio/core/resources/styles/blog_palette.dart';
 
 /// Headline block for the newsletter page: an eyebrow label, the serif
@@ -11,7 +12,7 @@ class NewsletterHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final palette = theme.blogPalette;
-    final isCompact = MediaQuery.of(context).size.width < 700;
+    final isCompact = MediaQuery.sizeOf(context).width < Breakpoints.tablet;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

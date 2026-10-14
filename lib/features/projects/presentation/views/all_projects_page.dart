@@ -1,0 +1,176 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:my_portfolio/app/navigation/site_navigation.dart';
+import 'package:my_portfolio/app/navigation/site_page.dart';
+import 'package:my_portfolio/core/presentation/widgets/tappable.dart';
+import 'package:my_portfolio/core/resources/styles/home_palette.dart';
+import 'package:my_portfolio/core/resources/styles/site_text.dart';
+import 'package:my_portfolio/features/projects/domain/models/project_summary.dart';
+import 'package:my_portfolio/features/projects/presentation/controllers/work_controller.dart';
+import 'package:my_portfolio/features/projects/presentation/views/project_detail.dart';
+
+/// Every project as icon, name and one line, in as many columns as fit
+/// (three on desktop, two on tablets, one on phones).
+/// Featured projects open their project view; the rest open their store.
+class AllProjectsPage extends StatelessWidget {
+  const AllProjectsPage({required this.controller, super.key});
+
+  /// Narrowest a card gets before the grid drops a column; the longest
+  /// name still fits on one line.
+  static const double _minTileWidth = 290;
+
+  final WorkController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    // Plain warm cream, like the Work page it opens from.
+    return SitePage(
+      title: 'All projects',
+      intro: "Every app I've helped design, build and ship.",
+      section: SiteSection.work,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          const gap = 16.0;
+          final width = constraints.maxWidth;
+          // As many columns as fit at _minTileWidth, up to three.
+          final columns = ((width + gap) / (_minTileWidth + gap)).floor().clamp(
+            1,
+            3,
+          );
+          // Floored so rounding never pushes the last card onto a new row.
+          final tileWidth = ((width - gap * (columns - 1)) / columns)
+              .floorToDouble();
+          return Wrap(
+            spacing: gap,
+            runSpacing: gap,
+            children: [
+              for (final project in controller.all)
+                SizedBox(
+                  width: tileWidth,
+                  child: Builder(
+                    builder: (tile) => _ProjectTile(
+                      project: project,
+                      compact: columns == 1,
+                      onTap: () => _open(tile, project),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _open(BuildContext tile, ProjectSummary project) {
+    if (project is! FeaturedProject) {
+      unawaited(controller.openLink(project.links.first));
+      return;
+    }
+    final box = tile.findRenderObject()! as RenderBox;
+    unawaited(
+      showProjectDetail(
+        tile,
+        project: project,
+        origin: box.localToGlobal(Offset.zero) & box.size,
+        onOpenStore: (link) => unawaited(controller.openLink(link)),
+      ),
+    );
+  }
+}
+
+class _ProjectTile extends StatelessWidget {
+  const _ProjectTile({
+    required this.project,
+    required this.compact,
+    required this.onTap,
+  });
+
+  static const double _aboutSize = 14;
+  static const double _aboutLineHeight = 1.45;
+
+  final ProjectSummary project;
+
+  /// Phones: one row with the icon beside the text, so the list stays
+  /// short; the whole row is the link, so it drops the arrow.
+  final bool compact;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
+    final icon = ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Image.asset(project.icon, width: 48, height: 48),
+    );
+    final arrow = Icon(
+      Icons.north_east_rounded,
+      size: 18,
+      color: palette.textSecondary,
+    );
+    final title = Text(
+      project.title.toUpperCase(),
+      style: SiteText.display(palette.textStrong, size: compact ? 22 : 24),
+      maxLines: compact ? 2 : 1,
+      overflow: TextOverflow.ellipsis,
+    );
+    final about = Text(
+      project.about,
+      style: SiteText.body(
+        palette.textSecondary,
+        size: _aboutSize,
+      ).copyWith(height: _aboutLineHeight),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+
+    // Every card reserves two lines for [about], so cards in a row match.
+    final aboutHeight =
+        2 *
+        MediaQuery.textScalerOf(context).scale(_aboutSize * _aboutLineHeight);
+
+    return Tappable(
+      label: 'Open ${project.title}',
+      onTap: onTap,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: palette.surfaceCard.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: palette.textSecondary.withValues(alpha: 0.12),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(compact ? 16 : 20),
+          child: compact
+              ? Row(
+                  children: [
+                    icon,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [title, about],
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [icon, const Spacer(), arrow],
+                    ),
+                    const SizedBox(height: 16),
+                    title,
+                    const SizedBox(height: 4),
+                    SizedBox(height: aboutHeight, child: about),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}

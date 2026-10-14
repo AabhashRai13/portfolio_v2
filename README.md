@@ -4,7 +4,7 @@
 
 **My personal site, built in Flutter Web.**
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.35-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.8-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![Firebase](https://img.shields.io/badge/Firebase-backed-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com)
 [![Live](https://img.shields.io/badge/live-aabhashrai.com-1f6feb)](https://aabhashrai.com)

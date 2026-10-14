@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:my_portfolio/constants/size.dart';
+import 'package:my_portfolio/constants/breakpoints.dart';
 
 /// A [ScrollBehavior] that enables mouse-drag scrolling on web and uses
 /// clamping physics (no overscroll bounce) across all platforms.
@@ -17,11 +17,11 @@ class PortfolioScrollBehavior extends MaterialScrollBehavior {
 
   @override
   Set<PointerDeviceKind> get dragDevices => <PointerDeviceKind>{
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.stylus,
-        PointerDeviceKind.unknown,
-      };
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.stylus,
+    PointerDeviceKind.unknown,
+  };
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) =>
@@ -98,8 +98,10 @@ class _SmoothScrollWrapperState extends State<SmoothScrollWrapper>
 
     // Mouse wheel: intercept and handle with smooth chase animation.
     // We must stop the event from reaching the default handler.
-    GestureBinding.instance.pointerSignalResolver
-        .register(event, _handleMouseWheel);
+    GestureBinding.instance.pointerSignalResolver.register(
+      event,
+      _handleMouseWheel,
+    );
   }
 
   void _handleMouseWheel(PointerSignalEvent event) {
@@ -177,7 +179,7 @@ class SmoothWheelScrollController extends ScrollController {
 }
 
 bool shouldEnableSmoothWheelScroll(double width) {
-  if (width < kMinDesktopWidth) {
+  if (width < Breakpoints.smallTablet) {
     return false;
   }
 
@@ -189,8 +191,7 @@ bool shouldEnableSmoothWheelScroll(double width) {
   return switch (defaultTargetPlatform) {
     TargetPlatform.macOS ||
     TargetPlatform.windows ||
-    TargetPlatform.linux =>
-      true,
+    TargetPlatform.linux => true,
     _ => false,
   };
 }

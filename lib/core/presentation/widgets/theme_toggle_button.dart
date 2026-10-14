@@ -22,7 +22,10 @@ class ThemeToggleButton extends StatelessWidget {
           tooltip: 'Theme',
           initialValue: mode,
           onSelected: controller.setMode,
-          icon: Icon(_iconFor(mode), color: resolvedIconColor),
+          icon: Icon(
+            _iconFor(mode, Theme.of(context).brightness),
+            color: resolvedIconColor,
+          ),
           itemBuilder: (context) => <PopupMenuEntry<ThemeMode>>[
             _menuItem(
               ThemeMode.light,
@@ -48,14 +51,16 @@ class ThemeToggleButton extends StatelessWidget {
     );
   }
 
-  IconData _iconFor(ThemeMode mode) {
+  IconData _iconFor(ThemeMode mode, Brightness brightness) {
     switch (mode) {
       case ThemeMode.light:
         return Icons.light_mode_outlined;
       case ThemeMode.dark:
         return Icons.dark_mode_outlined;
       case ThemeMode.system:
-        return Icons.brightness_auto_outlined;
+        return brightness == Brightness.dark
+            ? Icons.dark_mode_outlined
+            : Icons.light_mode_outlined;
     }
   }
 
