@@ -91,6 +91,41 @@ void main() {
     expect(find.byKey(SitePage.titleKey), findsNothing);
   });
 
+  // The URL the browser shows, as the router reports it.
+  String reportedPath(GoRouter router) =>
+      router.routeInformationProvider.value.uri.path;
+
+  testWidgets('a tile puts its page in the address bar; back restores it', (
+    tester,
+  ) async {
+    final router = await pumpAt(tester, '/');
+    await tester.pump(const Duration(seconds: 2));
+
+    await tester.tap(find.byKey(LandingWidgetGrid.keyFor(SiteSection.work)));
+    await tester.pump(LandingGridViewModel.openDelay);
+    await tester.pump();
+    expect(reportedPath(router), '/work');
+
+    router.pop();
+    await tester.pump();
+    expect(reportedPath(router), '/');
+  });
+
+  testWidgets('"Explore all projects" puts /work/all in the address bar', (
+    tester,
+  ) async {
+    final router = await pumpAt(tester, '/work');
+    await tester.pump(const Duration(seconds: 2));
+
+    final link = find.text('Explore all projects');
+    await tester.ensureVisible(link);
+    await tester.pump();
+    await tester.tap(link);
+    await tester.pump();
+    expect(find.byType(AllProjectsPage), findsOneWidget);
+    expect(reportedPath(router), '/work/all');
+  });
+
   testWidgets('top bar link opens without a transition', (tester) async {
     await pumpAt(tester, '/about');
     await tester.pump(const Duration(seconds: 2));
