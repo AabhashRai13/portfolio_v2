@@ -122,8 +122,16 @@ class LandingPhoneMotionController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Float cycles before the phone settles, so an idle landing stops drawing.
+  static const int floatCycles = 2;
+
   void start() {
-    if (_enabled && !_locked && !_float.isAnimating) _float.repeat();
+    if (_enabled && !_locked && !_float.isAnimating) {
+      // repeat(count:) stops on whichever tick ends it; settle at rest.
+      unawaited(
+        _float.repeat(count: floatCycles).then((_) => _float.value = 0),
+      );
+    }
   }
 
   /// Holds the forward-facing hover pose and ignores drag, so the phone stays

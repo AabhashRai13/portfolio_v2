@@ -30,6 +30,32 @@ void main() {
     motion.setEnabled(isEnabled: false);
   });
 
+  testWidgets('the idle float settles at rest after two cycles', (
+    tester,
+  ) async {
+    final motion = LandingPhoneMotionController(vsync: const TestVSync());
+    addTearDown(motion.dispose);
+
+    motion.sync(routeActive: true, reduceMotion: false, isDesktop: true);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1500));
+    expect(motion.offset, isNot(Offset.zero));
+
+    await tester.pump(const Duration(seconds: 11));
+    expect(motion.offset, Offset.zero);
+    expect(tester.binding.hasScheduledFrame, isFalse);
+
+    // Coming back to the landing floats it again.
+    motion
+      ..setEnabled(isEnabled: false)
+      ..setEnabled(isEnabled: true);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1500));
+    expect(motion.offset, isNot(Offset.zero));
+
+    motion.setEnabled(isEnabled: false);
+  });
+
   testWidgets('lock holds the hover pose and ignores drag and hover exit', (
     tester,
   ) async {
