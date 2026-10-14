@@ -20,6 +20,10 @@ class AppRouter {
   static final GoRouter router = createRouter();
 
   static GoRouter createRouter({String initialLocation = AppRoutes.home}) {
+    // Pages are pushed so the landing stays alive underneath, but the address
+    // bar must still show the open page. Every pushed route is a top-level,
+    // deep-linkable path, so reflecting it is safe.
+    GoRouter.optionURLReflectsImperativeAPIs = true;
     return GoRouter(
       initialLocation: initialLocation,
       routes: [
