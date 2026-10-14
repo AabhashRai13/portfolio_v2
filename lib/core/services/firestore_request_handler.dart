@@ -10,9 +10,15 @@ import 'package:my_portfolio/core/resources/typedef.dart';
 class FirestoreRequestHandler {
   const FirestoreRequestHandler({
     this.timeout = const Duration(seconds: 12),
+    this.ready = _alreadyReady,
   });
 
   final Duration timeout;
+
+  /// Completes once Firebase is up; every request waits on it first.
+  final Future<void> Function() ready;
+
+  static Future<void> _alreadyReady() async {}
 
   ResultFuture<T> run<T>({
     required Future<T> Function() request,
@@ -21,7 +27,10 @@ class FirestoreRequestHandler {
     DataMap? context,
   }) async {
     try {
-      final result = await request().timeout(timeout);
+      final result = await () async {
+        await ready();
+        return request();
+      }().timeout(timeout);
       return Right(result);
     } on FirebaseException catch (error, stackTrace) {
       _logFailure(operation, error, stackTrace, context);
