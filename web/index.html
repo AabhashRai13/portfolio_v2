@@ -7,6 +7,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CanvasKit, Firebase and fonts load from these; connect while the page parses. -->
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <title>Aabhash Rai | Mobile App Developer for iOS &amp; Android</title>
     <meta name="description"
         content="Aabhash Rai is a Sydney-based mobile app developer with 6+ years building iOS and Android apps for charities, healthcare, government and NGOs. Available for freelance projects and full-time roles.">
@@ -109,7 +113,8 @@
             if (loader) loader.remove();
         });
     </script>
-    <script src="flutter_bootstrap.js" async></script>
+    <!-- Inlined at build time, saving a round trip before main.dart.js can start. -->
+    <script>{{flutter_bootstrap_js}}</script>
 </body>
 
 </html>
