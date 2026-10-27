@@ -146,7 +146,8 @@ class _FakeContactRepository implements ContactRepository {
     sent.add(message);
     await gate;
     if (shouldThrow) {
-      throw Exception('boom');
+      // emailjs throws bare Strings, not Exceptions — mirror that here.
+      throw 'boom';
     }
   }
 }

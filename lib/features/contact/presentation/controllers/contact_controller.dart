@@ -65,7 +65,8 @@ class ContactController {
       sentTo.value = message.email;
       clearForm();
       submitCommand.setData('Form submitted successfully');
-    } on Exception {
+    } catch (_) {
+      // emailjs throws plain Strings and EmailJSResponseStatus, not Exceptions.
       if (_isDisposed) return;
       submitCommand.setError(
         'Failed to submit form, please try again later.',

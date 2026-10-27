@@ -53,6 +53,15 @@ jobs:
     - name: Build Flutter Web
       run: flutter build web --release
 
+    # 🔖 Give main.dart.js a new URL per build so browsers can cache it long term
+    - name: Version main.dart.js
+      run: |
+        hash=$(sha256sum build/web/main.dart.js | cut -c1-12)
+        sed -i "s|\"mainJsPath\":\"main.dart.js\"|\"mainJsPath\":\"main.dart.js?v=${hash}\"|" build/web/index.html
+        # Stop the deploy if the bootstrap format changed: an unversioned
+        # main.dart.js under the one-year cache header would go stale.
+        grep -q "main.dart.js?v=${hash}" build/web/index.html
+
     # 🏷️ Add deploy marker for live verification & Cache-Buster
     - name: Create deploy marker and Cache-Buster
       run: |
@@ -79,13 +88,14 @@ jobs:
         </IfModule>
 
         <IfModule mod_headers.c>
-            # Entrypoint files: never cache. Everything else (main.dart.js, canvaskit/*,
-            # hashed assets) is safe to cache because flutter_bootstrap.js references
-            # them with a build-specific version query.
-            <FilesMatch "\.(html|json)$|^flutter(_bootstrap)?\.js$">
-                Header set Cache-Control "no-cache, no-store, must-revalidate"
-                Header set Pragma "no-cache"
-                Header set Expires 0
+            # Pages and manifests: always check for a new deploy, but reuse the
+            # cached copy when unchanged (304) instead of downloading it again.
+            <FilesMatch "\.(html|json)$">
+                Header set Cache-Control "no-cache"
+            </FilesMatch>
+            # index.html requests main.dart.js?v=<hash>, so each build has its own URL.
+            <FilesMatch "^main\.dart\.js$">
+                Header set Cache-Control "public, max-age=31536000, immutable"
             </FilesMatch>
         </IfModule>
         EOF
