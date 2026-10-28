@@ -4,10 +4,12 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 import 'package:my_portfolio/core/controllers/app_theme_controller.dart';
+import 'package:my_portfolio/core/services/analytics_app_launch_service.dart';
 import 'package:my_portfolio/core/services/app_launch_service.dart';
 import 'package:my_portfolio/core/services/firebase_app_check_service.dart';
 import 'package:my_portfolio/core/services/firebase_bootstrap.dart';
 import 'package:my_portfolio/core/services/firestore_request_handler.dart';
+import 'package:my_portfolio/core/services/site_analytics_service.dart';
 import 'package:my_portfolio/core/services/theme_preference_store.dart';
 import 'package:my_portfolio/features/blog_detail/data/datasources/blog_detail_remote_data_source.dart';
 import 'package:my_portfolio/features/blog_detail/data/repositories/firestore_blog_detail_repository.dart';
@@ -73,8 +75,17 @@ void setupDependencies() {
         ready: getIt.get<FirebaseBootstrap>().ensureInitialized,
       ),
     )
+    ..registerLazySingleton<SiteAnalyticsService>(
+      () => SiteAnalyticsService(
+        analytics: getIt.get<FirebaseAnalytics>,
+        ready: getIt.get<FirebaseBootstrap>().ensureInitialized,
+      ),
+    )
     ..registerLazySingleton<AppLaunchService>(
-      () => const UrlLauncherAppLaunchService(),
+      () => AnalyticsAppLaunchService(
+        inner: const UrlLauncherAppLaunchService(),
+        analytics: getIt.get<SiteAnalyticsService>(),
+      ),
     )
     ..registerLazySingleton<BlogListRemoteDataSource>(
       () => BlogListRemoteDataSource(
@@ -95,7 +106,9 @@ void setupDependencies() {
       ),
     )
     ..registerLazySingleton<ContactRepository>(
-      EmailJsContactRepository.new,
+      () => EmailJsContactRepository(
+        analytics: getIt.get<SiteAnalyticsService>(),
+      ),
     )
     ..registerLazySingleton<NewsletterRemoteDataSource>(
       () => NewsletterRemoteDataSource(

@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_portfolio/app/analytics/analytics_route_observer.dart';
 import 'package:my_portfolio/app/di/service_locator.dart';
 import 'package:my_portfolio/app/router/app_routes.dart';
 import 'package:my_portfolio/core/presentation/widgets/app_theme_scope.dart';
+import 'package:my_portfolio/core/services/site_analytics_service.dart';
 import 'package:my_portfolio/features/about/presentation/views/about_page.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/controllers/blog_post_detail_controller.dart';
 import 'package:my_portfolio/features/blog_detail/presentation/views/blog_post_detail_page.dart';
@@ -17,15 +19,21 @@ import 'package:my_portfolio/features/projects/presentation/views/all_projects_p
 import 'package:my_portfolio/features/projects/presentation/views/work_page.dart';
 
 class AppRouter {
-  static final GoRouter router = createRouter();
+  static final GoRouter router = createRouter(
+    observers: [AnalyticsRouteObserver(getIt<SiteAnalyticsService>())],
+  );
 
-  static GoRouter createRouter({String initialLocation = AppRoutes.home}) {
+  static GoRouter createRouter({
+    String initialLocation = AppRoutes.home,
+    List<NavigatorObserver> observers = const <NavigatorObserver>[],
+  }) {
     // Pages are pushed so the landing stays alive underneath, but the address
     // bar must still show the open page. Every pushed route is a top-level,
     // deep-linkable path, so reflecting it is safe.
     GoRouter.optionURLReflectsImperativeAPIs = true;
     return GoRouter(
       initialLocation: initialLocation,
+      observers: observers,
       routes: [
         GoRoute(
           path: AppRoutes.home,
@@ -119,6 +127,8 @@ class AppRouter {
   static Page<void> _sitePage(GoRouterState state, Widget child) {
     return NoTransitionPage<void>(
       key: state.pageKey,
+      // The matched pattern (e.g. /blog/:slug) keeps screen_view low-cardinality.
+      name: state.fullPath ?? state.uri.path,
       child: child,
     );
   }
