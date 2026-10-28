@@ -10,6 +10,8 @@ import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/about/data/about_content.dart';
 import 'package:my_portfolio/features/about/presentation/widgets/intro_video.dart';
+import 'package:my_portfolio/features/about/presentation/widgets/scroll_highlight_text.dart';
+import 'package:my_portfolio/features/about/presentation/widgets/scroll_reveal.dart';
 import 'package:my_portfolio/features/about/presentation/widgets/sydney_clock.dart';
 
 /// The video is the hero. The rest frames it for founders and hiring teams,
@@ -43,7 +45,7 @@ class AboutPage extends StatelessWidget {
           SizedBox(height: isNarrow ? 32 : 48),
           for (final (index, line) in aboutStatement.indexed) ...[
             if (index > 0) SizedBox(height: isNarrow ? 20 : 28),
-            Text(
+            ScrollHighlightText(
               line,
               style: strong.copyWith(
                 fontSize: isNarrow ? 28 : 44,
@@ -80,47 +82,66 @@ class AboutPage extends StatelessWidget {
           ),
           sectionGap,
           _Heading('Skills', isNarrow: isNarrow),
-          _Grid(
-            columns: isNarrow ? 3 : 6,
-            spacing: 12,
-            children: [for (final skill in skills) _SkillTile(skill)],
+          // One trigger for the grid; the tiles ripple in reading order.
+          ScrollReveal(
+            duration: const Duration(milliseconds: 1000),
+            builder: (context, reveal) => _Grid(
+              columns: isNarrow ? 3 : 6,
+              spacing: 12,
+              children: [
+                for (final (index, skill) in skills.indexed)
+                  FadeUp(
+                    reveal: staggered(
+                      reveal,
+                      index: index,
+                      count: skills.length,
+                    ),
+                    rise: 16,
+                    child: _SkillTile(skill),
+                  ),
+              ],
+            ),
           ),
           sectionGap,
           _Heading('How I work', isNarrow: isNarrow),
-          _Grid(
-            columns: isNarrow ? 1 : 3,
-            spacing: isNarrow ? 24 : 32,
-            children: [
-              for (final (index, step) in howIWork.indexed)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '0${index + 1}  ${step.title.toUpperCase()}',
-                      style: SiteText.label(palette.primaryAccent),
+          // The steps arrive 01, 02, 03, so the order reads as a process.
+          ScrollReveal(
+            duration: const Duration(milliseconds: 900),
+            builder: (context, reveal) => _Grid(
+              columns: isNarrow ? 1 : 3,
+              spacing: isNarrow ? 24 : 32,
+              children: [
+                for (final (index, step) in howIWork.indexed)
+                  FadeUp(
+                    reveal: staggered(
+                      reveal,
+                      index: index,
+                      count: howIWork.length,
+                      span: 0.6,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      step.body,
-                      style: SiteText.body(palette.textStrong),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '0${index + 1}  ${step.title.toUpperCase()}',
+                          style: SiteText.label(palette.primaryAccent),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          step.body,
+                          style: SiteText.body(palette.textStrong),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-            ],
+                  ),
+              ],
+            ),
           ),
           sectionGap,
           _Heading("You'll be a good fit if you…", isNarrow: isNarrow),
           for (final (index, item) in goodFit.indexed)
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: isNarrow ? 16 : 22),
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: palette.primaryAccent.withValues(alpha: 0.3),
-                  ),
-                ),
-              ),
+            _FitRow(
+              isNarrow: isNarrow,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
@@ -146,41 +167,7 @@ class AboutPage extends StatelessWidget {
             ),
           sectionGap,
           _Heading('Sound like you?', isNarrow: isNarrow),
-          SizedBox(
-            width: double.infinity,
-            height: isNarrow ? 68 : 96,
-            child: FilledButton(
-              onPressed: () => openSiteSection(context, SiteSection.contact),
-              style: FilledButton.styleFrom(
-                backgroundColor: palette.textStrong,
-                foregroundColor: palette.sectionBackground,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      ctaLabel,
-                      style: SiteText.display(
-                        palette.sectionBackground,
-                        size: isNarrow ? 26 : 44,
-                      ),
-                    ),
-                    SizedBox(width: isNarrow ? 10 : 16),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      size: isNarrow ? 26 : 40,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          _ContactButton(isNarrow: isNarrow),
           const SizedBox(height: 12),
           Center(
             child: SiteTextLink(
@@ -207,13 +194,138 @@ class _Heading extends StatelessWidget {
     final palette = Theme.of(context).homePalette;
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
-      child: Semantics(
-        header: true,
-        child: Text(
-          text.toUpperCase(),
-          style: SiteText.display(palette.textStrong, size: isNarrow ? 36 : 48),
+      child: ScrollReveal(
+        builder: (context, reveal) => FadeUp(
+          reveal: reveal,
+          child: Semantics(
+            header: true,
+            child: Text(
+              text.toUpperCase(),
+              style: SiteText.display(
+                palette.textStrong,
+                size: isNarrow ? 36 : 48,
+              ),
+            ),
+          ),
         ),
       ),
+    );
+  }
+}
+
+/// A good-fit row whose divider draws in left to right before the line
+/// rises in under it, like ticking off a checklist.
+class _FitRow extends StatelessWidget {
+  const _FitRow({required this.isNarrow, required this.child});
+
+  final bool isNarrow;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
+    return ScrollReveal(
+      duration: const Duration(milliseconds: 800),
+      builder: (context, reveal) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          MatrixTransition(
+            animation: reveal.drive(
+              CurveTween(
+                curve: const Interval(0, 0.6, curve: Curves.easeInOutCubic),
+              ),
+            ),
+            alignment: Alignment.centerLeft,
+            onTransform: (t) => Matrix4.diagonal3Values(t, 1, 1),
+            child: ColoredBox(
+              color: palette.primaryAccent.withValues(alpha: 0.3),
+              child: const SizedBox(height: 1),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: isNarrow ? 16 : 22),
+            child: FadeUp(
+              reveal: reveal.drive(CurveTween(curve: const Interval(0.3, 1))),
+              rise: 16,
+              child: child,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The page's one call to action. It settles into place as it arrives, then
+/// its arrow slides in to point the way.
+class _ContactButton extends StatelessWidget {
+  const _ContactButton({required this.isNarrow});
+
+  final bool isNarrow;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Theme.of(context).homePalette;
+    return ScrollReveal(
+      duration: const Duration(milliseconds: 700),
+      builder: (context, reveal) {
+        final settle = reveal.drive(CurveTween(curve: Curves.easeOutCubic));
+        final arrow = reveal.drive(
+          CurveTween(
+            curve: const Interval(0.45, 1, curve: Curves.easeOutCubic),
+          ),
+        );
+        return FadeTransition(
+          opacity: settle,
+          alwaysIncludeSemantics: true,
+          child: ScaleTransition(
+            scale: settle.drive(Tween(begin: 0.96, end: 1)),
+            child: SizedBox(
+              width: double.infinity,
+              height: isNarrow ? 68 : 96,
+              child: FilledButton(
+                onPressed: () => openSiteSection(context, SiteSection.contact),
+                style: FilledButton.styleFrom(
+                  backgroundColor: palette.textStrong,
+                  foregroundColor: palette.sectionBackground,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        AboutPage.ctaLabel,
+                        style: SiteText.display(
+                          palette.sectionBackground,
+                          size: isNarrow ? 26 : 44,
+                        ),
+                      ),
+                      SizedBox(width: isNarrow ? 10 : 16),
+                      FadeTransition(
+                        opacity: arrow,
+                        child: MatrixTransition(
+                          animation: arrow,
+                          onTransform: (t) =>
+                              Matrix4.translationValues((t - 1) * 24, 0, 0),
+                          child: Icon(
+                            Icons.arrow_forward_rounded,
+                            size: isNarrow ? 26 : 40,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

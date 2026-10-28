@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/app/navigation/site_page.dart';
 import 'package:my_portfolio/features/about/data/about_content.dart';
 import 'package:my_portfolio/features/about/presentation/views/about_page.dart';
+import 'package:my_portfolio/features/about/presentation/widgets/scroll_reveal.dart';
 
 import '../../../helpers/site_test_harness.dart';
 
@@ -42,6 +43,27 @@ void main() {
       expect(find.text('EXPERIENCE'), findsNothing);
     });
   }
+
+  testWidgets('every section has fully arrived once scrolled to the end', (
+    tester,
+  ) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(tester, const AboutPage());
+
+    await tester.ensureVisible(find.text('OR GRAB MY RÉSUMÉ (PDF) ↓'));
+    await tester.pumpAndSettle();
+
+    final fades = tester.widgetList<FadeTransition>(
+      find.descendant(
+        of: find.byType(ScrollReveal),
+        matching: find.byType(FadeTransition),
+      ),
+    );
+    expect(fades, isNotEmpty);
+    for (final fade in fades) {
+      expect(fade.opacity.value, 1);
+    }
+  });
 
   testWidgets('the big button opens the contact form', (tester) async {
     setViewSize(tester, const Size(1440, 900));
