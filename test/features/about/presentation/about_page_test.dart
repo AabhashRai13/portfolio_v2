@@ -1,8 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/app/navigation/site_page.dart';
 import 'package:my_portfolio/features/about/data/about_content.dart';
 import 'package:my_portfolio/features/about/presentation/views/about_page.dart';
+import 'package:my_portfolio/features/about/presentation/widgets/roll_text.dart';
+import 'package:my_portfolio/features/about/presentation/widgets/scroll_reveal.dart';
 
 import '../../../helpers/site_test_harness.dart';
 
@@ -39,9 +42,31 @@ void main() {
         expect(find.text(skill.label), findsOneWidget);
       }
       expect(find.text(AboutPage.ctaLabel), findsOneWidget);
+      expect(find.text(replyPromise.toUpperCase()), findsOneWidget);
       expect(find.text('EXPERIENCE'), findsNothing);
     });
   }
+
+  testWidgets('every section has fully arrived once scrolled to the end', (
+    tester,
+  ) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(tester, const AboutPage());
+
+    await tester.ensureVisible(find.text('OR GRAB MY RÉSUMÉ (PDF) ↓'));
+    await tester.pumpAndSettle();
+
+    final fades = tester.widgetList<FadeTransition>(
+      find.descendant(
+        of: find.byType(ScrollReveal),
+        matching: find.byType(FadeTransition),
+      ),
+    );
+    expect(fades, isNotEmpty);
+    for (final fade in fades) {
+      expect(fade.opacity.value, 1);
+    }
+  });
 
   testWidgets('the big button opens the contact form', (tester) async {
     setViewSize(tester, const Size(1440, 900));
@@ -53,6 +78,44 @@ void main() {
     await tester.tap(cta);
     await tester.pumpAndSettle();
     expect(find.text('Send message'), findsOneWidget);
+  });
+
+  testWidgets("hovering the big button rolls its label's letters", (
+    tester,
+  ) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(tester, const AboutPage());
+
+    final cta = find.text(AboutPage.ctaLabel);
+    await tester.ensureVisible(cta);
+    await tester.pumpAndSettle();
+    final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    addTearDown(mouse.removePointer);
+    await mouse.addPointer(location: Offset.zero);
+    await mouse.moveTo(tester.getCenter(cta));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 150));
+
+    expect(find.byKey(RollText.rollKey), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.byKey(RollText.rollKey), findsNothing);
+  });
+
+  testWidgets('keyboard focus on the big button rolls its label too', (
+    tester,
+  ) async {
+    setViewSize(tester, const Size(1440, 900));
+    await pumpRouted(tester, const AboutPage());
+
+    final cta = find.text(AboutPage.ctaLabel);
+    await tester.ensureVisible(cta);
+    await tester.pumpAndSettle();
+    Focus.of(tester.element(cta)).requestFocus();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 150));
+
+    expect(find.byKey(RollText.rollKey), findsOneWidget);
+    await tester.pumpAndSettle();
   });
 
   testWidgets('résumé link opens the PDF', (tester) async {
