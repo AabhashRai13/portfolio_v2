@@ -158,7 +158,9 @@ class _ContactSectionState extends State<ContactSection> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Bubble(text: "Got it. I'll reply to $email soon."),
+        _Bubble(
+          text: "Got it. I'll reply to $email within one business day.",
+        ),
         const SizedBox(height: 12),
         SiteTextLink(
           label: 'Send another message',

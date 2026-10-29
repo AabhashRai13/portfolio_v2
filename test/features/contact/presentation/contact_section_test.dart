@@ -100,7 +100,9 @@ void main() {
       'Topic: Fix my app\n\nIt crashes on launch',
     );
     expect(
-      find.textContaining("I'll reply to sam@example.com"),
+      find.textContaining(
+        "I'll reply to sam@example.com within one business day.",
+      ),
       findsOneWidget,
     );
     expect(find.text('Send message'), findsNothing);

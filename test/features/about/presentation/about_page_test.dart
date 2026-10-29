@@ -40,6 +40,7 @@ void main() {
         expect(find.text(skill.label), findsOneWidget);
       }
       expect(find.text(AboutPage.ctaLabel), findsOneWidget);
+      expect(find.text(replyPromise.toUpperCase()), findsOneWidget);
       expect(find.text('EXPERIENCE'), findsNothing);
     });
   }

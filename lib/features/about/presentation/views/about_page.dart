@@ -168,7 +168,15 @@ class AboutPage extends StatelessWidget {
           sectionGap,
           _Heading('Sound like you?', isNarrow: isNarrow),
           _ContactButton(isNarrow: isNarrow),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
+          Center(
+            child: Text(
+              replyPromise.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: meta,
+            ),
+          ),
+          const SizedBox(height: 4),
           Center(
             child: SiteTextLink(
               label: 'Or grab my résumé (PDF) ↓',

@@ -15,14 +15,16 @@ const String availability = 'Open to freelance projects and full-time roles';
 
 /// Qualifies visitors: who works well with Aabhash.
 const List<String> goodFit = [
-  'Want to move fast without lowering the bar.',
-  'Want someone who just gets it done, no hand-holding.',
+  'Want to ship fast and still get a stable app that scales with you.',
+  'Want to hand over a goal, not a spec.',
   'Care what happens after launch: crashes, reviews, updates.',
-  _fitPlatformHurdles,
+  _fitPlatformLimits,
 ];
-const String _fitPlatformHurdles =
-    'Want platform hurdles flagged early, with a plan B ready, such as what '
-    'iOS and Android widgets allow.';
+const String _fitPlatformLimits =
+    'Want platform limits flagged before they cost you a week, with a plan B '
+    'ready.';
+
+const String replyPromise = 'I reply within one business day.';
 
 typedef ProcessStep = ({String title, String body});
 
