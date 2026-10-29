@@ -10,6 +10,7 @@ import 'package:my_portfolio/core/resources/styles/home_palette.dart';
 import 'package:my_portfolio/core/resources/styles/site_text.dart';
 import 'package:my_portfolio/features/about/data/about_content.dart';
 import 'package:my_portfolio/features/about/presentation/widgets/intro_video.dart';
+import 'package:my_portfolio/features/about/presentation/widgets/roll_text.dart';
 import 'package:my_portfolio/features/about/presentation/widgets/scroll_highlight_text.dart';
 import 'package:my_portfolio/features/about/presentation/widgets/scroll_reveal.dart';
 import 'package:my_portfolio/features/about/presentation/widgets/sydney_clock.dart';
@@ -265,15 +266,25 @@ class _FitRow extends StatelessWidget {
 }
 
 /// The page's one call to action. It settles into place as it arrives, then
-/// its arrow slides in to point the way.
-class _ContactButton extends StatelessWidget {
+/// its arrow slides in to point the way; its letters roll while it is
+/// hovered or focused.
+class _ContactButton extends StatefulWidget {
   const _ContactButton({required this.isNarrow});
 
   final bool isNarrow;
 
   @override
+  State<_ContactButton> createState() => _ContactButtonState();
+}
+
+class _ContactButtonState extends State<_ContactButton> {
+  bool _hovered = false;
+  bool _focused = false;
+
+  @override
   Widget build(BuildContext context) {
     final palette = Theme.of(context).homePalette;
+    final isNarrow = widget.isNarrow;
     return ScrollReveal(
       duration: const Duration(milliseconds: 700),
       builder: (context, reveal) {
@@ -293,6 +304,8 @@ class _ContactButton extends StatelessWidget {
               height: isNarrow ? 68 : 96,
               child: FilledButton(
                 onPressed: () => openSiteSection(context, SiteSection.contact),
+                onHover: (hovered) => setState(() => _hovered = hovered),
+                onFocusChange: (focused) => setState(() => _focused = focused),
                 style: FilledButton.styleFrom(
                   backgroundColor: palette.textStrong,
                   foregroundColor: palette.sectionBackground,
@@ -306,8 +319,9 @@ class _ContactButton extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      RollText(
                         AboutPage.ctaLabel,
+                        active: _hovered || _focused,
                         style: SiteText.display(
                           palette.sectionBackground,
                           size: isNarrow ? 26 : 44,
