@@ -111,17 +111,44 @@ class FadeUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final eased = reveal.drive(CurveTween(curve: Curves.easeOutCubic));
-    return FadeTransition(
-      opacity: eased,
-      // Hidden still reaches screen readers.
-      alwaysIncludeSemantics: true,
-      child: MatrixTransition(
-        animation: eased,
-        onTransform: (t) => Matrix4.translationValues(0, (1 - t) * rise, 0),
-        child: child,
-      ),
+    return MatrixTransition(
+      animation: eased,
+      onTransform: (t) => Matrix4.translationValues(0, (1 - t) * rise, 0),
+      child: ClippedFade(opacity: eased, child: child),
     );
   }
+}
+
+/// A [FadeTransition] clipped just past [child]'s edges. On the web a fade
+/// is an offscreen layer as big as the clip around it, and a dozen
+/// screen-sized ones at once stutter the scroll.
+class ClippedFade extends StatelessWidget {
+  const ClippedFade({required this.opacity, required this.child, super.key});
+
+  final Animation<double> opacity;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ClipRect(
+    clipper: const _Bleed(),
+    child: FadeTransition(
+      opacity: opacity,
+      // Hidden still reaches screen readers.
+      alwaysIncludeSemantics: true,
+      child: child,
+    ),
+  );
+}
+
+/// Room for glyphs that overhang tight line heights.
+class _Bleed extends CustomClipper<Rect> {
+  const _Bleed();
+
+  @override
+  Rect getClip(Size size) => (Offset.zero & size).inflate(16);
+
+  @override
+  bool shouldReclip(_Bleed oldClipper) => false;
 }
 
 /// The part of [reveal] that child [index] of [count] enters in, so a group

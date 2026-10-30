@@ -294,9 +294,8 @@ class _ContactButtonState extends State<_ContactButton> {
             curve: const Interval(0.45, 1, curve: Curves.easeOutCubic),
           ),
         );
-        return FadeTransition(
+        return ClippedFade(
           opacity: settle,
-          alwaysIncludeSemantics: true,
           child: ScaleTransition(
             scale: settle.drive(Tween(begin: 0.96, end: 1)),
             child: SizedBox(
@@ -328,12 +327,12 @@ class _ContactButtonState extends State<_ContactButton> {
                         ),
                       ),
                       SizedBox(width: isNarrow ? 10 : 16),
-                      FadeTransition(
-                        opacity: arrow,
-                        child: MatrixTransition(
-                          animation: arrow,
-                          onTransform: (t) =>
-                              Matrix4.translationValues((t - 1) * 24, 0, 0),
+                      MatrixTransition(
+                        animation: arrow,
+                        onTransform: (t) =>
+                            Matrix4.translationValues((t - 1) * 24, 0, 0),
+                        child: ClippedFade(
+                          opacity: arrow,
                           child: Icon(
                             Icons.arrow_forward_rounded,
                             size: isNarrow ? 26 : 40,

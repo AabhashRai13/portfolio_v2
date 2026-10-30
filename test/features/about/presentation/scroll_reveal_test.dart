@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_portfolio/features/about/presentation/widgets/scroll_reveal.dart';
 
@@ -74,6 +75,23 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(_opacity(tester), 1);
+  });
+
+  testWidgets('fades inside a clip about its own size', (tester) async {
+    // On the web a fade's offscreen layer is as big as the clip around it.
+    final controller = await _pump(tester, gap: 1000);
+    controller.jumpTo(700);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    Layer? layer = tester.layers
+        .whereType<OpacityLayer>()
+        .singleWhere((layer) => layer.alpha! < 255);
+    while (layer is! ClipRectLayer) {
+      layer = layer!.parent;
+    }
+    final text = tester.getSize(find.text('hello'));
+    expect(layer.clipRect!.height, lessThan(text.height + 50));
   });
 
   testWidgets('waits until it is clear of the bottom edge', (tester) async {
